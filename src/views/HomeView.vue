@@ -1,12 +1,16 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
+    <carousel />
   </div>
 </template>
 
 <script>
+import Carousel from '@/components/carousel.vue'
 
 export default {
-  name: 'HomeView'
+  name: 'HomeView',
+  components: {
+    Carousel
+  }
 }
 </script>

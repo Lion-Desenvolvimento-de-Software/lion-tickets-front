@@ -1,6 +1,6 @@
 <template>
-  <nav-bar v-if="$route.meta.navbar" />
-  <router-view/>
+  <nav-bar v-if="$route.meta.navbar" class="header" />
+  <router-view />
 </template>
 
 <script>
@@ -34,5 +34,14 @@ nav {
       color: #42b983;
     }
   }
+}
+
+.header {
+  position: fixed !important;
+  width: 100%;
+  z-index: 50;
+}
+.home {
+  padding-top: 4.5rem;
 }
 </style>

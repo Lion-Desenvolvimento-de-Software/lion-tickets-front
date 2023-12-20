@@ -78,22 +78,34 @@
           </ul>    
           <ul class="carousel__thumbnails">
             <li>
-              <label for="slide-1"><img src="https://picsum.photos/id/1041/150/150" alt=""></label>
+              <label for="slide-1">
+                <img src="https://picsum.photos/id/1041/150/150" alt="">
+              </label>
             </li>
             <li>
-              <label for="slide-2"><img src="https://picsum.photos/id/1043/150/150" alt=""></label>
+              <label for="slide-2">
+                <img src="https://picsum.photos/id/1043/150/150" alt="">
+              </label>
             </li>
             <li>
-              <label for="slide-3"><img src="https://picsum.photos/id/1044/150/150" alt=""></label>
+              <label for="slide-3">
+                <img src="https://picsum.photos/id/1044/150/150" alt="">
+              </label>
             </li>
             <li>
-              <label for="slide-4"><img src="https://picsum.photos/id/1045/150/150" alt=""></label>
+              <label for="slide-4">
+                <img src="https://picsum.photos/id/1045/150/150" alt="">
+              </label>
             </li>
             <li>
-              <label for="slide-5"><img src="https://picsum.photos/id/1049/150/150" alt=""></label>
+              <label for="slide-5">
+                <img src="https://picsum.photos/id/1049/150/150" alt="">
+              </label>
             </li>
             <li>
-              <label for="slide-6"><img src="https://picsum.photos/id/1052/150/150" alt=""></label>
+              <label for="slide-6">
+                <img src="https://picsum.photos/id/1052/150/150" alt="">
+              </label>
             </li>
         </ul>
       </div>
@@ -268,6 +280,7 @@ section {
         width: 100%;
         height: 100%;
         object-fit: cover;
-    }
+      }
 }
+
 </style>

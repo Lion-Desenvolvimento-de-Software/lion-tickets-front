@@ -1,5 +1,5 @@
 <template>
-  <nav-bar v-if="$route.meta.navbar" class="header" />
+  <nav-bar v-if="$route.meta.navbar" />
   <router-view />
 </template>
 
@@ -36,11 +36,6 @@ nav {
   }
 }
 
-.header {
-  position: fixed !important;
-  width: 100%;
-  z-index: 50;
-}
 .home {
   padding-top: 4.5rem;
 }

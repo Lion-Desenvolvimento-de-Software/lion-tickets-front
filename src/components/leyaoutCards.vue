@@ -4,11 +4,11 @@
       <div class="card">
         <img src="https://picsum.photos/id/1045/800/450" class="card-img-top" alt="...">
         <div class="card-body">
-          <h5 class="card-title">Card title</h5>
+          <h5 class="card-title">{{nome}}</h5>
           <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-          <button class="btn btn-primary">
-            Detalhes
-          </button>
+
+          <slot name="botaoDetalhes"></slot>
+          
         </div>
       </div>
     </div>
@@ -16,7 +16,15 @@
 </template>
 
 <script>
+
 export default {
-  name: 'leyaoutCards'
+  name: 'leyaoutCards',
+  props: {
+    nome: {
+        type: String,
+        default: ''
+    },
+    tipo: String
+  },
 }
 </script>

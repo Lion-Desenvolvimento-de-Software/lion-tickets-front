@@ -1,13 +1,11 @@
 <template>
   <div class="d-flex container">
     <leyaout-cards nome="teste">
-      <template v-slot:botaoDetalhes>
-        <RouterLink :to="{ name: 'Eventos', params: { id: 'teste' } }">
-          <button class="btn btn-primary">
-            Detalhes
-          </button>
+      <button class="btn btn-primary" to="/teste">
+        <RouterLink :to="{ name: 'Produtos', params: { productsName: 'teste' } }">
+          Detalhes
         </RouterLink>
-      </template>
+      </button>
     </leyaout-cards>
   </div>
 </template>
@@ -15,7 +13,7 @@
 <script>
 import leyaoutCards from '@/components/leyaoutCards.vue';
 export default {
-  name: 'EventosView',
+  name: 'Produtos',
   components: {
     leyaoutCards
   }

@@ -1,5 +1,5 @@
 <template>
-	<nav class="navbar navbar-expand-lg bg-info-subtle">
+	<nav class="navbar fixed-top navbar-expand-lg bg-info-subtle">
 		<div class="container-fluid">
 			<router-link class="navbar-brand" to="/">OceanTicket</router-link>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -14,17 +14,27 @@
 						<a class="nav-link" href="#">Sobre nós</a>
 					</li>
 					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 							Produtos
-						</a>
+						</button>
 						<ul class="dropdown-menu">
-							<li><a class="dropdown-item" href="#">Roupas</a></li>
-							<li><a class="dropdown-item" href="#">Acessórios</a></li>
+							<li>
+								<router-link class="dropdown-item" 
+														:to="{ name: 'Produtos', params: { productsName: 'roupas' } }">
+									Roupas
+								</router-link>
+							</li>
+							<li>
+								<router-link class="dropdown-item" 
+														:to="{ name: 'Produtos', params: { productsName: 'acessorios' } }">
+									Acessórios
+								</router-link>
+							</li>
 						</ul>
 					</li>
 				</ul>
 				<form class="d-flex" role="search">
-					<RouterLink to="/">
+					<RouterLink to="/cadastro">
 						<button class="btn btn-outline-success mx-1">Cadastro</button>
 					</RouterLink>
 					<RouterLink to="/login">

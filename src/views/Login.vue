@@ -14,7 +14,7 @@
             type="text"
             name="Email"
             placeholder="Insira o seu email..." 
-            v-model="dados['email']"
+            v-model="email"
             class="form-control"
           />
         </div>
@@ -24,7 +24,7 @@
             type="password"
             name="Sena"
             placeholder="Insira a senha..." 
-            v-model="dados['senha']"
+            v-model="senha"
             class="form-control"
           />
         </div>
@@ -42,7 +42,7 @@
           </div>
         </div>
         <div class="d-flex justify-content-center">
-          <button class="btn btn-primary btn-lg" :disabled="!isValidEmail || !isPasswordValidLength">Entrar</button>
+          <button class="btn btn-primary btn-lg" @click="Logar" :disabled="!isValidEmail || !isPasswordValidLength">Entrar</button>
         </div>
       </div>
     </div>
@@ -50,22 +50,36 @@
 </template>
 
 <script>
+import UsuarioServices from '@/assets/services/UsuarioServices';
 export default {
   name: 'Login',
   data() {
     return {
-      dados: {}
+      email: null,
+      senha: null
     }
   },
   computed: {
     isValidEmail() {
       var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
-      if (this.dados['email'] == null) return false;
-      return this.dados['email'].match(pattern);
+      if (this.email == null) return false;
+      return this.email.match(pattern);
     },
     isPasswordValidLength() {
-      if (this.dados['senha'] == null) return false;
-      return this.dados['senha'].length > 5
+      if (this.senha == null) return false;
+      return this.senha.length > 5
+    },
+    
+  },
+  methods: {
+    async Logar() {
+      let obj = {
+        "User": this.email,
+        "Password": this.senha,
+        "RememberMe": false
+      }
+      var result = await UsuarioServices.login(obj);
+      console.log(result);
     }
   }
 }

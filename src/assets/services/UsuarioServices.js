@@ -17,8 +17,8 @@ export default {
     return response
   },
 
-  async login(formData) {
-    axios.post(`${api}/usuario/login`, formData).then(res => {
+  async login(dados) {
+    axios.post(`${api}/usuario/login`, dados).then(res => {
       return res;
     }).catch(err => {
       console.log('login: ', err);

@@ -8,27 +8,21 @@ export default {
   },
 
   hasUserName(userName) {
-    return axios.get(`${api}/usuario/hasUserName/${userName}`).then(() => {
-      return false
-    }).catch(err => {
-      return err
-    })
+    return axios.get(`${api}/usuario/HasUserName/${userName}`)
   },
 
   async post(userData) {
-    axios.post(`${api}/usuario`, userData
-    ).then(res => {
-      return res
-    }).catch(err => {
-      console.log(err)
-    })
+    var response = await axios.post(`${api}/usuario`, userData)
+    console.log(response)
+    return response
   },
 
   async login(formData) {
-    axios.post(`${api}/usuario/login`, formaData).then(res => {
+    axios.post(`${api}/usuario/login`, formData).then(res => {
       return res;
     }).catch(err => {
       console.log('login: ', err);
+      return err
     })
   }
 }

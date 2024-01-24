@@ -140,7 +140,7 @@ export default {
       usuario.AddData({
         UserName: this.username,
         Email: this.email,
-        Password: this.senha,
+        PasswordHash: this.senha,
         Cpf: this.cpf,
         Telefone: this.telefone,
         Genero: parseInt(this.genero)
@@ -150,22 +150,26 @@ export default {
         if(!this.senhaConfirmacao) this.Erros.push('Confirmação da senha não preenchida!');
         else if(this.senha !== this.senhaConfirmacao) this.Erros.push('Confirmação da senha inválida!');
       }
-      usuario.hasUserName(this.username).then(res => {
-        if(res?.response?.data) this.Erros.push(res?.response?.data)
-      }).catch((err) => {
-        console.log(err)
-      }).finally(() => {
-        this.loading = false
-        if(this.Erros.length == 0) {
-          usuario.post().then(() => {
-            this.$router.push('/login')
-          }).catch(err => {
-            console.log(err)
-          }).finally(() => {
-            this.loading = false;
-          })
-        }
-      })
+      if(this.Erros.length == 0) {
+        usuario.hasUserName(this.username).then(res => {
+          if(res?.response?.data) this.Erros.push(res?.response?.data)
+          if(this.Erros.length == 0) {
+            usuario.post().then(res => {
+              console.log(res)
+              this.$router.push('/login')
+            }).catch(err => {
+              console.log(err)
+            }).finally(() => {
+              this.loading = false;
+            })
+          }
+        }).catch((err) => {
+          console.log(err)
+          this.loading = false;
+        })
+      } else {
+        this.loading = false;
+      }
     },
     cpfKeydown(e) {
       if (/^\W$/.test(e.key)) {

@@ -7,7 +7,7 @@ export class Usuario {
     this.Id = null,
     this.UserName = null,
     this.Email = null,
-    this.Password = null,
+    this.PasswordHash = null,
     this.Genero = null,
     this.Cpf = null,
     this.Telefone = null,
@@ -27,7 +27,6 @@ export class Usuario {
     } else if (!Validacoes.validEmail(this.Email)) {
       erros.push("Email inválido!")
     }
-    if(!this.Password) erros.push("Informe sua senha!");
     erros.push(...this.getErrorsPasswordNotIsStrong());
     if(!this.Genero) erros.push("Informe seu gênero!");
     if(!Validacoes.validarCPF(this.Cpf)) erros.push("CPF invélido!");
@@ -40,25 +39,21 @@ export class Usuario {
   }
 
   async post() {
-    usuarioService.post(this).then(res => {
-      return res
-    }).catch(err => {
-      console.log('UsuarioPost: ', err)
-    })
+    return await usuarioService.post(this)
   }
 
   getErrorsPasswordNotIsStrong() {
-    if(!this.Password) return ['Senha é obrigatória!'];
+    if(!this.PasswordHash) return ['Senha é obrigatória!'];
     let erros = [];
 
     var numeros = /([0-9])/;
     var alfabeto = /([A-Z])/;
     var chEspeciais = /([~,!,@,#,$,%,^,&,*,-,_,+,=,?,>,<])/;
 
-    if(this.Password.length < 6) erros.push("Senha tem que ter mais de 6 digitos!!");
-    if(!this.Password.match(numeros)) erros.push("A senha tem que ter no minimo um número!");
-    if(!this.Password.match(alfabeto)) erros.push("A senha tem que ter no minimo uma letra maiúscula!");
-    if(!this.Password.match(chEspeciais)) erros.push("A senha tem que ter pelomenos um caracter especial!");
+    if(this.PasswordHash.length < 6) erros.push("Senha tem que ter mais de 6 digitos!!");
+    if(!this.PasswordHash.match(numeros)) erros.push("A senha tem que ter no minimo um número!");
+    if(!this.PasswordHash.match(alfabeto)) erros.push("A senha tem que ter no minimo uma letra maiúscula!");
+    if(!this.PasswordHash.match(chEspeciais)) erros.push("A senha tem que ter pelomenos um caracter especial!");
   
     return erros;
   }

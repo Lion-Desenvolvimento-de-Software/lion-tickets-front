@@ -9,5 +9,6 @@ import "bootstrap"
 
 axios.defaults.baseURL = 'https://localhost:44361'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
+axios.defaults.withCredentials = true
 
 createApp(App).use(store).use(router).mount('#app')

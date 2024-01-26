@@ -78,8 +78,11 @@ export default {
         "Password": this.senha,
         "RememberMe": false
       }
-      var result = await UsuarioServices.login(obj);
-      console.log(result);
+      UsuarioServices.login(obj).then(() => {
+        this.$router.push('/');
+      }).catch(err => {
+        console.log(err);
+      })
     }
   }
 }

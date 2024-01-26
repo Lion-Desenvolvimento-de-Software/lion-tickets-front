@@ -141,7 +141,7 @@ export default {
         UserName: this.username,
         Email: this.email,
         PasswordHash: this.senha,
-        Cpf: this.cpf,
+        CPF_CNPJ: this.cpf,
         Telefone: this.telefone,
         Genero: parseInt(this.genero)
       })

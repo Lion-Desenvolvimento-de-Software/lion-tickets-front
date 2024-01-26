@@ -9,7 +9,7 @@ export class Usuario {
     this.Email = null,
     this.PasswordHash = null,
     this.Genero = null,
-    this.Cpf = null,
+    this.CPF_CNPJ = null,
     this.Telefone = null,
     this.Role = 0
   }
@@ -29,7 +29,7 @@ export class Usuario {
     }
     erros.push(...this.getErrorsPasswordNotIsStrong());
     if(!this.Genero) erros.push("Informe seu gênero!");
-    if(!Validacoes.validarCPF(this.Cpf)) erros.push("CPF invélido!");
+    if(!Validacoes.validarCPF(this.CPF_CNPJ)) erros.push("CPF invélido!");
     if(!Validacoes.telefoneValidation(this.Telefone)) erros.push('Telefone inválido!');
     return erros
   }

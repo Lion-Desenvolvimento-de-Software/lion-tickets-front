@@ -18,11 +18,6 @@ export default {
   },
 
   async login(dados) {
-    axios.post(`${api}/usuario/login`, dados).then(res => {
-      return res;
-    }).catch(err => {
-      console.log('login: ', err);
-      return err
-    })
+    await axios.post(`${api}/usuario/login`, dados);
   }
 }

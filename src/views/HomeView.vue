@@ -3,10 +3,10 @@
     <carousel />
     <leyaout-cards nome="teste">
       <template v-slot:botaoDetalhes>
-        <RouterLink :to="{ name: 'Eventos', params: { id: 'teste' } }">
-          <button class="btn btn-primary">
-            Detalhes
-          </button>
+        <RouterLink aria-disabled="true"
+          class="btn btn-primary" 
+          :to="{ name: 'Eventos', params: { id: 'teste' } }">
+          Detalhes
         </RouterLink>
       </template>
     </leyaout-cards>
@@ -19,6 +19,11 @@ import LeyaoutCards from '@/components/leyaoutCards.vue'
 
 export default {
   name: 'HomeView',
+  data() {
+    return {
+      loadingPage: false
+    }
+  },
   components: {
     Carousel,
     LeyaoutCards

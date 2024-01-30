@@ -1,7 +1,7 @@
 <template>
 	<nav class="navbar fixed-top navbar-expand-lg bg-info-subtle">
 		<div class="container-fluid">
-			<router-link class="navbar-brand" to="/">OceanTicket</router-link>
+			<router-link class="navbar-brand" to="/">LionTickets</router-link>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
@@ -33,14 +33,34 @@
 						</ul>
 					</li>
 				</ul>
-				<form class="d-flex" role="search">
-					<RouterLink to="/cadastro">
-						<button class="btn btn-outline-success mx-1">Cadastro</button>
-					</RouterLink>
+				<div v-if="!usuario?.Id" class="d-flex">
 					<RouterLink to="/login">
 						<button class="btn btn-success mx-1">Entrar</button>
 					</RouterLink>
-				</form>
+				</div>
+				<div v-else class="dropstart">
+					<img class="nav-link dropdown-toggle btn"
+						data-bs-toggle="dropdown" 
+						aria-expanded="false" 
+						src="../assets/images/R.png" 
+						height="30" 
+						width="30" />
+
+					<ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
+						<li>
+							<router-link class="dropdown-item"
+													:to="{ name: 'Usuarios', params: { UserName: usuario?.UserName } }">
+								Perfil
+							</router-link>
+						</li>
+						<li>
+							<router-link class="dropdown-item" 
+													:to="{ name: 'Produtos', params: { productsName: 'acessorios' } }">
+								Acessórios
+							</router-link>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
   </nav>
@@ -50,7 +70,13 @@
 import { RouterLink } from 'vue-router';
 
 export default {
-  name: 'navBar',
+	name: 'navBar',
+	props: {
+		usuario: {
+			type: Object,
+			default: null
+		}
+	},
   components: { RouterLink }
 }
 </script>

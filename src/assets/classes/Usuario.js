@@ -16,7 +16,7 @@ export class Usuario {
 
   AddData(userData) {
     Object.assign(this, userData);
-    if (this.Id == null) delete this['Id']
+    if (this.Id == null) delete this['Id'];
   }
 
   checkForm() {

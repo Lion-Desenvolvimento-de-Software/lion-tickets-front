@@ -7,6 +7,11 @@ export default {
     return data;
   },
 
+  async GetUserAuthenticated() {
+    const { data } = await axios.get(`${api}/usuario/GetUserAuthenticated`, {withCredentials: true});
+    return data;
+  },
+
   hasUserName(userName) {
     return axios.get(`${api}/usuario/HasUserName/${userName}`)
   },

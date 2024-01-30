@@ -1,15 +1,42 @@
 <template>
-  <nav-bar v-if="$route.meta.navbar" />
-  <router-view />
+  <nav-bar :usuario="usuario" v-if="$route.meta.navbar" />
+  <router-view :usuario="usuario" />
 </template>
 
 <script>
 import navBar from '@/components/navBar.vue'
+import { Usuario } from './assets/classes/Usuario';
+import UsuarioServices from './assets/services/UsuarioServices';
 
 export default {
   name: 'app',
+  data() {
+    return {
+      loadingFethingData: false,
+      error: null,
+      usuario: new Usuario()
+    }
+  },
+  created() {
+    this.fetchData()
+  },
   components: {
     navBar
+  },
+  methods: {
+    fetchData() {
+      UsuarioServices.GetUserAuthenticated().then(res => {
+        let obj = {
+          Id: res.id,
+          UserName: res.userName,
+          Email: res.email,
+          Telefone: res.phoneNumber,
+        }
+        this.usuario.AddData(obj);
+      }).catch(err => {
+        this.error = err;
+      })
+    }
   }
 }
 </script>

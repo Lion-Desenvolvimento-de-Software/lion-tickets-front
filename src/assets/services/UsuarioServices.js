@@ -8,8 +8,15 @@ export default {
   },
 
   async GetUserAuthenticated() {
-    const { data } = await axios.get(`${api}/usuario/GetUserAuthenticated`, {withCredentials: true});
-    return data;
+    try {
+      const { data } = await axios.get(`${api}/usuario/GetUserAuthenticated`, {withCredentials: true});
+      return data;
+    } catch(err) {
+      if(err.response.status == 401) {
+        return "Você não está logado!";
+      }
+    }
+    
   },
 
   hasUserName(userName) {

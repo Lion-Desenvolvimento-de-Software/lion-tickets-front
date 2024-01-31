@@ -79,7 +79,7 @@ export default {
         "RememberMe": false
       }
       UsuarioServices.login(obj).then(() => {
-        this.$router.push('/');
+        window.location.pathname = '/'
       }).catch(err => {
         console.log(err);
       })

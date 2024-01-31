@@ -20,13 +20,13 @@ export default {
     }
   },
   created() {
-    this.fetchData()
+    this.fetchData();
   },
   components: {
     navBar
   },
   methods: {
-    fetchData() {
+    async fetchData() {
       UsuarioServices.GetUserAuthenticated().then(res => {
         let obj = {
           Id: res.id,

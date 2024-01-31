@@ -1,5 +1,7 @@
 <template>
-  <nav-bar :usuario="usuario" v-if="$route.meta.navbar" />
+  <nav-bar :usuario="usuario" 
+            v-if="$route.meta.navbar"
+            @logof="logof" />
   <router-view :usuario="usuario" />
 </template>
 
@@ -36,6 +38,10 @@ export default {
       }).catch(err => {
         this.error = err;
       })
+    },
+    async logof() {
+      this.usuario = null;
+      UsuarioServices.logof();
     }
   }
 }

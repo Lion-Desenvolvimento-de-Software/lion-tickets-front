@@ -54,10 +54,10 @@
 							</router-link>
 						</li>
 						<li>
-							<router-link class="dropdown-item" 
-													:to="{ name: 'Produtos', params: { productsName: 'acessorios' } }">
-								Acessórios
-							</router-link>
+							<hr class="dropdown-divider" />
+						</li>
+						<li>
+							<a class="btn dropdown-item" @click="$emit('logof')">Logof</a>
 						</li>
 					</ul>
 				</div>

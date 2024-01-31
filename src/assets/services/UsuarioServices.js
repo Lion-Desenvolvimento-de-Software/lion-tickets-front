@@ -24,5 +24,9 @@ export default {
 
   async login(dados) {
     await axios.post(`${api}/usuario/login`, dados);
+  },
+
+  async logof() {
+    await axios.post(`${api}/usuario/logof`);
   }
 }

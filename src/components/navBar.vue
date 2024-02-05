@@ -1,5 +1,5 @@
 <template>
-	<nav class="navbar fixed-top navbar-expand-lg bg-info-subtle">
+	<header class="navbar fixed-top navbar-expand-lg" :class="BGHader">
 		<div class="container-fluid">
 			<router-link class="navbar-brand" to="/">LionTickets</router-link>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,7 +63,7 @@
 				</div>
 			</div>
 		</div>
-  </nav>
+  </header>
 </template>
 
 <script>
@@ -77,6 +77,19 @@ export default {
 			default: null
 		}
 	},
-  components: { RouterLink }
+  components: { RouterLink },
+	data() {
+		return {
+			BGHader: 'bg-transparent'
+		}
+	},
+	mounted() {
+		window.addEventListener("scroll", this.onScroll)
+	},
+	methods: {
+		onScroll() {
+			this.BGHader = window.top.scrollY < 50 ? 'bg-transparent' : 'bg-info-subtle'
+		}
+	}
 }
 </script>

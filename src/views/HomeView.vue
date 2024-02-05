@@ -4,7 +4,6 @@
     <leyaout-cards nome="teste">
       <template v-slot:botaoDetalhes>
         <RouterLink aria-disabled="true"
-          class="btn btn-primary" 
           :to="{ name: 'Eventos', params: { id: 'teste' } }">
           Detalhes
         </RouterLink>

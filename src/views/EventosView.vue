@@ -3,9 +3,7 @@
     <leyaout-cards nome="teste">
       <template v-slot:botaoDetalhes>
         <RouterLink :to="{ name: 'Eventos', params: { id: 'teste' } }">
-          <button class="btn btn-primary">
-            Detalhes
-          </button>
+          Detalhes
         </RouterLink>
       </template>
     </leyaout-cards>

@@ -22,8 +22,7 @@ export default {
 }
 .box {
   position: relative;
-  width: 20em;
-  height: 20em;
+  width: 25%;
   top: 25px;
   left: 25px;
 }
@@ -55,6 +54,5 @@ export default {
     box-sizing: border-box;
     border: 4px solid silver;
     border-radius: 50%;
-    overflow: hidden;
 }
 </style>

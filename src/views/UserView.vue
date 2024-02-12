@@ -38,23 +38,24 @@ export default {
 
 <style scoped>
 .wreaper {
-  display: grid;
-  grid-template-columns: 0 100%;
-  grid-gap: 11.5em;
+  display: flex;
   align-items: center;
-  min-width: 835px;
+  flex-direction: row;
 }
 
 .custom-layout-numbers-seguidores-and-curtidas {
   display: flex;
   justify-content: space-evenly;
-  margin-left: 200px;
-  margin-right: 200px;
 }
 
-@media screen and (max-width: 800px) {
+@media only screen and (max-width: 450px) {
   .wreaper {
-    grid-gap: 6.5em;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .wreaper .box {
+    left: 0;
   }
 }
 

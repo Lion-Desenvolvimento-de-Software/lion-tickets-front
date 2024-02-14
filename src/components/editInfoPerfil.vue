@@ -1,15 +1,15 @@
 <template>
   <div class="m-4 justify-content-grid custom-form">
     <div class="d-flex align-items-center">
-      <span id="telefone">T</span>
-      <input id="telefone" type="text" name="telefone" :value="telefone" aria-describedby="telefone" />
+      <font-awesome-icon class="custom-icons" :icon="['fas', 'mobile-screen']" id="telefone" />
+      <input id="telefone" placeholder="(__) _____-____" type="text" name="telefone" :value="telefone" aria-describedby="telefone" />
     </div>
     <div class="d-flex align-items-center">
-      <span id="telefone">T</span>
+      <font-awesome-icon class="custom-icons" :icon="['fas', 'calendar-days']" id="telefone" />
       <input type="date" name="telefone" :value="telefone" />
     </div>
     <div class="d-flex align-items-center">
-      <span id="telefone">T</span>
+      <font-awesome-icon class="custom-icons" :icon="['fas', 'venus-mars']" id="telefone" />
       <select type="text" name="telefone">
         <option :value="null">Selecione...</option>
         <option value="">Masculino</option>
@@ -35,12 +35,10 @@ export default {
   gap: 10px;
   align-items: center;
 }
-.custom-form span {
+.custom-form .custom-icons {
   position: absolute;
-  padding-left: 0.8em;
-  padding-right: 0.8em;
-  top: 1px;
-  bottom: 1px;
+  padding-left: 0.6rem;
+  padding-right: 0.6rem;
   border-right: 1px solid;
 }
 .custom-form > div {
@@ -48,15 +46,11 @@ export default {
 }
 .custom-form input, select {
   width: 100%;
-  height: 26px;
+  height: 35px;
   border-radius: 25px;
   border: 1px solid #000;
   padding-left: 2.5em;
   padding-right: 0.5em;
-}
-
-.custom-form input:hover {
-  
 }
 
 @media only screen and (max-width: 450px) {

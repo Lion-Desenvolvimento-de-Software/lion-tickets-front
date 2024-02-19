@@ -1,48 +1,19 @@
 <template>
-  <div class="bg-primary py-2 d-flex justify-content-center limited-h">
-    <div class="shadow-lg container bg-body rounded py-4 w-500">
-      <div class="my-4">
-        <img src="../assets/images/R.png" height="75" width="75" />
+  <div class="custom-container">
+    <div class="custom-layout">
+      <div class="custom-title">
+        <FontAwesomeIcon :icon="['fas', 'user']" />
       </div>
-      <div id="title" class="my-4">
-        <h1>Login</h1>
-      </div>
-      <div class="row g-3 justify-content-center mx-2">
-        <div class="col-md-8">
-          <label for="email" class="form-label d-flex px-0 label-spacing">Email:</label>
-          <input id="email"
-            type="text"
-            name="Email"
-            placeholder="Insira o seu email..." 
-            v-model="email"
-            class="form-control"
-          />
+      <div class="custom-form">
+        <div class="custom-input">
+          <input id="email" type="text" name="Email" required />
+          <label for="email">Email</label>
+          <font-awesome-icon :icon="['fas', 'envelope']" />
         </div>
-        <div class="col-md-8">
-          <label for="senha" class="form-label d-flex px-0 label-spacing">Senha:</label>
-          <input id="senha"
-            type="password"
-            name="Sena"
-            placeholder="Insira a senha..." 
-            v-model="senha"
-            class="form-control"
-          />
-        </div>
-        <div class="d-flex justify-content-center">
-          <p class="size-font">Esqueceu a senha? <a href="/">clique aqui</a></p>
-        </div>
-        <div class="col-md-8 my-0">
-          <div class="d-flex justify-content-center">
-            <button class="border-0 rounded-circle m-3 bg-white">
-              <img src="../assets/images/google-icon.png" width="35" height="35" alt="Login google" />
-            </button>
-            <button class="border-0 rounded-circle mx-3 bg-white">
-              <img src="../assets/images/icon-face.png" width="35" height="35" alt="Login facebook" />
-            </button>
-          </div>
-        </div>
-        <div class="d-flex justify-content-center">
-          <button class="btn btn-primary btn-lg" @click="Logar" :disabled="!isValidEmail || !isPasswordValidLength">Entrar</button>
+        <div class="custom-input">
+          <input id="senha" type="password" name="Senha" required toggle-show="false" />
+          <label for="senha">Senha</label>
+          <font-awesome-icon :icon="['fas', 'lock']" />
         </div>
       </div>
     </div>
@@ -51,69 +22,123 @@
 
 <script>
 import UsuarioServices from '@/assets/services/UsuarioServices';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 export default {
-  name: 'Login',
-  data() {
-    return {
-      email: null,
-      senha: null
-    }
-  },
-  computed: {
-    isValidEmail() {
-      var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
-      if (this.email == null) return false;
-      return this.email.match(pattern);
+    name: 'Login',
+    data() {
+        return {
+            email: null,
+            senha: null
+        };
     },
-    isPasswordValidLength() {
-      if (this.senha == null) return false;
-      return this.senha.length > 5
+    computed: {
+        isValidEmail() {
+            var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+            if (this.email == null)
+                return false;
+            return this.email.match(pattern);
+        },
+        isPasswordValidLength() {
+            if (this.senha == null)
+                return false;
+            return this.senha.length > 5;
+        },
     },
-    
-  },
-  methods: {
-    async Logar() {
-      let obj = {
-        "User": this.email,
-        "Password": this.senha,
-        "RememberMe": false
-      }
-      UsuarioServices.login(obj).then(() => {
-        window.location.pathname = '/'
-      }).catch(err => {
-        console.log(err);
-      })
-    }
-  }
+    methods: {
+        async Logar() {
+            let obj = {
+                "User": this.email,
+                "Password": this.senha,
+                "RememberMe": false
+            };
+            UsuarioServices.login(obj).then(() => {
+                window.location.pathname = '/';
+            }).catch(err => {
+                console.log(err);
+            });
+        }
+    },
+    components: { FontAwesomeIcon }
 }
 </script>
 
 <style scoped>
-#app {
-  background-color: gray;
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
-.size-font {
-  font-size: 11px;
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
 }
-
-.label-spacing {
-  margin-bottom: 0;
-}
-
-.w-500 {
-  width: 500px;
-}
-
-.limited-h {
+.custom-container {
+  display: flex;
   height: 100vh;
-  max-height: 100vh;
+  justify-content: center;
+  align-items: center;
 }
 
-.altura-form {
-  height: 75vh;
+.custom-layout {
+  background: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  width: 360px;
+  height: 520px;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
 }
 
-.cursor-pointer {
-  cursor: pointer;
+.custom-title {
+  margin: 2.5em 0;
+}
+.custom-title svg {
+  font-size: 3rem;
+}
+
+.custom-form {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  height: 25%;
+  flex-direction: column;
+  align-items: center;
+}
+.custom-form .custom-input {
+  position: relative;
+  margin: 30px 0;
+  max-width: 310px;
+}
+.custom-input input {
+  background: transparent !important;
+  border: 0;
+  border-bottom: 2px solid black;
+  width: 250px;
+  height: 35px;
+  padding: 0 2.5rem 0 0.5rem;
+}
+input:focus {
+  outline: none;
+}
+.custom-input label {
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  pointer-events: none;
+  transition: all 0.5s ease-in-out;
+}
+input:-webkit-autofill ~ label,
+input:focus ~ label,
+input:valid ~ label {
+  top: -5px;
+}
+
+.custom-input svg {
+  position: absolute;
+  font-size: 1.2rem;
+  right: 0;
+  top: 0.5rem;
+  margin: 0 0.5rem;
 }
 </style>

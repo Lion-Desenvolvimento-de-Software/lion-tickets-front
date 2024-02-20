@@ -1,20 +1,18 @@
 <template>
   <div class="custom-container">
-    <div class="custom-layout">
-      <div class="custom-title">
-        <FontAwesomeIcon :icon="['fas', 'user']" />
+    <div class="custom-layout-boxs">
+      <div class="custom-button-troca">
+        <button><font-awesome-icon :icon="['fas', 'arrows-rotate']" /></button>
       </div>
-      <div class="custom-form">
-        <div class="custom-input">
-          <input id="email" type="text" name="Email" required />
-          <label for="email">Email</label>
-          <font-awesome-icon :icon="['fas', 'envelope']" />
+      <div class="custom-layout-left">
+        <div class="custom-info">
+          <h1>Bem Vindo</h1>
+          <h3>Cadastre-se</h3>
+          <p>Você pode clicando <a href="">aqui</a> ou no botão à direita.</p>
         </div>
-        <div class="custom-input">
-          <input id="senha" type="password" name="Senha" required toggle-show="false" />
-          <label for="senha">Senha</label>
-          <font-awesome-icon :icon="['fas', 'lock']" />
-        </div>
+      </div>
+      <div class="custom-layout">
+        <layout-login />
       </div>
     </div>
   </div>
@@ -22,14 +20,17 @@
 
 <script>
 import UsuarioServices from '@/assets/services/UsuarioServices';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import layoutLogin from '@/components/layoutLogin.vue';
 export default {
     name: 'Login',
     data() {
         return {
             email: null,
             senha: null
-        };
+          };
+        },
+    components: {
+      layoutLogin
     },
     computed: {
         isValidEmail() {
@@ -58,7 +59,6 @@ export default {
             });
         }
     },
-    components: { FontAwesomeIcon }
 }
 </script>
 
@@ -78,67 +78,70 @@ input::-ms-clear {
   height: 100vh;
   justify-content: center;
   align-items: center;
+  background-image: url('../assets/images/background/wallpaper-gif-4.gif');
+  background-size: cover;
+  background-position-y: 100%;
+}
+
+.custom-layout-boxs {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  justify-content: center;
+  grid: auto-flow dense / 50% 50% 1fr;
+}
+
+.custom-layout-left {
+  background: rgba(0, 0, 0, 0.2);
+  width: 260px;
+  height: 520px;
+  color: #fff;
+  box-shadow: 0px 0px 10px 5px rgba(255, 255, 255, 0.5);
 }
 
 .custom-layout {
   background: rgba(0, 0, 0, 0.2);
-  position: absolute;
-  width: 360px;
+  width: 400px;
   height: 520px;
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  padding: 0 50px;
+  box-shadow: 0px 0px 10px 5px rgba(255, 255, 255, 0.5);
 }
 
-.custom-title {
-  margin: 2.5em 0;
-}
-.custom-title svg {
-  font-size: 3rem;
+a {
+  color: aqua;
 }
 
-.custom-form {
+.custom-button-troca {
+  position: absolute;
+  margin: 0 75px 0 0;
+}
+
+.custom-button-troca button {
+  border-radius: 50%;
+  width: 75px;
+  height: 75px;
+  z-index: 150px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 0;
+  box-shadow: 0 0 5px 2px #000;
+}
+
+.custom-button-troca button:active {
+  box-shadow: 0 0 5px 2px #000 inset;
+}
+.custom-button-troca button:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+.custom-info {
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  height: 25%;
   flex-direction: column;
   align-items: center;
-}
-.custom-form .custom-input {
-  position: relative;
-  margin: 30px 0;
-  max-width: 310px;
-}
-.custom-input input {
-  background: transparent !important;
-  border: 0;
-  border-bottom: 2px solid black;
-  width: 250px;
-  height: 35px;
-  padding: 0 2.5rem 0 0.5rem;
-}
-input:focus {
-  outline: none;
-}
-.custom-input label {
-  position: absolute;
-  top: 50%;
-  left: 5px;
-  transform: translateY(-50%);
-  font-size: 1rem;
-  pointer-events: none;
-  transition: all 0.5s ease-in-out;
-}
-input:-webkit-autofill ~ label,
-input:focus ~ label,
-input:valid ~ label {
-  top: -5px;
+  height: 100%;
+  justify-content: center;
 }
 
-.custom-input svg {
-  position: absolute;
-  font-size: 1.2rem;
-  right: 0;
-  top: 0.5rem;
-  margin: 0 0.5rem;
+.custom-info p, h3 {
+  margin: 2rem 0;
 }
 </style>

@@ -69,10 +69,6 @@ export default {
   margin: 0;
   box-sizing: border-box;
 }
-input::-ms-reveal,
-input::-ms-clear {
-  display: none;
-}
 .custom-container {
   display: flex;
   height: 100vh;

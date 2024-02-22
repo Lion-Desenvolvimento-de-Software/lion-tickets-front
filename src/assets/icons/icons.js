@@ -3,6 +3,7 @@ import { faCalendarDays } from "@fortawesome/free-solid-svg-icons"
 import { faVenusMars } from "@fortawesome/free-solid-svg-icons"
 import { faUser } from "@fortawesome/free-solid-svg-icons"
 import { faLock } from "@fortawesome/free-solid-svg-icons"
+import { faLockOpen } from "@fortawesome/free-solid-svg-icons"
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons"
 import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons"
 
@@ -13,5 +14,6 @@ export default [
   faUser,
   faLock,
   faEnvelope,
-  faArrowsRotate
+  faArrowsRotate,
+  faLockOpen
 ]

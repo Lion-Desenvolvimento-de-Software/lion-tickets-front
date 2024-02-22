@@ -9,9 +9,9 @@
       <font-awesome-icon :icon="['fas', 'envelope']" />
     </div>
     <div class="custom-input">
-      <input id="senha" type="password" name="Senha" required toggle-show="false" />
+      <input id="senha" :type="!senhaVisivel ? 'password' : 'text'" name="Senha" required toggle-show="false" />
       <label for="senha">Senha</label>
-      <font-awesome-icon :icon="['fas', 'lock']" />
+      <font-awesome-icon class="icon" :icon="['fas', !senhaVisivel ? 'lock' : 'lock-open']" @click="senhaVisivel = !senhaVisivel" />
     </div>
   </div>
   <div class="custom-redefinir-senha">
@@ -23,11 +23,20 @@
 <script>
 
 export default {
-  name: "LayoutLogin"
+  name: "LayoutLogin",
+  data() {
+    return {
+      senhaVisivel: false
+    }
+  }
 }
 </script>
 
 <style>
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
 .custom-title {
   margin: 2.5em 0;
 }
@@ -84,6 +93,10 @@ input:valid ~ label {
   right: 0;
   top: 0.5rem;
   margin: 0 0.5rem;
+}
+
+.custom-input .icon {
+  cursor: pointer;
 }
 
 .custom-redefinir-senha {

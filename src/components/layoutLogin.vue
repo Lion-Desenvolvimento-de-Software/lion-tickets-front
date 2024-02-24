@@ -2,17 +2,25 @@
   <div class="custom-title">
     <font-awesome-icon :icon="['fas', 'user']" />
   </div>
-  <div class="custom-form">
-    <div class="custom-input">
-      <input id="email" type="text" name="Email" required />
-      <label for="email">Email</label>
-      <font-awesome-icon :icon="['fas', 'envelope']" />
+  <div class="custom-form" :class="!isCadastro ? 'h-25' : 'h-50'">
+    <div>
+      <input-with-icon Id="email"
+                      Type="text"
+                      Label="Email"
+                      :Required="true" />
     </div>
     <div class="custom-input">
-      <input id="senha" :type="!senhaVisivel ? 'password' : 'text'" name="Senha" required toggle-show="false" />
-      <label for="senha">Senha</label>
-      <font-awesome-icon class="icon" :icon="['fas', !senhaVisivel ? 'lock' : 'lock-open']" @click="senhaVisivel = !senhaVisivel" />
+      <input-with-icon Id="senha"
+                      Type="password"
+                      Label="Senha"
+                      Name="Senha"
+                      :Required="true"
+                      ClassIcon="visionPassword"
+                      :Icon="['fas',  senhaVisivel ? 'lock-open' : 'lock']"
+                      @ViewPassword="ViewPassword"
+                      ref="inputPassword" />
     </div>
+    
   </div>
   <div class="custom-redefinir-senha">
     <p>Esqueceu a senha? <a href="">Redefinir</a></p>
@@ -21,22 +29,28 @@
 </template>
 
 <script>
+import inputWithIcon from './inputs/inputWithIcon.vue'
 
 export default {
   name: "LayoutLogin",
   data() {
     return {
-      senhaVisivel: false
+      senhaVisivel: false,
+      isCadastro: false
+    }
+  },
+  components: {
+    inputWithIcon
+  },
+  methods: {
+    ViewPassword() {
+      this.senhaVisivel = !this.senhaVisivel;
     }
   }
 }
 </script>
 
-<style>
-input::-ms-reveal,
-input::-ms-clear {
-  display: none;
-}
+<style scoped>
 .custom-title {
   margin: 2.5em 0;
 }
@@ -48,55 +62,8 @@ input::-ms-clear {
   display: flex;
   flex-wrap: nowrap;
   justify-content: center;
-  height: 25%;
   flex-direction: column;
   align-items: center;
-}
-.custom-form .custom-input {
-  position: relative;
-  margin: 30px 0;
-  max-width: 310px;
-}
-.custom-input input {
-  background: transparent !important;
-  border: 0;
-  border-bottom: 2px solid #fff;
-  width: 250px;
-  height: 35px;
-  padding: 0 2.5rem 0 0.5rem;
-  color: #fff;
-}
-input:focus {
-  outline: none;
-}
-.custom-input label {
-  position: absolute;
-  top: 50%;
-  left: 5px;
-  transform: translateY(-50%);
-  font-size: 1rem;
-  pointer-events: none;
-  transition: all 0.5s ease-in-out;
-}
-input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 30px #6ff9d3 inset;
-}
-input:-webkit-autofill ~ label,
-input:focus ~ label,
-input:valid ~ label {
-  top: -5px;
-}
-
-.custom-input svg {
-  position: absolute;
-  font-size: 1.2rem;
-  right: 0;
-  top: 0.5rem;
-  margin: 0 0.5rem;
-}
-
-.custom-input .icon {
-  cursor: pointer;
 }
 
 .custom-redefinir-senha {

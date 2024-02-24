@@ -12,7 +12,19 @@
         </div>
       </div>
       <div class="custom-layout">
-        <layout-login />
+        <layout-login> 
+          <template v-slot:cadastro>
+            <input id="confirmacaoSenha" 
+              :type="!senhaConfirmacaoVisivel ? 'password' : 'text'" 
+              name="Senha" 
+              required 
+              toggle-show="false" />
+            <label for="confirmacaoSenha">Confirmar</label>
+            <font-awesome-icon class="icon"
+              :icon="['fas', !senhaConfirmacaoVisivel ? 'lock' : 'lock-open']"
+              @click="senhaConfirmacaoVisivel = !senhaConfirmacaoVisivel" />
+          </template>
+        </layout-login>
       </div>
     </div>
   </div>
@@ -22,11 +34,13 @@
 import UsuarioServices from '@/assets/services/UsuarioServices';
 import layoutLogin from '@/components/layoutLogin.vue';
 export default {
-    name: 'Login',
+    name: 'LoginAndCreatedView',
     data() {
         return {
             email: null,
-            senha: null
+            senha: null,
+
+            isLogin: false
           };
         },
     components: {

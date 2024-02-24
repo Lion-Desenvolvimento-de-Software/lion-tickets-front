@@ -8,14 +8,8 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue'),
+    component: () => import(/* webpackChunkName: "login" */ '../views/LoginAndCreatedView.vue'),
     meta: { navbar: false }
-  },
-  {
-    path: '/cadastro',
-    name: 'Cadastro',
-    component: () => import(/* webpackChunkName: "cadastro" */ '../views/Cadastro.vue'),
-    meta: { navbar: true }
   },
   {
     path: '/',

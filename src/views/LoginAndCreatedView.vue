@@ -2,29 +2,23 @@
   <div class="custom-container">
     <div class="custom-layout-boxs">
       <div class="custom-button-troca">
-        <button><font-awesome-icon :icon="['fas', 'arrows-rotate']" /></button>
+        <button @click="isCadastro = !isCadastro"><font-awesome-icon :icon="['fas', 'arrows-rotate']" /></button>
       </div>
       <div class="custom-layout-left">
         <div class="custom-info">
           <h1>Bem Vindo</h1>
-          <h3>Cadastre-se</h3>
-          <p>Você pode clicando <a href="">aqui</a> ou no botão à direita.</p>
+          <div v-if="!isCadastro">
+            <h3>Cadastre-se</h3>
+            <p>Você pode clicando <a @click="isCadastro = !isCadastro">aqui</a> ou no botão à direita.</p>
+          </div>
+          <div v-else>
+            <h3>Login</h3>
+            <p>Já possui uma conta? Clique <a @click="isCadastro = !isCadastro">aqui</a> para logar na sua conta ou no botão à direita.</p>
+          </div>
         </div>
       </div>
       <div class="custom-layout">
-        <layout-login> 
-          <template v-slot:cadastro>
-            <input id="confirmacaoSenha" 
-              :type="!senhaConfirmacaoVisivel ? 'password' : 'text'" 
-              name="Senha" 
-              required 
-              toggle-show="false" />
-            <label for="confirmacaoSenha">Confirmar</label>
-            <font-awesome-icon class="icon"
-              :icon="['fas', !senhaConfirmacaoVisivel ? 'lock' : 'lock-open']"
-              @click="senhaConfirmacaoVisivel = !senhaConfirmacaoVisivel" />
-          </template>
-        </layout-login>
+        <layout-login :isCadastro="isCadastro" />
       </div>
     </div>
   </div>
@@ -40,7 +34,7 @@ export default {
             email: null,
             senha: null,
 
-            isLogin: false
+            isCadastro: false
           };
         },
     components: {
@@ -94,11 +88,10 @@ export default {
 }
 
 .custom-layout-boxs {
-  display: grid;
+  display: flex;
   align-items: center;
   justify-items: center;
   justify-content: center;
-  grid: auto-flow dense / 50% 50% 1fr;
 }
 
 .custom-layout-left {
@@ -110,6 +103,11 @@ export default {
 }
 
 .custom-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
   background: rgba(0, 0, 0, 0.2);
   width: 400px;
   height: 520px;
@@ -118,13 +116,15 @@ export default {
   box-shadow: 0px 0px 10px 5px rgba(255, 255, 255, 0.5);
 }
 
-a {
+.custom-info a {
   color: aqua;
+  cursor: pointer;
+  border-bottom: 1px solid;
 }
 
 .custom-button-troca {
   position: absolute;
-  margin: 0 75px 0 0;
+  margin: 0 140px 0 0;
 }
 
 .custom-button-troca button {
@@ -149,6 +149,7 @@ a {
   align-items: center;
   height: 100%;
   justify-content: center;
+  margin: 0 10px;
 }
 
 .custom-info p, h3 {

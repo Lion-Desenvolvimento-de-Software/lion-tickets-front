@@ -2,29 +2,32 @@
   <div class="custom-title">
     <font-awesome-icon :icon="['fas', 'user']" />
   </div>
-  <div class="custom-form" :class="!isCadastro ? 'h-25' : 'h-50'">
-    <div>
-      <input-with-icon Id="email"
-                      Type="text"
-                      Label="Email"
-                      :Required="true" />
-    </div>
-    <div class="custom-input">
-      <input-with-icon Id="senha"
-                      Type="password"
-                      Label="Senha"
-                      Name="Senha"
-                      :Required="true"
-                      ClassIcon="visionPassword"
-                      :Icon="['fas',  senhaVisivel ? 'lock-open' : 'lock']"
-                      @ViewPassword="ViewPassword"
-                      ref="inputPassword" />
-    </div>
-    
+  <div class="custom-form">
+    <input-with-icon Id="email"
+                    Type="text"
+                    Label="Email"
+                    :Required="true" />
+
+    <input-with-icon Id="senha"
+                    :Type="senhaVisivel ? 'text' : 'password'"
+                    Label="Senha"
+                    Name="Senha"
+                    :Required="true"
+                    ClassIcon="visionPassword"
+                    :Icon="['fas',  senhaVisivel ? 'lock-open' : 'lock']"
+                    @ViewPassword="senhaVisivel = !senhaVisivel" />
+                    
+    <input-with-icon Id="confirmarSenha"
+                    :Type="senhaConfirmaVisivel ? 'text' : 'password'"
+                    Label="Confirmar"
+                    Name="Confirmar Senha"
+                    :Required="true"
+                    ClassIcon="visionPassword"
+                    :Icon="['fas',  senhaConfirmaVisivel ? 'lock-open' : 'lock']"
+                    @ViewPassword="senhaConfirmaVisivel = !senhaConfirmaVisivel"
+                    v-if="isCadastro" />
   </div>
-  <div class="custom-redefinir-senha">
-    <p>Esqueceu a senha? <a href="">Redefinir</a></p>
-  </div>
+  <p>Esqueceu a senha? <a href="">Redefinir</a></p>
   <button class="custom-button">Entrar</button>
 </template>
 
@@ -36,8 +39,11 @@ export default {
   data() {
     return {
       senhaVisivel: false,
-      isCadastro: false
+      senhaConfirmaVisivel: false
     }
+  },
+  props: {
+    isCadastro: Boolean
   },
   components: {
     inputWithIcon
@@ -52,9 +58,6 @@ export default {
 
 <style scoped>
 .custom-title {
-  margin: 2.5em 0;
-}
-.custom-title svg {
   font-size: 3rem;
 }
 
@@ -66,12 +69,11 @@ export default {
   align-items: center;
 }
 
-.custom-redefinir-senha {
-  margin: 1rem 0;
-}
-
 a {
   color: aqua;
+}
+a:hover {
+  color: #fff;
 }
 
 .custom-button {
@@ -80,7 +82,6 @@ a {
   color: #fff;
   background: none;
   border: 1px solid #fff;
-  margin: 1rem 0;
   box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.5);
 }
 .custom-button:hover {

@@ -1,28 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import EventosView from '@/views/EventosView.vue'
 import ProdutosView from '@/views/ProdutosView.vue'
 import UserView from '@/views/UserView.vue'
 
 const routes = [
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import(/* webpackChunkName: "login" */ '../views/LoginAndCreatedView.vue'),
-    meta: { navbar: false }
-  },
-  {
-    path: '/',
-    name: 'Home',
-    component: HomeView,
-    meta: { navbar: true }
-  },
-  {
-    path: '/eventos/:id?',
-    name: 'Eventos',
-    component: EventosView,
-    meta: { navbar: true }
-  },
+  ...require(/* webpackChunkName: "login" */ '@/router/Login/LoginRoutes').default,
+  ...require(/* webpackChunkName: "Home" */ '@/router/Home').default,
+  ...require(/* webpackChunkName: "Home" */ '@/router/Eventos/Eventos').default,
   {
     path: '/produtos/:productsName?/:id?',
     name: 'Produtos',
@@ -34,7 +17,7 @@ const routes = [
     name: 'Usuarios',
     component: UserView,
     meta: { navbar: false }
-  }
+  },
 ]
 
 const router = createRouter({

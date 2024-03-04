@@ -35,5 +35,14 @@ export default {
 
   async logof() {
     await axios.post(`${api}/usuario/logof`);
+  },
+
+  async hasEmail(email) {
+    try {
+      const { data } = await axios.get(`${api}/usuario/hasEmail/${email}`);
+      return data;
+    } catch(err) {
+      throw(err.response.data)
+    }
   }
 }

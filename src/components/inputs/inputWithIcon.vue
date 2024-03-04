@@ -1,8 +1,15 @@
 <template>
   <div class="custom-input">
-    <input :id="Id" :type="Type" :name="Name" :required="Required" />
+    <input :class="!IsValid ? 'invalid-input' : ''" 
+      :id="Id" 
+      :type="Type" 
+      :name="Name" 
+      :required="Required"
+      :value="model"
+      @input="$emit('update:model', $event.target.value)" />
     <label :for="Id">{{ Label }}</label>
     <font-awesome-icon :class="ClassIcon" :icon="Icon" @click="$emit('ViewPassword')" />
+    <p v-if="messageError" class="error">{{ messageError }}</p>
   </div>
 </template>
 
@@ -22,7 +29,27 @@ export default {
       type: Array,
       default: () => ['fas', 'envelope']
     },
-    Label: String
+    Label: String,
+    IsValid: {
+      type: Boolean,
+      default: false
+    },
+    model: String,
+    messageError: String
+  },
+  emits: ['update:model'],
+  computed: {
+    isValidEmail() {
+      var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+      if (!this.model)
+          return '';
+      return this.model.match(pattern) ? '' : 'invalid-input';
+    },
+    isPasswordValidLength() {
+      if (!this.model)
+          return '';
+      return this.model.length > 5 ? '' : 'invalid-input';
+    },
   }
 }
 </script>
@@ -79,5 +106,12 @@ svg {
 
 .visionPassword {
   cursor: pointer;
+}
+.invalid-input {
+  border-bottom-color: red;
+}
+.error {
+  color: red;
+  margin: 0;
 }
 </style>

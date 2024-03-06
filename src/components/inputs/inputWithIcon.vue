@@ -7,7 +7,7 @@
       :required="Required"
       :value="model"
       @input="$emit('update:model', $event.target.value)" />
-    <label :for="Id">{{ Label }}</label>
+    <label :for="Id" :class="messageError ? 'ajuste-label' : ''">{{ Label }}</label>
     <font-awesome-icon :class="ClassIcon" :icon="Icon" @click="$emit('ViewPassword')" />
     <p v-if="messageError" class="error">{{ messageError }}</p>
   </div>
@@ -87,6 +87,10 @@ label {
   pointer-events: none;
   transition: all 0.5s ease-in-out;
 }
+.ajuste-label {
+  transform: translateY(-100%) !important;
+}
+
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 30px #6ff9d3 inset;
 }

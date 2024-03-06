@@ -49,7 +49,7 @@
 					<ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
 						<li>
 							<router-link class="dropdown-item"
-													:to="{ name: 'Usuarios', params: { UserName: usuario?.UserName } }">
+													:to="{ name: 'Usuarios', params: { Id: usuario?.Id } }">
 								Perfil
 							</router-link>
 						</li>

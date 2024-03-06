@@ -13,7 +13,7 @@ const routes = [
     meta: { navbar: true }
   },
   {
-    path: '/usuarios/:UserName',
+    path: '/usuarios/:Id',
     name: 'Usuarios',
     component: UserView,
     meta: { navbar: false }

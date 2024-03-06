@@ -1,12 +1,12 @@
 <template>
   <div class="custom-container">
     <div class="custom-layout-boxs">
-      <div class="custom-button-troca">
+      <div class="custom-button-troca" v-if="!isProxCadastro">
         <button @click="trocar()"><font-awesome-icon :icon="['fas', 'arrows-rotate']" /></button>
       </div>
-      <div class="custom-layout-left">
+      <div class="custom-layout-left" v-if="!isProxCadastro">
         <div class="custom-info">
-          <h1>Bem Vindo</h1>
+          <h1>{{ isCadastro ? 'Bem Vindo' : 'Bem Vindo de volta' }}</h1>
           <div v-if="!isCadastro">
             <h3>Cadastre-se</h3>
             <p>Você pode clicando <a @click="trocar()">aqui</a> ou no botão à direita.</p>
@@ -19,7 +19,9 @@
       </div>
       <div class="custom-layout">
         <layout-formulario :isCadastro="isCadastro"
-                          @logar="Logar"
+                          @entrar="Logar"
+                          @cadastrar="Cadastrar"
+                          @isProx="isProx"
                           ref="layout-form">
           <p class="visible-in-responsible">{{ !isCadastro ? "Cadastre-se " : "Possui uma conta? " }}
             <button class="custom-button-link" @click="trocar()">
@@ -39,29 +41,40 @@ export default {
     name: 'LoginAndSigninView',
     data() {
         return {
-            isCadastro: false
+            isCadastro: false,
+            isProxCadastro: false
           };
         },
     components: {
       layoutFormulario
     },
     methods: {
-        async Logar(email, senha) {
-          let obj = {
-              "User": email,
-              "Password": senha,
-              "RememberMe": false
-          };
-          UsuarioServices.login(obj).then(() => {
-              window.location.pathname = '/';
-          }).catch(err => {
-              this.$refs['layout-form'].setMessageErrorLogin(err.response.data);
-          });
-        },
-        trocar() {
-          this.isCadastro = !this.isCadastro;
-          this.$refs['layout-form'].clear()
-        },
+      async Logar(email, senha) {
+        let obj = {
+            "User": email,
+            "Password": senha,
+            "RememberMe": false
+        };
+        UsuarioServices.login(obj).then(() => {
+            window.location.pathname = '/';
+        }).catch(err => {
+            this.$refs['layout-form'].setMessageErrorLogin(err.response?.data);
+        });
+      },
+      async Cadastrar(obj) {
+        UsuarioServices.post(obj).then(res => {
+          console.log(res);
+        }).catch(err => {
+          console.log(err);
+        })
+      },
+      trocar() {
+        this.isCadastro = !this.isCadastro;
+        this.$refs['layout-form'].clear()
+      },
+      isProx(isProx) {
+        this.isProxCadastro = isProx;
+      }
         
     },
 }

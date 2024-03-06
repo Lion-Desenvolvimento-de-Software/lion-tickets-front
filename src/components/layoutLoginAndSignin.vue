@@ -2,7 +2,7 @@
   <div class="custom-title">
     <font-awesome-icon :icon="['fas', 'user']" />
   </div>
-  <div class="custom-form">
+  <div class="custom-form" v-if="!isProx">
     <input-with-icon Id="email"
                     Type="text"
                     Label="Email"
@@ -34,28 +34,69 @@
                     v-if="isCadastro"
                     v-model:model="senhaConfirmada" />
   </div>
+  <div class="custom-form" v-else>
+    <input-with-icon Id="userName"
+                    Type="text"
+                    Label="Nome de Usuário"
+                    Name="userName"
+                    :Required="true"
+                    :Icon="['fas',  'user']"
+                    :IsValid="isError ? false : true"
+                    v-model:model="userName"
+                    :messageError="messageError" />
+
+    <select-with-icon Id="genero"
+                      Label="Genero:"
+                      :Required="true"
+                      :IsValid="!genero ? false : true"
+                      v-model:model="genero"
+                      :options="[{'name': 'Masculino', 'value': 1}, {'name': 'Feminino', 'value': 2}]"
+                      :messageError="messageError" />
+
+    <input-date Id="dataAniversario"
+                    Type="date"
+                    Label="Data de Aniv."
+                    Name="Data"
+                    :Required="true"
+                    :IsValid="!dataAniversario ? false : true"
+                    v-model:model="dataAniversario"
+                    :messageError="messageError" />
+  </div>
   <p v-if="!isCadastro && messageErrorLogin" class="error">{{ messageErrorLogin }}</p>
   <p v-if="!isCadastro">Esqueceu a senha? <a href="">Redefinir</a></p>
   <slot></slot>
-  <button class="custom-button" @click="ActionForm">{{ isCadastro ? 'Cadastrar' : 'Entrar' }}</button>
+  <button class="custom-button" @click="ActionForm">{{ isCadastro 
+    ? isProx 
+      ? 'Cadastrar' 
+      : 'Continuar' 
+    : 'Entrar' }}</button>
 </template>
 
 <script>
 import UsuarioServices from '@/assets/services/UsuarioServices';
 import inputWithIcon from './inputs/inputWithIcon.vue'
+import selectWithIcon from './inputs/selectWithIcon.vue';
+import inputDate from './inputs/inputDate.vue';
 
 export default {
   name: "layoutLoginAndSignin",
+  emits: ['entrar', 'cadastrar', 'isProx'],
   data() {
     return {
       senhaVisivel: false,
       senhaConfirmaVisivel: false,
 
+      userName: '',
       email: '',
       senha: '',
       senhaConfirmada: '',
+      genero: '',
+      dataAniversario: '',
       messageError: null,
-      messageErrorLogin: null
+      messageErrorLogin: null,
+      isError: false,
+
+      isProx: false
     }
   },
   computed: {
@@ -79,7 +120,9 @@ export default {
     isCadastro: Boolean,
   },
   components: {
-    inputWithIcon
+    inputWithIcon,
+    selectWithIcon,
+    inputDate
   },
   methods: {
     ViewPassword() {
@@ -88,24 +131,50 @@ export default {
     async ActionForm() {
       this.clearErrors();
       if(this.hasSingin()) {
-        UsuarioServices.hasEmail(this.email).then(res => {
-          this.clearErrors();
-          console.log(res);
-        }).catch(err => {
-          this.messageError = err;
-        })
+        if(this.isProx) {
+          console.log(this.genero)
+          UsuarioServices.hasUserName(this.userName).then(() => {
+            this.clearErrors();
+            let obj = {
+              "UserName": this.userName,
+              "Email": this.email,
+              "PasswordHash": this.senha,
+              "Genero": Number(this.genero),
+              "DataAniversario": this.dataAniversario
+            };
+            this.$emit("cadastrar", obj);
+          }).catch(err => {
+            this.messageError = err;
+            this.isError = true;
+          })
+        }
+        else {
+          this.hasEmail();
+        }
       } else {
-        if(this.isValidEmail && this.isPasswordValidLength) this.$emit("logar", this.email, this.senha);
+        if(this.isValidEmail && this.isPasswordValidLength) this.$emit("entrar", this.email, this.senha);
       }
     },
     setMessageErrorLogin(message) {
       this.messageErrorLogin = message;
     },
-
+    
     /** Metodos para verificações para código limpo e limpeza nos dados */
+    hasEmail() {
+      UsuarioServices.hasEmail(this.email).then(() => {
+        this.clearErrors();
+        this.isProx = true;
+        this.$emit("isProx", this.isProx);
+        
+        //this.$emit("cadastrar", this.email, this.senha);
+      }).catch(err => {
+        this.messageError = err;
+      })
+    },
+    
     hasSingin() {
       return this.isCadastro && this.hasData() && this.isValidsSingin();
-        
+      
     },
     hasData() {
       if(this.isCadastro) return this.email && this.senha && this.senhaConfirmada;
@@ -118,12 +187,13 @@ export default {
       this.email = '';
       this.senha = '';
       this.senhaConfirmada = '';
-      this.messageError = null;
+      this.clearErrors();
     },
     clearErrors() {
       this.messageError = null;
       this.messageErrorLogin = null;
-    }
+      this.isError = false;
+    },
   }
 }
 </script>

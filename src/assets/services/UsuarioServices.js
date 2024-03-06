@@ -19,13 +19,27 @@ export default {
     
   },
 
-  hasUserName(userName) {
-    return axios.get(`${api}/usuario/HasUserName/${userName}`)
+  async hasUserName(userName) {
+    console.log(userName)
+    try {
+      const { data } = await axios.get(`${api}/usuario/HasUserName/${userName}`);
+      return data;
+    } catch (err) {
+      throw(err.response.data);
+    }
+  },
+
+  async hasEmail(email) {
+    try {
+      const { data } = await axios.get(`${api}/usuario/hasEmail/${email}`);
+      return data;
+    } catch(err) {
+      throw(err.response.data)
+    }
   },
 
   async post(userData) {
     var response = await axios.post(`${api}/usuario`, userData)
-    console.log(response)
     return response
   },
 
@@ -37,12 +51,4 @@ export default {
     await axios.post(`${api}/usuario/logof`);
   },
 
-  async hasEmail(email) {
-    try {
-      const { data } = await axios.get(`${api}/usuario/hasEmail/${email}`);
-      return data;
-    } catch(err) {
-      throw(err.response.data)
-    }
-  }
 }

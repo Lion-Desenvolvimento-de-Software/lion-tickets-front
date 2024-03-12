@@ -28,7 +28,7 @@ export default {
       throw(err.response.data);
     }
   },
-
+  
   async hasEmail(email) {
     try {
       const { data } = await axios.get(`${api}/usuario/hasEmail/${email}`);
@@ -38,9 +38,13 @@ export default {
     }
   },
 
+  async SendConfirmationEmail(email) {
+    await axios.get(`${api}/usuario/SendConfirmationEmail/${email}`);
+  },
+
   async post(userData) {
-    var response = await axios.post(`${api}/usuario`, userData)
-    return response
+    var response = await axios.post(`${api}/usuario`, userData);
+    return response;
   },
 
   async login(dados) {
@@ -50,5 +54,6 @@ export default {
   async logof() {
     await axios.post(`${api}/usuario/logof`);
   },
+
 
 }

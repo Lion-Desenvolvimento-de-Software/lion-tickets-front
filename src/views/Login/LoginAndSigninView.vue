@@ -31,12 +31,14 @@
         </layout-formulario>
       </div>
     </div>
+    <modal-confirmation-email id="modal_aviso" ref="modal" />
   </div>
 </template>
 
 <script>
 import UsuarioServices from '@/assets/services/UsuarioServices';
 import layoutFormulario from '@/components/layoutLoginAndSignin.vue';
+import ModalConfirmationEmail from '@/components/modals/ModalConfirmationEmail.vue';
 export default {
     name: 'LoginAndSigninView',
     data() {
@@ -46,7 +48,8 @@ export default {
           };
         },
     components: {
-      layoutFormulario
+      layoutFormulario,
+      ModalConfirmationEmail
     },
     methods: {
       async Logar(email, senha) {
@@ -63,7 +66,12 @@ export default {
       },
       async Cadastrar(obj) {
         UsuarioServices.post(obj).then(res => {
-          console.log(res);
+          UsuarioServices.SendConfirmationEmail(res.data.email).then(res => {
+            console.log(res);
+            this.$refs.modal.show();
+          }).catch(err => {
+            console.log(err);
+          })
         }).catch(err => {
           console.log(err);
         })
@@ -106,7 +114,7 @@ export default {
   height: 100vh;
   justify-content: center;
   align-items: center;
-  background-image: url('@/assets/images/background/wallpaper-gif-4.gif');
+  background-image: url('@/assets/images/background/wallpaper-leao.jpg');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

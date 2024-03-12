@@ -1,9 +1,6 @@
 <template>
   <div class="custom-container">
     <div class="custom-layout-boxs">
-      <div class="custom-button-troca" v-if="!isProxCadastro">
-        <button @click="trocar()"><font-awesome-icon :icon="['fas', 'arrows-rotate']" /></button>
-      </div>
       <div class="custom-layout-left" v-if="!isProxCadastro">
         <div class="custom-info">
           <h1>{{ isCadastro ? 'Bem Vindo' : 'Bem Vindo de volta' }}</h1>
@@ -158,28 +155,6 @@ export default {
   border-bottom: 1px solid;
 }
 
-.custom-button-troca {
-  position: absolute;
-  margin: 0 140px 0 0;
-  z-index: 150;
-}
-
-.custom-button-troca button {
-  border-radius: 50%;
-  width: 75px;
-  height: 75px;
-  z-index: 150px;
-  background: rgba(255, 255, 255, 0.5);
-  border: 0;
-  box-shadow: 0 0 5px 2px #000;
-}
-
-.custom-button-troca button:active {
-  box-shadow: 0 0 5px 2px #000 inset;
-}
-.custom-button-troca button:hover {
-  background: rgba(255, 255, 255, 0.75);
-}
 .custom-info {
   display: flex;
   flex-direction: column;

@@ -10,6 +10,7 @@
         </div>
         <div class="modal-body">
           <p>Abra seu email e confirme sua conta para continuar!</p>
+          <p>Se você não recebeu o Email, clique <button class="button-link" @click="$emit('reenviarConfirmacao')">aqui</button> para reenviar novamente.</p>
         </div>
         <div class="modal-footer">
           <button @click="hide" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -29,6 +30,7 @@ export default {
   mounted: () => {
     thisModalObj = new Modal($('#modal_aviso'));
   },
+  emits: ['reenviarConfirmacao'],
   methods: {
     show() {
       thisModalObj.show()
@@ -39,3 +41,20 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.button-link {
+  background: none;
+  border: none;
+  border-bottom: 1px solid;
+  color: aqua;
+}
+
+.button-link:hover {
+  color: aquamarine;
+}
+
+.button-link:active {
+  color: #fff;
+}
+</style>

@@ -5,16 +5,19 @@
         <div class="custom-info">
           <h1>{{ isCadastro ? 'Bem Vindo' : 'Bem Vindo de volta' }}</h1>
           <div v-if="!isCadastro">
-            <h3>Cadastre-se</h3>
-            <p>Você pode clicando <a @click="trocar()">aqui</a> ou no botão à direita.</p>
+            <h3>Login</h3>
+            <p>Cadastre-se <a @click="trocar()">aqui</a>.</p>
           </div>
           <div v-else>
-            <h3>Login</h3>
-            <p>Já possui uma conta? Clique <a @click="trocar()">aqui</a> para logar na sua conta ou no botão à direita.</p>
+            <h3>Cadastro</h3>
+            <p>Já possui uma conta? Clique <a @click="trocar()">aqui</a> para entrar na sua conta.</p>
           </div>
         </div>
       </div>
       <div class="custom-layout">
+        <div class="custom-button-back" v-if="isProxCadastro">
+          <button @click="voltar" class="button-back"> {{ "<" }} </button>
+        </div>
         <layout-formulario :isCadastro="isCadastro"
                           @entrar="Logar"
                           @cadastrar="Cadastrar"
@@ -28,7 +31,7 @@
         </layout-formulario>
       </div>
     </div>
-    <modal-confirmation-email id="modal_aviso" ref="modal" />
+    <modal-confirmation-email id="modal_aviso" ref="modal" @reenviarConfirmacao="ReenviarConfirmacao" />
   </div>
 </template>
 
@@ -37,51 +40,63 @@ import UsuarioServices from '@/assets/services/UsuarioServices';
 import layoutFormulario from '@/components/layoutLoginAndSignin.vue';
 import ModalConfirmationEmail from '@/components/modals/ModalConfirmationEmail.vue';
 export default {
-    name: 'LoginAndSigninView',
-    data() {
-        return {
-            isCadastro: false,
-            isProxCadastro: false
-          };
-        },
-    components: {
-      layoutFormulario,
-      ModalConfirmationEmail
+  name: 'LoginAndSigninView',
+  data() {
+    return {
+      isCadastro: false,
+      isProxCadastro: false,
+      emailConfirmation: null
+    };
+  },
+  components: {
+    layoutFormulario,
+    ModalConfirmationEmail
+  },
+  methods: {
+    async Logar(email, senha) {
+      let obj = {
+          "User": email,
+          "Password": senha,
+          "RememberMe": false
+      };
+      UsuarioServices.login(obj).then(() => {
+        window.location.pathname = '/';
+      }).catch(err => {
+        this.$refs['layout-form'].setMessageErrorLogin(err.response?.data);
+      });
     },
-    methods: {
-      async Logar(email, senha) {
-        let obj = {
-            "User": email,
-            "Password": senha,
-            "RememberMe": false
-        };
-        UsuarioServices.login(obj).then(() => {
-            window.location.pathname = '/';
-        }).catch(err => {
-            this.$refs['layout-form'].setMessageErrorLogin(err.response?.data);
-        });
-      },
-      async Cadastrar(obj) {
-        UsuarioServices.post(obj).then(res => {
-          UsuarioServices.SendConfirmationEmail(res.data.email).then(res => {
-            console.log(res);
-            this.$refs.modal.show();
-          }).catch(err => {
-            console.log(err);
-          })
+    async Cadastrar(obj) {
+      UsuarioServices.post(obj).then(res => {
+        this.emailConfirmation = res.data.email;
+        UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(res => {
+          console.log(res);
+          this.$refs.modal.show();
         }).catch(err => {
           console.log(err);
         })
-      },
-      trocar() {
-        this.isCadastro = !this.isCadastro;
-        this.$refs['layout-form'].clear()
-      },
-      isProx(isProx) {
-        this.isProxCadastro = isProx;
-      }
-        
+      }).catch(err => {
+        console.log(err);
+      })
     },
+    async ReenviarConfirmacao() {
+      UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(res => {
+          console.log(res);
+        }).catch(err => {
+          console.log(err);
+        })
+    },
+    trocar() {
+      this.isCadastro = !this.isCadastro;
+      this.$refs['layout-form'].clear()
+    },
+    isProx(isProx) {
+      this.isProxCadastro = isProx;
+    },
+    voltar() {
+      this.isProxCadastro = false;
+    }
+      
+  },
 }
 </script>
 
@@ -170,6 +185,30 @@ export default {
 
 .visible-in-responsible {
   display: none;
+}
+
+.custom-button-back {
+  position: absolute;
+  display: flex;
+  inset: 1rem 0 0 1rem;
+}
+
+.button-back {
+  font-size: 25px;
+  transition: 0.2s;
+  cursor: pointer;
+  height: 0;
+  color: aqua;
+  background: none;
+  border: 0;
+}
+.button-back:hover {
+  font-size: 30px;
+  color: aquamarine;
+}
+.button-back:active {
+  font-size: 27px;
+  color: #fff;
 }
 
 @media only screen and (max-width: 690px) {

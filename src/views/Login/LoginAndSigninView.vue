@@ -62,7 +62,10 @@ export default {
       UsuarioServices.login(obj).then(() => {
         window.location.pathname = '/';
       }).catch(err => {
-        this.$refs['layout-form'].setMessageErrorLogin(err.response?.data);
+        var userError = err.response?.data?.errors?.User;
+        var passwordError = err.response?.data?.errors?.Password;
+        if(userError && passwordError) this.$refs['layout-form'].setMessageErrorLogin(`${userError[0]} e ${passwordError[0]} obrigatórios!`);
+        else this.$refs['layout-form'].setMessageErrorLogin(userError ? `${userError[0]} obrigatório!` : `${passwordError[0]} obrigatória!`);
       });
     },
     async Cadastrar(obj) {
@@ -93,8 +96,9 @@ export default {
       this.isProxCadastro = isProx;
     },
     voltar() {
+      this.$refs['layout-form'].voltar();
       this.isProxCadastro = false;
-    }
+    },
       
   },
 }
@@ -190,10 +194,13 @@ export default {
 .custom-button-back {
   position: absolute;
   display: flex;
+  height: 2rem;
   inset: 1rem 0 0 1rem;
+  padding: 0 8px;
 }
 
 .button-back {
+  font-family: monospace;
   font-size: 25px;
   transition: 0.2s;
   cursor: pointer;

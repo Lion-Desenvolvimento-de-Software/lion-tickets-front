@@ -65,11 +65,14 @@
   <p v-if="!isCadastro && messageErrorLogin" class="error">{{ messageErrorLogin }}</p>
   <p v-if="!isCadastro">Esqueceu a senha? <a href="">Redefinir</a></p>
   <slot></slot>
-  <button class="custom-button" @click="ActionForm">{{ isCadastro 
-    ? isProx 
-      ? 'Cadastrar' 
-      : 'Continuar' 
-    : 'Entrar' }}</button>
+  <button class="custom-button" @click="ActionForm">{{ 
+    isCadastro 
+      ? isProx 
+        ? 'Cadastrar' 
+        : 'Continuar' 
+      : 'Entrar' 
+    }}
+  </button>
 </template>
 
 <script>
@@ -151,7 +154,7 @@ export default {
         else {
           this.hasEmail();
         }
-      } else {
+      } else if(!this.isCadastro) {
         if(this.isValidEmail && this.isPasswordValidLength) this.$emit("entrar", this.email, this.senha);
       }
     },
@@ -194,6 +197,9 @@ export default {
       this.messageErrorLogin = null;
       this.isError = false;
     },
+    voltar() {
+      this.isProx = false;
+    }
   }
 }
 </script>

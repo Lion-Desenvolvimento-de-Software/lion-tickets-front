@@ -22,6 +22,7 @@
                           @entrar="Logar"
                           @cadastrar="Cadastrar"
                           @isProx="isProx"
+                          @showModalRedefinicaoSenha="showModalRedefinicaoSenha"
                           ref="layout-form">
           <p class="visible-in-responsible">{{ !isCadastro ? "Cadastre-se " : "Possui uma conta? " }}
             <button class="custom-button-link" @click="trocar()">
@@ -31,7 +32,8 @@
         </layout-formulario>
       </div>
     </div>
-    <modal-confirmation-email id="modal_aviso" ref="modal" @reenviarConfirmacao="ReenviarConfirmacao" />
+    <modal-confirmation-email id="modal_aviso" ref="modal-confirmation" @reenviarConfirmacao="ReenviarConfirmacao" />
+    <modal-redefinicao-senha id="modal_redefinicao" ref="modal-redefinicao" @redefinirSenha="RedefinirSenha" />
   </div>
 </template>
 
@@ -39,6 +41,7 @@
 import UsuarioServices from '@/assets/services/UsuarioServices';
 import layoutFormulario from '@/components/layoutLoginAndSignin.vue';
 import ModalConfirmationEmail from '@/components/modals/ModalConfirmationEmail.vue';
+import ModalRedefinicaoSenha from '@/components/modals/ModalRedefinicaoSenha.vue';
 export default {
   name: 'LoginAndSigninView',
   data() {
@@ -50,7 +53,8 @@ export default {
   },
   components: {
     layoutFormulario,
-    ModalConfirmationEmail
+    ModalConfirmationEmail,
+    ModalRedefinicaoSenha
   },
   methods: {
     async Logar(email, senha) {
@@ -71,9 +75,8 @@ export default {
     async Cadastrar(obj) {
       UsuarioServices.post(obj).then(res => {
         this.emailConfirmation = res.data.email;
-        UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(res => {
-          console.log(res);
-          this.$refs.modal.show();
+        UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(() => {
+          this.$refs['modal-confirmation'].show();
         }).catch(err => {
           console.log(err);
         })
@@ -99,7 +102,13 @@ export default {
       this.$refs['layout-form'].voltar();
       this.isProxCadastro = false;
     },
-      
+    showModalRedefinicaoSenha() {
+      this.$refs['modal-redefinicao'].show();
+    },
+    async RedefinirSenha(email) {
+      console.log(email)
+      this.$refs['modal-redefinicao'].hide();
+    },
   },
 }
 </script>

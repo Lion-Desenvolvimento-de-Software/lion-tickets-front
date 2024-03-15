@@ -63,7 +63,7 @@
                     :messageError="messageError" />
   </div>
   <p v-if="!isCadastro && messageErrorLogin" class="error">{{ messageErrorLogin }}</p>
-  <p v-if="!isCadastro">Esqueceu a senha? <a href="">Redefinir</a></p>
+  <p v-if="!isCadastro">Esqueceu a senha? <button class="button-link-redefinicao" @click="$emit('showModalRedefinicaoSenha')">Redefinir</button></p>
   <slot></slot>
   <button class="custom-button" @click="ActionForm">{{ 
     isCadastro 
@@ -83,7 +83,7 @@ import inputDate from './inputs/inputDate.vue';
 
 export default {
   name: "layoutLoginAndSignin",
-  emits: ['entrar', 'cadastrar', 'isProx'],
+  emits: ['entrar', 'cadastrar', 'isProx', 'showModalRedefinicaoSenha'],
   data() {
     return {
       senhaVisivel: false,
@@ -240,5 +240,18 @@ a:hover {
 }
 .error {
   color: red;
+}
+.button-link-redefinicao {
+  background: none;
+  border: none;
+  border-bottom: 1px solid;
+  color: aqua;
+  padding: 0;
+}
+.button-link-redefinicao:hover {
+  color: aquamarine;
+}
+.button-link-redefinicao:active {
+  color: #fff;
 }
 </style>

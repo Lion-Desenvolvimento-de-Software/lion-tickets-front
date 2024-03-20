@@ -4,7 +4,7 @@
   </div>
   <div class="custom-form" v-if="!isProx">
     <input-with-icon Id="email"
-                    Type="text"
+                    Type="email"
                     Label="Email"
                     :Required="true"
                     :IsValid="isValidEmail"
@@ -199,6 +199,7 @@ export default {
     },
     voltar() {
       this.isProx = false;
+      this.clearErrors();
     }
   }
 }

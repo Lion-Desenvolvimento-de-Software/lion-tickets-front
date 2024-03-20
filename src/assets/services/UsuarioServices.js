@@ -55,5 +55,9 @@ export default {
     await axios.post(`${api}/usuario/logof`);
   },
 
+  async enviarConfirmacaoRedefinicaoSenha(email) {
+    var response = await axios.get(`${api}/usuario/SendEmailRedefinicaoSenha/${email}`);
+    return response;
+  },
 
 }

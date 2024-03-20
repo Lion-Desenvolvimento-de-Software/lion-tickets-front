@@ -1,13 +1,14 @@
 <template>
   <div class="custom-input">
-    <input :class="!IsValid ? 'invalid-input' : ''" 
+    <input :class="!IsValid ? 'invalid-input' : _"
       :id="Id" 
       :type="Type" 
       :name="Name" 
       :required="Required"
       :value="model"
-      @input="$emit('update:model', $event.target.value)" />
-    <label :for="Id" :class="messageError ? 'ajuste-label' : ''">{{ Label }}</label>
+      @input="$emit('update:model', $event.target.value)"
+      @focusout="!IsValid ? $emit('update:model', '') : ''" />
+    <label :for="Id" :class="messageError ? 'ajuste-label' : _">{{ Label }}</label>
     <font-awesome-icon :class="ClassIcon" :icon="Icon" @click="$emit('ViewPassword')" />
     <p v-if="messageError" class="error">{{ messageError }}</p>
   </div>
@@ -38,19 +39,6 @@ export default {
     messageError: String
   },
   emits: ['update:model'],
-  computed: {
-    isValidEmail() {
-      var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-      if (!this.model)
-          return '';
-      return this.model.match(pattern) ? '' : 'invalid-input';
-    },
-    isPasswordValidLength() {
-      if (!this.model)
-          return '';
-      return this.model.length > 5 ? '' : 'invalid-input';
-    },
-  }
 }
 </script>
 
@@ -67,11 +55,12 @@ input::-ms-clear {
 input {
   background: transparent !important;
   border: 0;
-  border-bottom: 2px solid #fff;
   width: 250px;
+  border-bottom: 2px solid #fff;
   height: 35px;
   padding: 0 2.5rem 0 0.5rem;
   color: #fff;
+  transition: 1s ease-in-out;
 }
 
 input:focus {
@@ -93,6 +82,7 @@ label {
 
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 30px #6ff9d3 inset;
+  border-bottom-color: #fff;
 }
 input:-webkit-autofill ~ label,
 input:focus ~ label,

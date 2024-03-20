@@ -3,6 +3,7 @@
             v-if="$route.meta.navbar"
             @logof="logof" />
   <router-view :usuario="usuario" />
+  <loading-global />
 </template>
 
 <script>
@@ -19,6 +20,7 @@ export default {
       usuario: new Usuario()
     }
   },
+  compatConfig: { MODE: 3 },
   created() {
     this.fetchData();
   },
@@ -46,6 +48,25 @@ export default {
   }
 }
 </script>
+
+import { mount } from '@vue/test-utils'
+
+// The component to test
+const MessageComponent = {
+  template: '<p>{{ msg }}</p>',
+  props: ['msg']
+}
+
+test('displays message', () => {
+  const wrapper = mount(MessageComponent, {
+    props: {
+      msg: 'Hello world'
+    }
+  })
+
+  // Assert the rendered text of the component
+  expect(wrapper.text()).toContain('Hello world')
+})
 
 <style lang="scss">
 #app {

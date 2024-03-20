@@ -66,10 +66,11 @@ export default {
       UsuarioServices.login(obj).then(() => {
         window.location.pathname = '/';
       }).catch(err => {
-        var userError = err.response?.data?.errors?.User;
-        var passwordError = err.response?.data?.errors?.Password;
-        if(userError && passwordError) this.$refs['layout-form'].setMessageErrorLogin(`${userError[0]} e ${passwordError[0]} obrigatórios!`);
-        else this.$refs['layout-form'].setMessageErrorLogin(userError ? `${userError[0]} obrigatório!` : `${passwordError[0]} obrigatória!`);
+        // var userError = err.response?.data?.errors?.User;
+        // var passwordError = err.response?.data?.errors?.Password;
+        this.$refs['layout-form'].setMessageErrorLogin(err.response.data);
+        // if(userError && passwordError) this.$refs['layout-form'].setMessageErrorLogin(`${userError[0]} e ${passwordError[0]} obrigatórios!`);
+        // else this.$refs['layout-form'].setMessageErrorLogin(userError ? `${userError[0]} obrigatório!` : `${passwordError[0]} obrigatória!`);
       });
     },
     async Cadastrar(obj) {
@@ -106,8 +107,13 @@ export default {
       this.$refs['modal-redefinicao'].show();
     },
     async RedefinirSenha(email) {
-      console.log(email)
-      this.$refs['modal-redefinicao'].hide();
+      UsuarioServices.enviarConfirmacaoRedefinicaoSenha(email).then(res => {
+        console.log(res);
+      }).catch(err => {
+        console.log(err);
+      }).finally(() => {
+        this.$refs['modal-redefinicao'].hide();
+      })
     },
   },
 }

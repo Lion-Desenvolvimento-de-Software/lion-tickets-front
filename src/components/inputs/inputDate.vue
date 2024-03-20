@@ -1,6 +1,5 @@
 <template>
   <div class="custom-input" :class="!IsValid ? 'invalid-input' : ''">
-    <font-awesome-icon :class="ClassIcon" :icon="['fas',  'calendar-days']" />
     <input :id="Id" 
       type="date" 
       :name="Name"
@@ -44,17 +43,23 @@ input::-ms-clear {
   margin: 30px 0;
   max-width: 310px;
   border-bottom: 2px solid #fff;
+  width: 100%;
 }
 input {
   background: transparent !important;
   border: 0;
-  width: 13.5rem;
+  width: 100%;
   height: 35px;
   color: #fff;
+  padding: 0 0 0 0.5rem;
 }
 
 input:focus {
   outline: none;
+}
+
+input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }
 
 label {
@@ -68,13 +73,6 @@ label {
 }
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 30px #6ff9d3 inset;
-}
-
-svg {
-  font-size: 1.2rem;
-  right: 0;
-  top: 0.5rem;
-  margin: 0 0.5rem;
 }
 
 .invalid-input {

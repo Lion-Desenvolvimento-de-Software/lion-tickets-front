@@ -9,7 +9,7 @@ export default {
 
   async GetUserAuthenticated() {
     try {
-      const { data } = await axios.get(`${api}/usuario/GetUserAuthenticated`, {withCredentials: true});
+      const { data } = await axios.get(`${api}/usuario/GetUserAuthenticated`);
       return data;
     } catch(err) {
       if(err.response.status == 401) {

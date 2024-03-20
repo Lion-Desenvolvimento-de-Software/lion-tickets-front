@@ -80,6 +80,7 @@ import UsuarioServices from '@/assets/services/UsuarioServices';
 import inputWithIcon from './inputs/inputWithIcon.vue'
 import selectWithIcon from './inputs/selectWithIcon.vue';
 import inputDate from './inputs/inputDate.vue';
+import { Usuario } from '@/assets/classes/Usuario';
 
 export default {
   name: "layoutLoginAndSignin",
@@ -121,6 +122,7 @@ export default {
   },
   props: {
     isCadastro: Boolean,
+    usuario: new Usuario()
   },
   components: {
     inputWithIcon,
@@ -135,7 +137,6 @@ export default {
       this.clearErrors();
       if(this.hasSingin()) {
         if(this.isProx) {
-          console.log(this.genero)
           UsuarioServices.hasUserName(this.userName).then(() => {
             this.clearErrors();
             let obj = {

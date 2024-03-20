@@ -1,4 +1,5 @@
 <template>
+  <spinner :isLoading="isLoading"></spinner>
   <div class="custom-container">
     <div class="custom-layout-boxs">
       <div class="custom-layout-left" v-if="!isProxCadastro">
@@ -19,6 +20,7 @@
           <button @click="voltar" class="button-back"> {{ "<" }} </button>
         </div>
         <layout-formulario :isCadastro="isCadastro"
+                          :usuario="usuario"
                           @entrar="Logar"
                           @cadastrar="Cadastrar"
                           @isProx="isProx"
@@ -33,48 +35,63 @@
       </div>
     </div>
     <modal-confirmation-email id="modal_aviso" ref="modal-confirmation" @reenviarConfirmacao="ReenviarConfirmacao" />
-    <modal-redefinicao-senha id="modal_redefinicao" ref="modal-redefinicao" @redefinirSenha="RedefinirSenha" />
+    <modal-redefinicao-senha class="custom-z-index" id="modal_redefinicao" ref="modal-redefinicao" @redefinirSenha="RedefinirSenha" />
   </div>
 </template>
 
 <script>
+import { Usuario } from '@/assets/classes/Usuario';
 import UsuarioServices from '@/assets/services/UsuarioServices';
 import layoutFormulario from '@/components/layoutLoginAndSignin.vue';
 import ModalConfirmationEmail from '@/components/modals/ModalConfirmationEmail.vue';
 import ModalRedefinicaoSenha from '@/components/modals/ModalRedefinicaoSenha.vue';
+import spinner from '@/components/spinner.vue';
 export default {
   name: 'LoginAndSigninView',
   data() {
     return {
       isCadastro: false,
       isProxCadastro: false,
-      emailConfirmation: null
+      emailConfirmation: null,
+      isLoading: false
     };
   },
   components: {
     layoutFormulario,
     ModalConfirmationEmail,
-    ModalRedefinicaoSenha
+    ModalRedefinicaoSenha,
+    spinner
+  },
+  props: {
+    usuario: new Usuario()
   },
   methods: {
     async Logar(email, senha) {
-      let obj = {
-          "User": email,
-          "Password": senha,
-          "RememberMe": false
-      };
-      UsuarioServices.login(obj).then(() => {
-        window.location.pathname = '/';
-      }).catch(err => {
-        // var userError = err.response?.data?.errors?.User;
-        // var passwordError = err.response?.data?.errors?.Password;
-        this.$refs['layout-form'].setMessageErrorLogin(err.response.data);
-        // if(userError && passwordError) this.$refs['layout-form'].setMessageErrorLogin(`${userError[0]} e ${passwordError[0]} obrigatórios!`);
-        // else this.$refs['layout-form'].setMessageErrorLogin(userError ? `${userError[0]} obrigatório!` : `${passwordError[0]} obrigatória!`);
-      });
+      try {
+        this.isLoading = true;
+        let obj = {
+            "User": email,
+            "Password": senha,
+            "RememberMe": false
+        };
+        if (!email || !senha) throw "Email ou senha inválidos!";
+        UsuarioServices.login(obj).then(() => {
+          window.location.pathname = '/';
+        }).catch(err => {
+          this.$refs['layout-form'].setMessageErrorLogin(err.response.data);
+        }).finally(() => {
+          this.isLoading = false;
+        });
+      } catch(err) {
+        this.$refs['layout-form'].setMessageErrorLogin(err)
+      } finally {
+        this.isLoading = false;
+      }
     },
     async Cadastrar(obj) {
-      UsuarioServices.post(obj).then(res => {
+      this.isLoading = true;
+      this.usuario.AddData(obj);
+      this.usuario.post(obj).then(res => {
         this.emailConfirmation = res.data.email;
         UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(() => {
           this.$refs['modal-confirmation'].show();
@@ -83,13 +100,18 @@ export default {
         })
       }).catch(err => {
         console.log(err);
+      }).finally(() => {
+        this.isLoading = false;
       })
     },
     async ReenviarConfirmacao() {
+      this.isLoading = true;
       UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(res => {
           console.log(res);
         }).catch(err => {
           console.log(err);
+        }).finally(() => {
+          this.isLoading = false;
         })
     },
     trocar() {
@@ -107,11 +129,13 @@ export default {
       this.$refs['modal-redefinicao'].show();
     },
     async RedefinirSenha(email) {
+      this.isLoading = true;
       UsuarioServices.enviarConfirmacaoRedefinicaoSenha(email).then(res => {
         console.log(res);
       }).catch(err => {
         console.log(err);
       }).finally(() => {
+        this.isLoading = false;
         this.$refs['modal-redefinicao'].hide();
       })
     },
@@ -231,6 +255,10 @@ export default {
 .button-back:active {
   font-size: 27px;
   color: #fff;
+}
+
+.custom-z-index {
+  z-index: 5;
 }
 
 @media only screen and (max-width: 690px) {

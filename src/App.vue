@@ -1,15 +1,16 @@
 <template>
+  <spinner :isLoading="loadingFethingData"></spinner>
   <nav-bar :usuario="usuario" 
             v-if="$route.meta.navbar"
             @logof="logof" />
   <router-view :usuario="usuario" />
-  <loading-global />
 </template>
 
 <script>
 import navBar from '@/components/navBar.vue'
 import { Usuario } from './assets/classes/Usuario';
 import UsuarioServices from './assets/services/UsuarioServices';
+import spinner from './components/spinner.vue';
 
 export default {
   name: 'app',
@@ -25,21 +26,32 @@ export default {
     this.fetchData();
   },
   components: {
-    navBar
+    navBar,
+    spinner
   },
   methods: {
     async fetchData() {
-      UsuarioServices.GetUserAuthenticated().then(res => {
-        let obj = {
-          Id: res.id,
-          UserName: res.userName,
-          Email: res.email,
-          Telefone: res.phoneNumber,
-        }
-        this.usuario.AddData(obj);
-      }).catch(err => {
-        this.error = err;
-      })
+      try {
+        this.loadingFethingData = true;
+        UsuarioServices.GetUserAuthenticated().then(res => {
+          let obj = {
+            Id: res.id,
+            UserName: res.userName,
+            Email: res.email,
+            Telefone: res.phoneNumber,
+            Genero: res.genero
+          }
+          this.usuario.AddData(obj);
+        }).catch(err => {
+          this.error = err;
+          console.log(this.error)
+        }).finally(() => {
+          this.loadingFethingData = false;
+        })
+      } catch(err) {
+        this.loadingFethingData = false;
+        console.log(err);
+      }
     },
     async logof() {
       this.usuario = null;

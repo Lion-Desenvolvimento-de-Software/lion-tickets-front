@@ -1,5 +1,4 @@
 <template>
-  <spinner :isLoading="isLoading"></spinner>
   <div class="custom-container">
     <div class="custom-layout-boxs">
       <div class="custom-layout-left" v-if="!isProxCadastro">
@@ -7,11 +6,11 @@
           <h1>{{ isCadastro ? 'Bem Vindo' : 'Bem Vindo de volta' }}</h1>
           <div v-if="!isCadastro">
             <h3>Login</h3>
-            <p>Cadastre-se <a @click="trocar()">aqui</a>.</p>
+            <p>Cadastre-se <a @click="trocarLoginOuCadastro()">aqui</a>.</p>
           </div>
           <div v-else>
             <h3>Cadastro</h3>
-            <p>Já possui uma conta? Clique <a @click="trocar()">aqui</a> para entrar na sua conta.</p>
+            <p>Já possui uma conta? Clique <a @click="trocarLoginOuCadastro()">aqui</a> para entrar na sua conta.</p>
           </div>
         </div>
       </div>
@@ -35,7 +34,9 @@
       </div>
     </div>
     <modal-confirmation-email id="modal_aviso" ref="modal-confirmation" @reenviarConfirmacao="ReenviarConfirmacao" />
-    <modal-redefinicao-senha class="custom-z-index" id="modal_redefinicao" ref="modal-redefinicao" @redefinirSenha="RedefinirSenha" />
+    <modal-redefinicao-senha id="modal_redefinicao" ref="modal-redefinicao" @redefinirSenha="RedefinirSenha" />
+    <toast id="success" ref="successToast" :mensagem="this.mensagem" :class="!getIsError ? 'text-bg-success' : 'text-bg-danger'" />
+    <spinner :isLoading="isLoading"></spinner>
   </div>
 </template>
 
@@ -46,6 +47,7 @@ import layoutFormulario from '@/components/layoutLoginAndSignin.vue';
 import ModalConfirmationEmail from '@/components/modals/ModalConfirmationEmail.vue';
 import ModalRedefinicaoSenha from '@/components/modals/ModalRedefinicaoSenha.vue';
 import spinner from '@/components/spinner.vue';
+import toast from '@/components/toasts/toast.vue';
 export default {
   name: 'LoginAndSigninView',
   data() {
@@ -53,22 +55,33 @@ export default {
       isCadastro: false,
       isProxCadastro: false,
       emailConfirmation: null,
-      isLoading: false
+      isLoading: false,
+
+      mensagem: '',
+      isError: false
     };
   },
   components: {
     layoutFormulario,
     ModalConfirmationEmail,
     ModalRedefinicaoSenha,
-    spinner
+    spinner,
+    toast
   },
   props: {
     usuario: new Usuario()
+  },
+  
+  computed: {
+    getIsError() {
+      return this.isError;
+    }
   },
   methods: {
     async Logar(email, senha) {
       try {
         this.isLoading = true;
+        this.isError = false;
         let obj = {
             "User": email,
             "Password": senha,
@@ -78,25 +91,36 @@ export default {
         UsuarioServices.login(obj).then(() => {
           window.location.pathname = '/';
         }).catch(err => {
-          this.$refs['layout-form'].setMessageErrorLogin(err.response.data);
+          this.isError = true;
+          this.mensagem = err;
+          this.$refs['layout-form'].setMessageErrorLogin(err);
         }).finally(() => {
           this.isLoading = false;
+          this.$refs['successToast'].show();
         });
       } catch(err) {
-        this.$refs['layout-form'].setMessageErrorLogin(err)
-      } finally {
+        this.isError = true;
+        this.mensagem = err;
+        //this.$refs['layout-form'].setMessageErrorLogin(err);
         this.isLoading = false;
+        this.$refs['successToast'].show();
       }
     },
     async Cadastrar(obj) {
       this.isLoading = true;
+      this.isError = false;
       this.usuario.AddData(obj);
       this.usuario.post(obj).then(res => {
         this.emailConfirmation = res.data.email;
         UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(() => {
+          this.mensagemSucesso = 'Email enviado com sucesso!'
           this.$refs['modal-confirmation'].show();
         }).catch(err => {
+          this.isError = true;
+          this.mensagem = 'Houve um problema ao enviar email de redefinição, tente novamente!'
           console.log(err);
+        }).finally(() => {
+          this.$refs['successToast'].show();
         })
       }).catch(err => {
         console.log(err);
@@ -106,20 +130,25 @@ export default {
     },
     async ReenviarConfirmacao() {
       this.isLoading = true;
+      this.isError = false;
       UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(res => {
+          this.mensagem = 'Email reenviado com sucesso!'
           console.log(res);
         }).catch(err => {
+          this.mensagem = 'Houve um problema ao enviar email de redefinição, tente novamente!'
+          this.isError = true;
           console.log(err);
         }).finally(() => {
           this.isLoading = false;
+          this.$refs['successToast'].show();
         })
-    },
-    trocar() {
-      this.isCadastro = !this.isCadastro;
-      this.$refs['layout-form'].clear()
     },
     isProx(isProx) {
       this.isProxCadastro = isProx;
+    },
+    trocarLoginOuCadastro() {
+      this.isCadastro = !this.isCadastro;
+      this.$refs['layout-form'].clear();
     },
     voltar() {
       this.$refs['layout-form'].voltar();
@@ -130,13 +159,18 @@ export default {
     },
     async RedefinirSenha(email) {
       this.isLoading = true;
+      this.isError = false;
+      this.$refs['modal-redefinicao'].hide();
       UsuarioServices.enviarConfirmacaoRedefinicaoSenha(email).then(res => {
+        this.mensagem = 'Email de redefinido enviado com sucesso!'
         console.log(res);
       }).catch(err => {
+        this.mensagem = 'Houve um problema ao enviar email de redefinição, tente novamente!'
+        this.isError = true;
         console.log(err);
       }).finally(() => {
         this.isLoading = false;
-        this.$refs['modal-redefinicao'].hide();
+        this.$refs['successToast'].show();
       })
     },
   },
@@ -255,10 +289,6 @@ export default {
 .button-back:active {
   font-size: 27px;
   color: #fff;
-}
-
-.custom-z-index {
-  z-index: 5;
 }
 
 @media only screen and (max-width: 690px) {

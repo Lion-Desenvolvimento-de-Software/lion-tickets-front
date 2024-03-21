@@ -2,7 +2,7 @@
   <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header justify-content-between">
           <h5 class="modal-title" id="exampleModalLongTitle">Redefinir Senha</h5>
           <button type="button" style="border: none;" class="close" data-dismiss="modal" aria-label="Close" @click="hide">
             <span aria-hidden="true">&times;</span>

@@ -1,12 +1,12 @@
 {
-  "name": "vendas-ingressos-front",
+  "name": "lion-tickets-front",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "test:watch": "jest --verbose --watch",
+    "cy:open": "cypress open",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -35,9 +35,10 @@
     "@vue/test-utils": "^2.4.5",
     "@vue/vue3-jest": "^27.0.0-alpha.1",
     "babel-jest": "^27.0.6",
+    "cypress": "^13.7.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
-    "jest": "^27.0.5",
+    "jest": "^27.5.1",
     "sass": "^1.32.7",
     "sass-loader": "^12.0.0",
     "unplugin-vue-router": "^0.7.0"

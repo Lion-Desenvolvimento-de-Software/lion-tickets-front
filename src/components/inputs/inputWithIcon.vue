@@ -6,11 +6,9 @@
       :name="Name" 
       :required="Required"
       :value="model"
-      @input="$emit('update:model', $event.target.value)"
-      @focusout="!IsValid ? $emit('update:model', '') : ''" />
-    <label :for="Id" :class="messageError ? 'ajuste-label' : _">{{ Label }}</label>
+      @input="$emit('update:model', $event.target.value)" />
+    <label :for="Id" :class="!IsValid ? 'ajuste-label' : _">{{ Label }}</label>
     <font-awesome-icon :class="ClassIcon" :icon="Icon" @click="$emit('ViewPassword')" />
-    <p v-if="messageError" class="error">{{ messageError }}</p>
   </div>
 </template>
 
@@ -35,8 +33,7 @@ export default {
       type: Boolean,
       default: false
     },
-    model: String,
-    messageError: String
+    model: String
   },
   emits: ['update:model'],
 }
@@ -76,13 +73,9 @@ label {
   pointer-events: none;
   transition: all 0.5s ease-in-out;
 }
-.ajuste-label {
-  transform: translateY(-100%) !important;
-}
 
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 30px #6ff9d3 inset;
-  border-bottom-color: #fff;
 }
 input:-webkit-autofill ~ label,
 input:focus ~ label,
@@ -103,9 +96,5 @@ svg {
 }
 .invalid-input {
   border-bottom-color: red;
-}
-.error {
-  color: red;
-  margin: 0;
 }
 </style>

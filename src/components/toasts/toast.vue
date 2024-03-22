@@ -1,5 +1,5 @@
 <template>
-  <div class="toast align-items-start custom-toast border-0 mt-3" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast fade align-items-start custom-toast border-0 mt-3" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="d-flex">
       <div class="toast-body">
         {{ mensagem }}
@@ -15,7 +15,7 @@ import { Toast } from 'bootstrap';
 let thisToastObj = null;
 
 export default {
-  name: 'successToast',
+  name: 'toast',
   mounted: () => {
     thisToastObj = new Toast($('#success'));
   },

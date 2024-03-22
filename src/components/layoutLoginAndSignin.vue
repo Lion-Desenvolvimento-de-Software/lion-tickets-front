@@ -4,12 +4,11 @@
   </div>
   <div class="custom-form" v-if="!isProx">
     <input-with-icon Id="email"
-                    Type="email"
+                    Type="text"
                     Label="Email"
                     :Required="true"
                     :IsValid="isValidEmail"
-                    v-model:model="email"
-                    :messageError="messageError" />
+                    v-model:model="email" />
 
     <input-with-icon Id="senha"
                     :Type="senhaVisivel ? 'text' : 'password'"
@@ -42,16 +41,14 @@
                     :Required="true"
                     :Icon="['fas',  'user']"
                     :IsValid="isError ? false : true"
-                    v-model:model="userName"
-                    :messageError="messageError" />
+                    v-model:model="userName" />
 
     <select-with-icon Id="genero"
                       Label="Genero:"
                       :Required="true"
                       :IsValid="!genero ? false : true"
                       v-model:model="genero"
-                      :options="[{'name': 'Masculino', 'value': 1}, {'name': 'Feminino', 'value': 2}]"
-                      :messageError="messageError" />
+                      :options="[{'name': 'Masculino', 'value': 1}, {'name': 'Feminino', 'value': 2}]" />
 
     <input-date Id="dataAniversario"
                     Type="date"
@@ -59,10 +56,8 @@
                     Name="Data"
                     :Required="true"
                     :IsValid="!dataAniversario ? false : true"
-                    v-model:model="dataAniversario"
-                    :messageError="messageError" />
+                    v-model:model="dataAniversario" />
   </div>
-  <p v-if="!isCadastro && messageErrorLogin" class="error">{{ messageErrorLogin }}</p>
   <p v-if="!isCadastro">Esqueceu a senha? <button class="button-link-redefinicao" @click="$emit('showModalRedefinicaoSenha')">Redefinir</button></p>
   <slot></slot>
   <button class="custom-button" @click="ActionForm">{{ 
@@ -84,7 +79,7 @@ import { Usuario } from '@/assets/classes/Usuario';
 
 export default {
   name: "layoutLoginAndSignin",
-  emits: ['entrar', 'cadastrar', 'isProx', 'showModalRedefinicaoSenha'],
+  emits: ['entrar', 'cadastrar', 'isProx', 'showModalRedefinicaoSenha', 'setMessageError'],
   data() {
     return {
       senhaVisivel: false,
@@ -96,8 +91,6 @@ export default {
       senhaConfirmada: '',
       genero: '',
       dataAniversario: '',
-      messageError: null,
-      messageErrorLogin: null,
       isError: false,
 
       isProx: false
@@ -108,7 +101,7 @@ export default {
       var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
       if (!this.email)
           return true;
-      return this.email.match(pattern) && this.messageError == null ? true : false;
+      return this.email.match(pattern) && !this.isError ? true : false;
     },
     isPasswordValidLength() {
       if (!this.senha)
@@ -118,6 +111,14 @@ export default {
     isPasswordConfirmed() {
       if (!this.senhaConfirmada) return true;
       return this.senha === this.senhaConfirmada;
+    }
+  },
+  watch: {
+    email() {
+      this.isError = false;
+    },
+    userName() {
+      this.isError = false;
     }
   },
   props: {
@@ -148,31 +149,29 @@ export default {
             };
             this.$emit("cadastrar", obj);
           }).catch(err => {
-            this.messageError = err;
+            this.$emit('setMessageError', err);
             this.isError = true;
           })
         }
         else {
-          this.hasEmail();
+          await this.hasEmail();
         }
       } else if(!this.isCadastro) {
         if(this.isValidEmail && this.isPasswordValidLength) this.$emit("entrar", this.email, this.senha);
       }
     },
-    setMessageErrorLogin(message) {
-      this.messageErrorLogin = message;
-    },
     
     /** Metodos para verificações para código limpo e limpeza nos dados */
-    hasEmail() {
+    async hasEmail() {
+      this.clearErrors();
       UsuarioServices.hasEmail(this.email).then(() => {
-        this.clearErrors();
         this.isProx = true;
         this.$emit("isProx", this.isProx);
         
         //this.$emit("cadastrar", this.email, this.senha);
       }).catch(err => {
-        this.messageError = err;
+        this.isError = true;
+        this.$emit('setMessageError', err);
       })
     },
     
@@ -194,8 +193,6 @@ export default {
       this.clearErrors();
     },
     clearErrors() {
-      this.messageError = null;
-      this.messageErrorLogin = null;
       this.isError = false;
     },
     voltar() {

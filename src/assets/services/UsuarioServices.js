@@ -48,8 +48,12 @@ export default {
   },
 
   async login(dados) {
-    var { data } = await axios.post(`${api}/usuario/login`, dados);
-    return data;
+    try {
+      var { data } = await axios.post(`${api}/usuario/login`, dados);
+      return data;
+    } catch({response}) {
+      throw response.data
+    }
   },
 
   async logof() {

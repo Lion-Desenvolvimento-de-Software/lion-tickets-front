@@ -24,9 +24,10 @@
                           @cadastrar="Cadastrar"
                           @isProx="isProx"
                           @showModalRedefinicaoSenha="showModalRedefinicaoSenha"
+                          @setMessageError="setMessageError"
                           ref="layout-form">
           <p class="visible-in-responsible">{{ !isCadastro ? "Cadastre-se " : "Possui uma conta? " }}
-            <button class="custom-button-link" @click="trocar()">
+            <button class="custom-button-link" @click="trocarLoginOuCadastro()">
               {{ !isCadastro ? "aqui" : "Entrar" }}
             </button>
           </p>
@@ -35,7 +36,7 @@
     </div>
     <modal-confirmation-email id="modal_aviso" ref="modal-confirmation" @reenviarConfirmacao="ReenviarConfirmacao" />
     <modal-redefinicao-senha id="modal_redefinicao" ref="modal-redefinicao" @redefinirSenha="RedefinirSenha" />
-    <toast id="success" ref="successToast" :mensagem="this.mensagem" :class="!getIsError ? 'text-bg-success' : 'text-bg-danger'" />
+    <toast id="success" ref="toast" :mensagem="this.mensagem" :class="!getIsError ? 'text-bg-success' : 'text-bg-danger show'" />
     <spinner :isLoading="isLoading"></spinner>
   </div>
 </template>
@@ -71,12 +72,13 @@ export default {
   props: {
     usuario: new Usuario()
   },
-  
+
   computed: {
     getIsError() {
       return this.isError;
     }
   },
+  
   methods: {
     async Logar(email, senha) {
       try {
@@ -93,17 +95,14 @@ export default {
         }).catch(err => {
           this.isError = true;
           this.mensagem = err;
-          this.$refs['layout-form'].setMessageErrorLogin(err);
         }).finally(() => {
           this.isLoading = false;
-          this.$refs['successToast'].show();
         });
       } catch(err) {
         this.isError = true;
         this.mensagem = err;
-        //this.$refs['layout-form'].setMessageErrorLogin(err);
         this.isLoading = false;
-        this.$refs['successToast'].show();
+        this.$refs['toast'].show();
       }
     },
     async Cadastrar(obj) {
@@ -120,7 +119,7 @@ export default {
           this.mensagem = 'Houve um problema ao enviar email de redefinição, tente novamente!'
           console.log(err);
         }).finally(() => {
-          this.$refs['successToast'].show();
+          this.$refs['toast'].show();
         })
       }).catch(err => {
         console.log(err);
@@ -140,8 +139,24 @@ export default {
           console.log(err);
         }).finally(() => {
           this.isLoading = false;
-          this.$refs['successToast'].show();
+          this.$refs['toast'].show();
         })
+    },
+    async RedefinirSenha(email) {
+      this.isLoading = true;
+      this.isError = false;
+      this.$refs['modal-redefinicao'].hide();
+      UsuarioServices.enviarConfirmacaoRedefinicaoSenha(email).then(res => {
+        this.mensagem = 'Email de redefinido enviado com sucesso!'
+        console.log(res);
+      }).catch(err => {
+        this.mensagem = 'Houve um problema ao enviar email de redefinição, tente novamente!'
+        this.isError = true;
+        console.log(err);
+      }).finally(() => {
+        this.isLoading = false;
+        this.$refs['toast'].show();
+      })
     },
     isProx(isProx) {
       this.isProxCadastro = isProx;
@@ -157,22 +172,12 @@ export default {
     showModalRedefinicaoSenha() {
       this.$refs['modal-redefinicao'].show();
     },
-    async RedefinirSenha(email) {
-      this.isLoading = true;
-      this.isError = false;
-      this.$refs['modal-redefinicao'].hide();
-      UsuarioServices.enviarConfirmacaoRedefinicaoSenha(email).then(res => {
-        this.mensagem = 'Email de redefinido enviado com sucesso!'
-        console.log(res);
-      }).catch(err => {
-        this.mensagem = 'Houve um problema ao enviar email de redefinição, tente novamente!'
-        this.isError = true;
-        console.log(err);
-      }).finally(() => {
-        this.isLoading = false;
-        this.$refs['successToast'].show();
-      })
-    },
+    
+    setMessageError(mensagemErro) {
+      this.mensagem = mensagemErro;
+      this.isError = true;
+      this.$refs['toast'].show();
+    }
   },
 }
 </script>

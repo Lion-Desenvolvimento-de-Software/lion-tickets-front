@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex container">
+  <div class="container">
     <leyaout-cards nome="teste">
       <button class="btn btn-primary" to="/teste">
         <RouterLink :to="{ name: 'Produtos', params: { productsName: 'teste' } }">

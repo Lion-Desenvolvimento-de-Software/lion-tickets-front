@@ -2,7 +2,8 @@
   <spinner :isLoading="loadingFethingData"></spinner>
   <nav-bar :usuario="usuario" 
             v-if="$route.meta.navbar"
-            @logof="logof" />
+            @logof="logof"
+            class="nav" />
   <router-view :usuario="usuario" />
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="container-local">
+  <div class="d-flex container-local">
     <div class="custom-card">
       <div class="img-box">
         <img src="https://picsum.photos/id/1045/800/450" alt="...">

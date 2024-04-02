@@ -74,8 +74,12 @@ label {
   transition: all 0.5s ease-in-out;
 }
 
-input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 30px #6ff9d3 inset;
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    transition: background-color 500000s ease-in-out 0s;
+    -webkit-text-fill-color: #fff !important;
 }
 input:-webkit-autofill ~ label,
 input:focus ~ label,

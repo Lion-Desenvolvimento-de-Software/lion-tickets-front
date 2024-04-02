@@ -5,7 +5,8 @@ import UserView from '@/views/UserView.vue'
 const routes = [
   ...require(/* webpackChunkName: "login" */ '@/router/Login/LoginRoutes').default,
   ...require(/* webpackChunkName: "Home" */ '@/router/Home').default,
-  ...require(/* webpackChunkName: "Home" */ '@/router/Eventos/Eventos').default,
+  ...require(/* webpackChunkName: "Eventos" */ '@/router/Eventos/Eventos').default,
+  ...require(/* webpackChunkName: "CadastroExterno" */ '@/router/CadastroExterno/CadastroExterno').default,
   {
     path: '/produtos/:productsName?/:id?',
     name: 'Produtos',

@@ -25,6 +25,7 @@
                           @isProx="isProx"
                           @showModalRedefinicaoSenha="showModalRedefinicaoSenha"
                           @setMessageError="setMessageError"
+                          @loginViaGoogle="loginViaGoogle"
                           ref="layout-form">
           <p class="visible-in-responsible">{{ !isCadastro ? "Cadastre-se " : "Possui uma conta? " }}
             <button class="custom-button-link" @click="trocarLoginOuCadastro()">
@@ -112,19 +113,18 @@ export default {
       this.usuario.post(obj).then(res => {
         this.emailConfirmation = res.data.email;
         UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(() => {
-          this.mensagemSucesso = 'Email enviado com sucesso!'
+          this.mensagem = 'Email de confirmação enviado com sucesso!'
           this.$refs['modal-confirmation'].show();
         }).catch(err => {
           this.isError = true;
           this.mensagem = 'Houve um problema ao enviar email de redefinição, tente novamente!'
           console.log(err);
         }).finally(() => {
+          this.isLoading = false;
           this.$refs['toast'].show();
         })
       }).catch(err => {
         console.log(err);
-      }).finally(() => {
-        this.isLoading = false;
       })
     },
     async ReenviarConfirmacao() {
@@ -177,6 +177,10 @@ export default {
       this.mensagem = mensagemErro;
       this.isError = true;
       this.$refs['toast'].show();
+    },
+
+    async loginViaGoogle() {
+      window.location.href = 'https://localhost:44361/Account/google-login';
     }
   },
 }
@@ -227,7 +231,7 @@ export default {
   width: 260px;
   height: 520px;
   color: #fff;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
   border: 1px solid #fff;
 }
 
@@ -242,7 +246,7 @@ export default {
   height: 520px;
   color: #fff;
   padding: 0 50px;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
   border: 1px solid #fff;
 }
 

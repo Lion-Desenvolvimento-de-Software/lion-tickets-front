@@ -2,6 +2,10 @@
   <div class="custom-title">
     <font-awesome-icon :icon="['fas', 'user']" />
   </div>
+  <div class="d-flex justify-content-evenly w-75" id="autenticacaoTerceiro">
+    <button @click="$emit('loginViaGoogle')" class="botao-google"><img src="@/assets/images/google-icon.png" width="30" height="30" /></button>
+    <button class="botao-google"><img src="@/assets/images/facebook-logo.png" width="40" height="40" /></button>
+  </div>
   <div class="custom-form" v-if="!isProx">
     <input-with-icon Id="email"
                     Type="text"
@@ -79,7 +83,7 @@ import { Usuario } from '@/assets/classes/Usuario';
 
 export default {
   name: "layoutLoginAndSignin",
-  emits: ['entrar', 'cadastrar', 'isProx', 'showModalRedefinicaoSenha', 'setMessageError'],
+  emits: ['entrar', 'cadastrar', 'isProx', 'showModalRedefinicaoSenha', 'setMessageError', 'loginViaGoogle'],
   data() {
     return {
       senhaVisivel: false,
@@ -252,5 +256,24 @@ a:hover {
 }
 .button-link-redefinicao:active {
   color: #fff;
+}
+.botao-google {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: none;
+  border: none;
+  backdrop-filter: blur(5px);
+}
+.botao-google:hover {
+  transform: rotate(1turn);
+  transition: .5s;
+}
+.botao-google:active {
+  box-shadow: 0 0 2px 3px rgba(0, 0, 0, 0.25) inset;
+  transition: 0s;
 }
 </style>

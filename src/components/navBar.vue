@@ -39,10 +39,10 @@
 					</RouterLink>
 				</div>
 				<div v-else class="dropstart">
-					<img class="nav-link dropdown-toggle btn"
+					<img class="nav-link dropdown-toggle btn p-0"
 						data-bs-toggle="dropdown" 
 						aria-expanded="false" 
-						src="../assets/images/R.png" 
+						src="@/assets/images/R.png" 
 						height="30" 
 						width="30" />
 

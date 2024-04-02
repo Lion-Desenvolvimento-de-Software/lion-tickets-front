@@ -7,9 +7,9 @@ module.exports = defineConfig({
       new webpack.DefinePlugin({
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false',
       })
-    ]
+    ],
+    // devServer: {
+    //   https: true
+    // }
   }
-  // devServer: {
-  //   https: true
-  // }
 })

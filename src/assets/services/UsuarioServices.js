@@ -2,14 +2,14 @@ import axios from 'axios'
 const api = '/api'
 
 export default {
-  getUser(id) {
-    const { data } = axios.get(`${api}/usuario/${id}`);
+  async getUser(id) {
+    const { data } = await axios.get(`${api}/usuario/${id}`);
     return data;
   },
 
   async GetUserAuthenticated() {
     try {
-      const { data } = await axios.get(`${api}/usuario/GetUserAuthenticated`);
+      const { data } = await axios.get(`/Account/GetUserAuthenticated`);
       return data;
     } catch(err) {
       if(err.response.status == 401) {
@@ -43,26 +43,26 @@ export default {
   },
 
   async post(userData) {
-    var response = await axios.post(`${api}/usuario`, userData);
+    var response = await axios.post(`/Account/Register`, userData);
     return response;
   },
 
   async login(dados) {
     try {
-      var { data } = await axios.post(`${api}/usuario/login`, dados);
+      var { data } = await axios.post(`/Account/login`, dados);
       return data;
-    } catch({response}) {
-      throw response.data
+    } catch(err) {
+      console.log(err)
+      throw err?.response?.data
     }
   },
 
   async logof() {
-    await axios.post(`${api}/usuario/logof`);
+    await axios.post(`/Account/logof`);
   },
 
   async enviarConfirmacaoRedefinicaoSenha(email) {
     var response = await axios.get(`${api}/usuario/SendEmailRedefinicaoSenha/${email}`);
     return response;
   },
-
 }

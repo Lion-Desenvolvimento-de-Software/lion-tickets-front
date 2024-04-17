@@ -25,7 +25,8 @@
                           @isProx="isProx"
                           @showModalRedefinicaoSenha="showModalRedefinicaoSenha"
                           @setMessageError="setMessageError"
-                          @loginViaGoogle="loginViaGoogle"
+                          @loginExternal="loginExternal"
+                          @setLoading="setLoading"
                           ref="layout-form">
           <p class="visible-in-responsible">{{ !isCadastro ? "Cadastre-se " : "Possui uma conta? " }}
             <button class="custom-button-link" @click="trocarLoginOuCadastro()">
@@ -35,10 +36,8 @@
         </layout-formulario>
       </div>
     </div>
-    <modal-confirmation-email id="modal_aviso" ref="modal-confirmation" @reenviarConfirmacao="ReenviarConfirmacao" />
     <modal-redefinicao-senha id="modal_redefinicao" ref="modal-redefinicao" @redefinirSenha="RedefinirSenha" />
-    <toast id="success" ref="toast" :mensagem="this.mensagem" :class="!getIsError ? 'text-bg-success' : 'text-bg-danger show'" />
-    <spinner :isLoading="isLoading"></spinner>
+    <spinner :isLoading="getIsLoading"></spinner>
   </div>
 </template>
 
@@ -46,10 +45,9 @@
 import { Usuario } from '@/assets/classes/Usuario';
 import UsuarioServices from '@/assets/services/UsuarioServices';
 import layoutFormulario from '@/components/layoutLoginAndSignin.vue';
-import ModalConfirmationEmail from '@/components/modals/ModalConfirmationEmail.vue';
 import ModalRedefinicaoSenha from '@/components/modals/ModalRedefinicaoSenha.vue';
 import spinner from '@/components/spinner.vue';
-import toast from '@/components/toasts/toast.vue';
+
 export default {
   name: 'LoginAndSigninView',
   data() {
@@ -63,12 +61,11 @@ export default {
       isError: false
     };
   },
+  emits: ['setMensagemToast', 'setIsError', 'showToast', 'setUsuario'],
   components: {
     layoutFormulario,
-    ModalConfirmationEmail,
     ModalRedefinicaoSenha,
     spinner,
-    toast
   },
   props: {
     usuario: new Usuario()
@@ -77,6 +74,9 @@ export default {
   computed: {
     getIsError() {
       return this.isError;
+    },
+    getIsLoading() {
+      return this.isLoading;
     }
   },
   
@@ -91,37 +91,39 @@ export default {
             "RememberMe": false
         };
         if (!email || !senha) throw "Email ou senha inválidos!";
-        UsuarioServices.login(obj).then(() => {
-          window.location.pathname = '/';
-        }).catch(err => {
-          this.isError = true;
-          this.mensagem = err;
+        UsuarioServices.login(obj).then(res => {
+          this.enviaMensagemAviso(res?.mensagem);
+          window.location.href = res.uri;
+        }).catch(async err => {
+          this.$emit('setMensagemToast', err);
+          await this.$emit('setIsError', true);
+          this.$emit('showToast');
         }).finally(() => {
           this.isLoading = false;
         });
       } catch(err) {
-        this.isError = true;
-        this.mensagem = err;
+        this.$emit('setMensagemToast', err);
+        await this.$emit('setIsError', true);
         this.isLoading = false;
-        this.$refs['toast'].show();
+        this.$emit('showToast');
       }
     },
     async Cadastrar(obj) {
+      var mensagem = 'Email de confirmação enviado com sucesso!';
       this.isLoading = true;
       this.isError = false;
-      this.usuario.AddData(obj);
-      this.usuario.post(obj).then(res => {
+      this.UsuarioServices.register(obj).then(res => {
         this.emailConfirmation = res.data.email;
-        UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(() => {
-          this.mensagem = 'Email de confirmação enviado com sucesso!'
-          this.$refs['modal-confirmation'].show();
-        }).catch(err => {
-          this.isError = true;
-          this.mensagem = 'Houve um problema ao enviar email de redefinição, tente novamente!'
+        UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(response => {
+          this.$router.push(response.uri);
+        }).catch(async err => {
+          await this.$emit('setIsError', true);
+          mensagem = 'O Email inserido não é válido!';
           console.log(err);
         }).finally(() => {
           this.isLoading = false;
-          this.$refs['toast'].show();
+          this.$emit('setMensagemToast', mensagem);
+          this.$emit('showToast');
         })
       }).catch(err => {
         console.log(err);
@@ -131,15 +133,17 @@ export default {
       this.isLoading = true;
       this.isError = false;
       UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(res => {
-          this.mensagem = 'Email reenviado com sucesso!'
+          this.$emit('setMensagemToast', res);
           console.log(res);
-        }).catch(err => {
-          this.mensagem = 'Houve um problema ao enviar email de redefinição, tente novamente!'
+        }).catch(async err => {
+          var mensagem = 'Houve um problema ao enviar email de redefinição, tente novamente!';
           this.isError = true;
+          this.$emit('setMensagemToast', mensagem);
+          await this.$emit('setIsError', true);
           console.log(err);
         }).finally(() => {
           this.isLoading = false;
-          this.$refs['toast'].show();
+          this.$emit('showToast');
         })
     },
     async RedefinirSenha(email) {
@@ -147,15 +151,15 @@ export default {
       this.isError = false;
       this.$refs['modal-redefinicao'].hide();
       UsuarioServices.enviarConfirmacaoRedefinicaoSenha(email).then(res => {
-        this.mensagem = 'Email de redefinido enviado com sucesso!'
+        this.$emit('setMensagemToast', 'Email de redefinido enviado com sucesso!');
         console.log(res);
-      }).catch(err => {
-        this.mensagem = 'Houve um problema ao enviar email de redefinição, tente novamente!'
-        this.isError = true;
+      }).catch(async err => {
+        this.$emit('setMensagemToast', 'Houve um problema ao enviar email de redefinição, tente novamente!');
+        await this.$emit('setIsError', true);
         console.log(err);
       }).finally(() => {
         this.isLoading = false;
-        this.$refs['toast'].show();
+        this.$emit('showToast');
       })
     },
     isProx(isProx) {
@@ -172,16 +176,33 @@ export default {
     showModalRedefinicaoSenha() {
       this.$refs['modal-redefinicao'].show();
     },
+
+    enviaMensagemAviso(mensagem) {
+      console.log(mensagem)
+      if (!mensagem) return;
+      this.$emit('setMensagemToast', mensagem);
+      this.$emit('showToast');
+    },
     
-    setMessageError(mensagemErro) {
-      this.mensagem = mensagemErro;
-      this.isError = true;
-      this.$refs['toast'].show();
+    async setMessageError(mensagemErro) {
+      this.$emit('setMensagemToast', mensagemErro);
+      await this.$emit('setIsError', true);
+      this.$emit('showToast');
     },
 
-    async loginViaGoogle() {
-      window.location.href = 'https://localhost:44361/Account/google-login';
-    }
+    async setMensagemSucesso(mensagemSucesso) {
+      this.$emit('setMensagemToast', mensagemSucesso);
+      await this.$emit('setIsError', false);
+      this.$emit('showToast');
+    },
+
+    setLoading(isLoading) {
+      this.isLoading = isLoading;
+    },
+
+    async loginExternal(provider) {
+      window.location.href = `https://localhost:44361/Account/external-login?provider=${provider}`;
+    },
   },
 }
 </script>

@@ -5,8 +5,10 @@ export class Usuario {
     this.Id = null,
     this.UserName = null,
     this.Email = null,
+    this.PhoneNumber = null,
     this.PasswordHash = null,
-    this.Genero = null
+    this.Genero = null,
+    this.DataAniversario = null
   }
 
   AddData(userData) {
@@ -15,6 +17,6 @@ export class Usuario {
   }
 
   async post() {
-    return await usuarioServices.post(this)
+    return await usuarioServices.register(this)
   }
 }

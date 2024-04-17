@@ -1,41 +1,46 @@
 <template>
-  <div class="toast fade align-items-start custom-toast border-0 mt-3" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast align-items-start custom-toast border-0 mt-3" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="d-flex">
       <div class="toast-body">
         {{ mensagem }}
       </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      <button @click="hide" type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
   </div>
 </template>
 
 <script>
-import $ from 'jquery';
 import { Toast } from 'bootstrap';
-let thisToastObj = null;
+var toast = null;
 
 export default {
   name: 'toast',
   mounted: () => {
-    thisToastObj = new Toast($('#success'));
+    toast = new Toast(document.getElementById('toastId'));
   },
   props: {
-    mensagem: String
+    mensagem: String,
   },
   methods: {
     show() {
-      thisToastObj.show();
+      toast.show();
     },
     hide() {
-      thisToastObj.hide();
+      toast.hide();
     }
   }
 }
 </script>
 
 <style scoped>
+* {
+  margin: 0;
+  padding: 0;
+}
+
 .custom-toast {
   position: absolute;
   top: 0%;
 }
+
 </style>

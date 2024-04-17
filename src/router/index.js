@@ -6,7 +6,7 @@ const routes = [
   ...require(/* webpackChunkName: "login" */ '@/router/Login/LoginRoutes').default,
   ...require(/* webpackChunkName: "Home" */ '@/router/Home').default,
   ...require(/* webpackChunkName: "Eventos" */ '@/router/Eventos/Eventos').default,
-  ...require(/* webpackChunkName: "CadastroExterno" */ '@/router/CadastroExterno/CadastroExterno').default,
+  ...require(/* webpackChunkName: "ConfirmacaoCodigo" */ '@/router/ConfirmacaoCodigo').default,
   {
     path: '/produtos/:productsName?/:id?',
     name: 'Produtos',
@@ -17,7 +17,7 @@ const routes = [
     path: '/usuarios/:Id',
     name: 'Usuarios',
     component: UserView,
-    meta: { navbar: false }
+    meta: { navbar: true }
   },
 ]
 
@@ -26,8 +26,13 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach(() => {
-  
+router.beforeEach(async (to, from) => {
+  if(!await canUserAccess(to)) return { path: from.path }
 })
+
+async function canUserAccess(to) {
+  if(window.localStorage.getItem("isAuthenticated") && to.name == 'Login') return false;
+  return true;
+}
 
 export default router

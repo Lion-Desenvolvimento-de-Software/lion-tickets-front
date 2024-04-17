@@ -3,8 +3,8 @@
     <font-awesome-icon :icon="['fas', 'user']" />
   </div>
   <div class="d-flex justify-content-evenly w-75" id="autenticacaoTerceiro">
-    <button @click="$emit('loginViaGoogle')" class="botao-google"><img src="@/assets/images/google-icon.png" width="30" height="30" /></button>
-    <button class="botao-google"><img src="@/assets/images/facebook-logo.png" width="40" height="40" /></button>
+    <button @click="$emit('loginExternal', 'Google')" class="botao-google"><img src="@/assets/images/google-icon.png" width="30" height="30" /></button>
+    <button @click="$emit('loginExternal', 'Facebook')" class="botao-google"><img src="@/assets/images/facebook-logo.png" width="40" height="40" /></button>
   </div>
   <div class="custom-form" v-if="!isProx">
     <input-with-icon Id="email"
@@ -83,7 +83,7 @@ import { Usuario } from '@/assets/classes/Usuario';
 
 export default {
   name: "layoutLoginAndSignin",
-  emits: ['entrar', 'cadastrar', 'isProx', 'showModalRedefinicaoSenha', 'setMessageError', 'loginViaGoogle'],
+  emits: ['entrar', 'cadastrar', 'isProx', 'showModalRedefinicaoSenha', 'setMessageError', 'loginExternal', 'setLoading'],
   data() {
     return {
       senhaVisivel: false,
@@ -139,6 +139,7 @@ export default {
       this.senhaVisivel = !this.senhaVisivel;
     },
     async ActionForm() {
+      this.$emit("setLoading", true);
       this.clearErrors();
       if(this.hasSingin()) {
         if(this.isProx) {
@@ -155,7 +156,8 @@ export default {
           }).catch(err => {
             this.$emit('setMessageError', err);
             this.isError = true;
-          })
+            this.$emit("setLoading", false);
+          });
         }
         else {
           await this.hasEmail();
@@ -167,6 +169,7 @@ export default {
     
     /** Metodos para verificações para código limpo e limpeza nos dados */
     async hasEmail() {
+      this.$emit("setLoading", true);
       this.clearErrors();
       UsuarioServices.hasEmail(this.email).then(() => {
         this.isProx = true;
@@ -176,6 +179,8 @@ export default {
       }).catch(err => {
         this.isError = true;
         this.$emit('setMessageError', err);
+      }).finally(() => {
+        this.$emit("setLoading", false);
       })
     },
     

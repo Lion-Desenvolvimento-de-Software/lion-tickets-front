@@ -13,14 +13,13 @@ export default {
       return data;
     } catch(err) {
       if(err.response.status == 401) {
-        return "Você não está logado!";
+        throw "Você não está logado!";
       }
     }
     
   },
 
   async hasUserName(userName) {
-    console.log(userName)
     try {
       const { data } = await axios.get(`${api}/usuario/HasUserName/${userName}`);
       return data;
@@ -39,10 +38,11 @@ export default {
   },
 
   async SendConfirmationEmail(email) {
-    await axios.get(`${api}/usuario/SendConfirmationEmail/${email}`);
+    const { data } = await axios.get(`${api}/usuario/SendConfirmationEmail/${email}`);
+    return data;
   },
 
-  async post(userData) {
+  async register(userData) {
     var response = await axios.post(`/Account/Register`, userData);
     return response;
   },
@@ -58,11 +58,24 @@ export default {
   },
 
   async logof() {
-    await axios.post(`/Account/logof`);
+    axios.post(`/Account/logof`).then(() => {
+      localStorage.clear();
+    }).catch(err => {
+      console.log("logof: ", err)
+    });
   },
 
   async enviarConfirmacaoRedefinicaoSenha(email) {
     var response = await axios.get(`${api}/usuario/SendEmailRedefinicaoSenha/${email}`);
     return response;
+  },
+
+  async confirmar_codigo_e_conta(id, code) {
+    try {
+      const { data } = await axios.post(`/Account/ConfirmarCodigoAndConta/${id}/${code}`);
+      return data
+    } catch(err) {
+      throw err.response.data;
+    }
   },
 }

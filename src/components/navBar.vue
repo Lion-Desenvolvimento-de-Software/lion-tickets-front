@@ -44,7 +44,8 @@
 						aria-expanded="false" 
 						src="@/assets/images/R.png" 
 						height="30" 
-						width="30" />
+						width="30"
+						v-if="$route.params.Id != usuario.Id" />
 
 					<ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
 						<li>

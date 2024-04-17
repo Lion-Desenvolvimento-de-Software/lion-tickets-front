@@ -4,7 +4,15 @@
             v-if="$route.meta.navbar"
             @logof="logof"
             class="nav" />
-  <router-view :usuario="usuario" />
+  <router-view :usuario="usuario"
+                @ConfirmarCodigo="ConfirmarCodigo"
+                @setMensagemToast="setMensagemToast"
+                @setIsError="setIsError"
+                @showToast="showToast"
+                @setUsuario="setUsuario" />
+  <div class="d-flex justify-content-center">
+    <toast id="toastId" ref="toast" :mensagem="this.mensagem" :class="!getIsError ? `text-bg-success` : `text-bg-danger`" />
+  </div>
 </template>
 
 <script>
@@ -12,14 +20,18 @@ import navBar from '@/components/navBar.vue'
 import { Usuario } from './assets/classes/Usuario';
 import UsuarioServices from './assets/services/UsuarioServices';
 import spinner from './components/spinner.vue';
+import toast from './components/toasts/toast.vue';
 
 export default {
   name: 'app',
   data() {
     return {
       loadingFethingData: false,
-      error: null,
-      usuario: new Usuario()
+      isError: false,
+      usuario: new Usuario(),
+
+      mensagem: null,
+      isShow: false
     }
   },
   compatConfig: { MODE: 3 },
@@ -28,24 +40,39 @@ export default {
   },
   components: {
     navBar,
-    spinner
+    spinner,
+    toast
+  },
+  computed: {
+    getIsError() {
+      return this.isError;
+    }
   },
   methods: {
+    setUsuario(user) {
+      let obj = {
+        Id: user.id,
+        Email: user.email,
+        UserName: user.userName
+      };
+      this.usuario.AddData(obj);
+    },
     async fetchData() {
       try {
         this.loadingFethingData = true;
-        UsuarioServices.GetUserAuthenticated().then(res => {
+        UsuarioServices.GetUserAuthenticated().then(async res => {
           let obj = {
             Id: res.id,
             UserName: res.userName,
             Email: res.email,
-            Telefone: res.phoneNumber,
+            PhoneNumber: res.phoneNumber,
             Genero: res.genero
           }
           this.usuario.AddData(obj);
+          window.localStorage.setItem("isAuthenticated", true);
         }).catch(err => {
-          this.error = err;
-          console.log(this.error)
+          console.log(err);
+          window.localStorage.clear();
         }).finally(() => {
           this.loadingFethingData = false;
         })
@@ -56,30 +83,42 @@ export default {
     },
     async logof() {
       this.usuario = null;
-      UsuarioServices.logof();
-    }
+      await UsuarioServices.logof();
+    },
+    async ConfirmarCodigo(code) {
+      var mensagem = "";
+      this.loadingFethingData = true;
+      try {
+        if (code.length < 6) throw 'Código inválido!';
+        mensagem = await UsuarioServices.confirmar_codigo_e_conta(this.$route.params.id, code);
+        this.setMensagemToast(mensagem);
+        this.setIsError(false);
+        console.log(mensagem);
+        this.$router.back();
+      } catch(err) {
+        mensagem = err;
+        this.setMensagemToast(mensagem);
+        this.setIsError(false);
+      } finally {
+        this.showToast();
+        this.loadingFethingData = false;
+      }
+    },
+
+    setMensagemToast(mensagem) {
+      this.mensagem = mensagem;
+    },
+    
+    async setIsError(isError) {
+      this.isError = isError;
+    },
+
+    showToast() {
+      this.$refs['toast'].show();
+    },
   }
 }
 </script>
-
-import { mount } from '@vue/test-utils'
-
-// The component to test
-const MessageComponent = {
-  template: '<p>{{ msg }}</p>',
-  props: ['msg']
-}
-
-test('displays message', () => {
-  const wrapper = mount(MessageComponent, {
-    props: {
-      msg: 'Hello world'
-    }
-  })
-
-  // Assert the rendered text of the component
-  expect(wrapper.text()).toContain('Hello world')
-})
 
 <style lang="scss">
 #app {

@@ -1,5 +1,5 @@
 <template>
-  <div class="container custom-component-general">
+  <div class="container custom-component-general my-5">
     <div class="wreaper h-100">
       <avatar class="mb-5"/>
       <div class="w-100">

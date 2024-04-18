@@ -62,7 +62,7 @@
                     :IsValid="!dataAniversario ? false : true"
                     v-model:model="dataAniversario" />
   </div>
-  <p v-if="!isCadastro">Esqueceu a senha? <button class="button-link-redefinicao" @click="$emit('showModalRedefinicaoSenha')">Redefinir</button></p>
+  <p v-if="!isCadastro">Esqueceu a senha? <button class="button-link-redefinicao" @click="redefinicaoSenha('showModalRedefinicaoSenha')">Redefinir</button></p>
   <slot></slot>
   <button class="custom-button" @click="ActionForm">{{ 
     isCadastro 
@@ -83,7 +83,7 @@ import { Usuario } from '@/assets/classes/Usuario';
 
 export default {
   name: "layoutLoginAndSignin",
-  emits: ['entrar', 'cadastrar', 'isProx', 'showModalRedefinicaoSenha', 'setMessageError', 'loginExternal', 'setLoading'],
+  emits: ['entrar', 'cadastrar', 'isProx', 'showModalRedefinicaoSenha', 'setMessageError', 'loginExternal', 'setLoading', 'setMensagemSucesso', 'RedefinirSenha'],
   data() {
     return {
       senhaVisivel: false,
@@ -103,7 +103,7 @@ export default {
   computed: {
     isValidEmail() {
       var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-      if (!this.email)
+      if (!this.email && !this.isError)
           return true;
       return this.email.match(pattern) && !this.isError ? true : false;
     },
@@ -160,7 +160,10 @@ export default {
           });
         }
         else {
-          await this.hasEmail();
+          var hasEmail =  await this.hasEmail();
+          this.$emit("setLoading", false);
+          if(hasEmail) this.addError("Email já cadastrado!!");
+          else this.isProx = true;
         }
       } else if(!this.isCadastro) {
         if(this.isValidEmail && this.isPasswordValidLength) this.$emit("entrar", this.email, this.senha);
@@ -169,19 +172,26 @@ export default {
     
     /** Metodos para verificações para código limpo e limpeza nos dados */
     async hasEmail() {
-      this.$emit("setLoading", true);
+      return await UsuarioServices.hasEmail(this.email);
+    },
+
+    async redefinicaoSenha(callback) {
+      console.log(callback)
       this.clearErrors();
-      UsuarioServices.hasEmail(this.email).then(() => {
-        this.isProx = true;
-        this.$emit("isProx", this.isProx);
-        
-        //this.$emit("cadastrar", this.email, this.senha);
-      }).catch(err => {
-        this.isError = true;
-        this.$emit('setMessageError', err);
-      }).finally(() => {
-        this.$emit("setLoading", false);
-      })
+      var hasEmail = await this.hasEmail();
+      if(hasEmail) this.$emit("RedefinirSenha", this.email);
+      else this.addError("Email não inserido!!");
+    },
+
+    addError(message) {
+      this.$emit('setMessageError', message);
+      this.isError = true;
+      if(this.isCadastro) this.isProx = false;
+    },
+
+    addSuccess(message) {
+      this.$emit("setMensagemSucesso", message);
+      this.isError = false;
     },
     
     hasSingin() {

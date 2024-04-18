@@ -94,7 +94,7 @@ export default {
         this.setMensagemToast(mensagem);
         this.setIsError(false);
         console.log(mensagem);
-        this.$router.back();
+        location.href = '/';
       } catch(err) {
         mensagem = err;
         this.setMensagemToast(mensagem);

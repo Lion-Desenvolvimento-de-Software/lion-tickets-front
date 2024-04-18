@@ -26,6 +26,8 @@
                           @showModalRedefinicaoSenha="showModalRedefinicaoSenha"
                           @setMessageError="setMessageError"
                           @loginExternal="loginExternal"
+                          @RedefinirSenha="RedefinirSenha"
+                          @setMensagemSucesso="setMensagemSucesso"
                           @setLoading="setLoading"
                           ref="layout-form">
           <p class="visible-in-responsible">{{ !isCadastro ? "Cadastre-se " : "Possui uma conta? " }}
@@ -112,7 +114,7 @@ export default {
       var mensagem = 'Email de confirmação enviado com sucesso!';
       this.isLoading = true;
       this.isError = false;
-      this.UsuarioServices.register(obj).then(res => {
+      UsuarioServices.register(obj).then(res => {
         this.emailConfirmation = res.data.email;
         UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(response => {
           this.$router.push(response.uri);
@@ -152,10 +154,11 @@ export default {
       this.$refs['modal-redefinicao'].hide();
       UsuarioServices.enviarConfirmacaoRedefinicaoSenha(email).then(res => {
         this.$emit('setMensagemToast', 'Email de redefinido enviado com sucesso!');
+        this.$emit('setIsError', false);
         console.log(res);
-      }).catch(async err => {
+      }).catch(err => {
         this.$emit('setMensagemToast', 'Houve um problema ao enviar email de redefinição, tente novamente!');
-        await this.$emit('setIsError', true);
+        this.$emit('setIsError', true);
         console.log(err);
       }).finally(() => {
         this.isLoading = false;

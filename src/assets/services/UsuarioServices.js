@@ -29,12 +29,8 @@ export default {
   },
   
   async hasEmail(email) {
-    try {
-      const { data } = await axios.get(`${api}/usuario/hasEmail/${email}`);
-      return data;
-    } catch(err) {
-      throw(err.response.data)
-    }
+    const { data } = await axios.get(`${api}/usuario/hasEmail/${email}`);
+    return data;
   },
 
   async SendConfirmationEmail(email) {

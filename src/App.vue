@@ -6,12 +6,13 @@
             class="nav" />
   <router-view :usuario="usuario"
                 @ConfirmarCodigo="ConfirmarCodigo"
+                @ReenviarCodigo="ReenviarCodigo"
                 @setMensagemToast="setMensagemToast"
                 @setIsError="setIsError"
                 @showToast="showToast"
                 @setUsuario="setUsuario" />
   <div class="d-flex justify-content-center">
-    <toast id="toastId" ref="toast" :mensagem="this.mensagem" :class="!getIsError ? `text-bg-success` : `text-bg-danger`" />
+    <toast id="toastId" ref="toast" :mensagem="this.mensagem" class="text-white" :class="!getIsError ? `bg-success` : `bg-danger`" />
   </div>
 </template>
 
@@ -90,15 +91,32 @@ export default {
       this.loadingFethingData = true;
       try {
         if (code.length < 6) throw 'Código inválido!';
-        mensagem = await UsuarioServices.confirmar_codigo_e_conta(this.$route.params.id, code);
+        mensagem = await UsuarioServices.confirmar_codigo_e_conta(this.$route.params.email, code);
+        await this.setIsError(false);
         this.setMensagemToast(mensagem);
-        this.setIsError(false);
         console.log(mensagem);
         location.href = '/';
       } catch(err) {
         mensagem = err;
+        await this.setIsError(true);
         this.setMensagemToast(mensagem);
-        this.setIsError(false);
+      } finally {
+        this.showToast();
+        this.loadingFethingData = false;
+      }
+    },
+
+    async ReenviarCodigo(email) {
+      var mensagem = "";
+      this.loadingFethingData = true;
+      try {
+        mensagem = await UsuarioServices.reenviarCodigo(email, this.$route.params.email);
+        await this.setIsError(false);
+        this.setMensagemToast(mensagem);
+      } catch(err) {
+        mensagem = err;
+        await this.setIsError(true);
+        this.setMensagemToast(mensagem);
       } finally {
         this.showToast();
         this.loadingFethingData = false;

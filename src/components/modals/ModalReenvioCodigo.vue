@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header justify-content-between">
-          <h5 class="modal-title" id="exampleModalLongTitle">Redefinir Senha</h5>
+          <h5 class="modal-title" id="exampleModalLongTitle">Reenviar código</h5>
           <button type="button" style="border: none;" class="close" data-dismiss="modal" aria-label="Close" @click="hide">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -18,7 +18,7 @@
         </div>
         <div class="modal-footer">
           <button @click="hide" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button @click="$emit('redefinirSenha',email)" type="button" class="btn btn-success" data-dismiss="modal">Enviar</button>
+          <button @click="$emit('reenviarCodigo', email)" type="button" class="btn btn-success" data-dismiss="modal">Enviar</button>
         </div>
       </div>
     </div>
@@ -38,9 +38,9 @@ export default {
     }
   },
   mounted: () => {
-    thisModalObj = new Modal($('#modal_redefinicao'));
+    thisModalObj = new Modal($('#modal_reenvio_codigo'));
   },
-  emits: ['redefinirSenha'],
+  emits: ['reenviarCodigo'],
   methods: {
     show() {
       thisModalObj.show()

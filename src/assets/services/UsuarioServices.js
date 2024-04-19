@@ -66,12 +66,21 @@ export default {
     return response;
   },
 
-  async confirmar_codigo_e_conta(id, code) {
+  async confirmar_codigo_e_conta(email, code) {
     try {
-      const { data } = await axios.post(`/Account/ConfirmarCodigoAndConta/${id}/${code}`);
+      const { data } = await axios.post(`/Account/ConfirmarCodigoAndConta/${email}/${code}`);
       return data
     } catch(err) {
       throw err.response.data;
     }
   },
+
+  async reenviarCodigo(emailReenvio, email) {
+    try {
+      const { data } = await axios.get(`${api}/Usuario/ReenviarCodigo/${email}/${emailReenvio}`);
+      return data
+    } catch(err) {
+      throw err.response.data;
+    }
+  }
 }

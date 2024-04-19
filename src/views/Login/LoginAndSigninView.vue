@@ -23,7 +23,7 @@
                           @entrar="Logar"
                           @cadastrar="Cadastrar"
                           @isProx="isProx"
-                          @showModalRedefinicaoSenha="showModalRedefinicaoSenha"
+                          @showModalReenviarCodigo="showModalReenviarCodigo"
                           @setMessageError="setMessageError"
                           @loginExternal="loginExternal"
                           @RedefinirSenha="RedefinirSenha"
@@ -38,7 +38,7 @@
         </layout-formulario>
       </div>
     </div>
-    <modal-redefinicao-senha id="modal_redefinicao" ref="modal-redefinicao" @redefinirSenha="RedefinirSenha" />
+    <modal-reenvio-codigo id="modal_reenvio_codigo" ref="modal-reenvio-codigo" @reenviarCodigo="$emit()" />
     <spinner :isLoading="getIsLoading"></spinner>
   </div>
 </template>
@@ -47,7 +47,7 @@
 import { Usuario } from '@/assets/classes/Usuario';
 import UsuarioServices from '@/assets/services/UsuarioServices';
 import layoutFormulario from '@/components/layoutLoginAndSignin.vue';
-import ModalRedefinicaoSenha from '@/components/modals/ModalRedefinicaoSenha.vue';
+import ModalReenvioCodigo from '@/components/modals/ModalReenvioCodigo.vue';
 import spinner from '@/components/spinner.vue';
 
 export default {
@@ -63,10 +63,10 @@ export default {
       isError: false
     };
   },
-  emits: ['setMensagemToast', 'setIsError', 'showToast', 'setUsuario'],
+  emits: ['setMensagemToast', 'setIsError', 'showToast', 'setUsuario', 'ReenviarCodigo'],
   components: {
     layoutFormulario,
-    ModalRedefinicaoSenha,
+    ModalReenvioCodigo,
     spinner,
   },
   props: {
@@ -80,6 +80,10 @@ export default {
     getIsLoading() {
       return this.isLoading;
     }
+  },
+
+  mount() {
+    this.isLoading = false;
   },
   
   methods: {
@@ -151,7 +155,6 @@ export default {
     async RedefinirSenha(email) {
       this.isLoading = true;
       this.isError = false;
-      this.$refs['modal-redefinicao'].hide();
       UsuarioServices.enviarConfirmacaoRedefinicaoSenha(email).then(res => {
         this.$emit('setMensagemToast', 'Email de redefinido enviado com sucesso!');
         this.$emit('setIsError', false);
@@ -176,8 +179,8 @@ export default {
       this.$refs['layout-form'].voltar();
       this.isProxCadastro = false;
     },
-    showModalRedefinicaoSenha() {
-      this.$refs['modal-redefinicao'].show();
+    showModalReenviarCodigo() {
+      this.$refs['modal-reenvio-codigo'].show();
     },
 
     enviaMensagemAviso(mensagem) {
@@ -199,13 +202,15 @@ export default {
       this.$emit('showToast');
     },
 
+    async loginExternal(provider) {
+      this.isLoading = true;
+      window.location.href = `https://localhost:44361/Account/external-login?provider=${provider}`;
+    },
+
     setLoading(isLoading) {
       this.isLoading = isLoading;
     },
 
-    async loginExternal(provider) {
-      window.location.href = `https://localhost:44361/Account/external-login?provider=${provider}`;
-    },
   },
 }
 </script>

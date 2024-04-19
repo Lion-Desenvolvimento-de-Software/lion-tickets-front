@@ -3,29 +3,46 @@
     <div class="custom-layout">
       <div class="custom-infos">
         <div class="custom-details">
-          <p>insira o código que enviamos pelo email.</p>
+          <p>insira o código que enviamos para o email: <span class="text-success">{{ $route.params.email }}</span>.</p>
         </div>
         <div class="custom-form w-100">
           <input type="text" maxlength="6" v-model="value" @input="value = value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" />
-          <button @click="ConfirmarCodigo">Confirmar</button>
+          <button @click="ConfirmarCodigo" class="my-3">Confirmar</button>
+          <span>Não tem acesso à este email. Clique <a href="#" @click="showModalReenviarCodigo">aqui</a> para enviar o código em outro email.</span>
         </div>
       </div>
     </div>
+    <modal-reenvio-codigo id="modal_reenvio_codigo" ref="modal-reenvio-codigo" @reenviarCodigo="reenviarCodigo" />
   </div>
 </template>
 
 <script>
+import ModalReenvioCodigo from '@/components/modals/ModalReenvioCodigo.vue';
+
 export default {
   name: "ConfirmacaoCodigoView",
-  emits: ['ConfirmarCodigo'],
+  emits: ['ConfirmarCodigo', 'showModalReenviarCodigo', 'ReenviarCodigo'],
   data() {
     return {
       value: ""
     }
   },
+  components: {
+    ModalReenvioCodigo
+  },
+  props: {
+    Email: String
+  },
   methods: {
     ConfirmarCodigo() {
       this.$emit('ConfirmarCodigo', this.value);
+    },
+    showModalReenviarCodigo() {
+      this.$refs['modal-reenvio-codigo'].show();
+    },
+    reenviarCodigo(email) {
+      this.$emit('ReenviarCodigo', email);
+      this.$refs['modal-reenvio-codigo'].hide()
     }
   }
 }

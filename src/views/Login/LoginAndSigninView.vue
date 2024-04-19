@@ -23,7 +23,6 @@
                           @entrar="Logar"
                           @cadastrar="Cadastrar"
                           @isProx="isProx"
-                          @showModalReenviarCodigo="showModalReenviarCodigo"
                           @setMessageError="setMessageError"
                           @loginExternal="loginExternal"
                           @RedefinirSenha="RedefinirSenha"
@@ -38,7 +37,6 @@
         </layout-formulario>
       </div>
     </div>
-    <modal-reenvio-codigo id="modal_reenvio_codigo" ref="modal-reenvio-codigo" @reenviarCodigo="$emit()" />
     <spinner :isLoading="getIsLoading"></spinner>
   </div>
 </template>
@@ -47,7 +45,6 @@
 import { Usuario } from '@/assets/classes/Usuario';
 import UsuarioServices from '@/assets/services/UsuarioServices';
 import layoutFormulario from '@/components/layoutLoginAndSignin.vue';
-import ModalReenvioCodigo from '@/components/modals/ModalReenvioCodigo.vue';
 import spinner from '@/components/spinner.vue';
 
 export default {
@@ -63,10 +60,9 @@ export default {
       isError: false
     };
   },
-  emits: ['setMensagemToast', 'setIsError', 'showToast', 'setUsuario', 'ReenviarCodigo'],
+  emits: ['setMensagemToast', 'setIsError', 'showToast', 'setUsuario'],
   components: {
     layoutFormulario,
-    ModalReenvioCodigo,
     spinner,
   },
   props: {
@@ -178,9 +174,6 @@ export default {
     voltar() {
       this.$refs['layout-form'].voltar();
       this.isProxCadastro = false;
-    },
-    showModalReenviarCodigo() {
-      this.$refs['modal-reenvio-codigo'].show();
     },
 
     enviaMensagemAviso(mensagem) {

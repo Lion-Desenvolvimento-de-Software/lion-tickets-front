@@ -1,5 +1,6 @@
 <template>
   <spinner :isLoading="loadingFethingData"></spinner>
+  <colapse-profile />
   <nav-bar :usuario="usuario" 
             v-if="$route.meta.navbar"
             @logof="logof"
@@ -22,6 +23,7 @@ import { Usuario } from './assets/classes/Usuario';
 import UsuarioServices from './assets/services/UsuarioServices';
 import spinner from './components/spinner.vue';
 import toast from './components/toasts/toast.vue';
+import colapseProfile from './components/colapses/colapseProfile.vue';
 
 export default {
   name: 'app',
@@ -42,7 +44,8 @@ export default {
   components: {
     navBar,
     spinner,
-    toast
+    toast,
+    colapseProfile
   },
   computed: {
     getIsError() {

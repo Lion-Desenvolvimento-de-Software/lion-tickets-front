@@ -6,14 +6,14 @@
     </div>
     <div class="d-flex align-items-center">
       <font-awesome-icon class="custom-icons" :icon="['fas', 'calendar-days']" id="telefone" />
-      <input type="date" name="telefone" :value="telefone" />
+      <input type="date" name="dataAniversario" :value="telefone" />
     </div>
     <div class="d-flex align-items-center">
       <font-awesome-icon class="custom-icons" :icon="['fas', 'venus-mars']" id="telefone" />
-      <select type="text" name="telefone">
+      <select name="genero">
         <option :value="null">Selecione...</option>
-        <option value="">Masculino</option>
-        <option value="">Feminino</option>
+        <option value="1">Masculino</option>
+        <option value="2">Feminino</option>
       </select>
     </div>
   </div>

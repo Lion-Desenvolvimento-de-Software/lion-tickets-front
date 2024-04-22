@@ -1,11 +1,10 @@
 <template>
   <spinner :isLoading="loadingFethingData"></spinner>
-  <collapse-profile :Usuario="usuario"
+  <collapse-profile :usuario="getUsuario"
     @fecharCollapse="fecharCollapse" 
     @logof="logof"
     :class="usuario && isOpenCollapse ? 'open-collapse' : 'close-collapse'" />
-  <nav-bar :usuario="usuario" 
-            v-if="$route.meta.navbar"
+  <nav-bar :usuario="usuario"
             @openCollapse="openCollapse"
             class="nav" />
   <router-view :usuario="usuario"
@@ -43,7 +42,7 @@ export default {
   },
   compatConfig: { MODE: 3 },
   created() {
-    if (this.usuario?.Id == null) this.fetchData();
+    this.fetchData();
   },
   components: {
     navBar,
@@ -54,6 +53,9 @@ export default {
   computed: {
     getIsError() {
       return this.isError;
+    },
+    getUsuario() {
+      return this.usuario;
     }
   },
   methods: {
@@ -92,6 +94,7 @@ export default {
     async logof() {
       this.usuario = null;
       await UsuarioServices.logof();
+      this.isOpenCollapse = false;
     },
     async ConfirmarCodigo(code) {
       var mensagem = "";

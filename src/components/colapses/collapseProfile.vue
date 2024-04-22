@@ -7,7 +7,7 @@
       <h1>Hello</h1>
       <div class="custom-items">
         <ul>
-          <router-link :to="`/usuarios/${usuario?.Id}`"><li>Perfil</li></router-link>
+          <router-link @click="$emit('fecharCollapse')" :to="`/usuarios/${usuario?.Id}`"><li>Perfil</li></router-link>
         </ul>
         <hr/>
         <ul>
@@ -19,12 +19,10 @@
 </template>
 
 <script>
-import { Usuario } from '@/assets/classes/Usuario';
-
 export default {
   name: "colapseProfile",
   props: {
-    usuario: Usuario
+    usuario: Object
   },
   emits: ['fecharCollapse', 'logof'],
 }

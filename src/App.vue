@@ -5,6 +5,7 @@
     @logof="logof"
     :class="usuario && isOpenCollapse ? 'open-collapse' : 'close-collapse'" />
   <nav-bar :usuario="usuario"
+            v-if="$route.meta.navbar"
             @openCollapse="openCollapse"
             class="nav" />
   <router-view :usuario="usuario"

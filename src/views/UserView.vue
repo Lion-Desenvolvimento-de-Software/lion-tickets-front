@@ -21,25 +21,31 @@
         </div>
       </div>
     </div>
-    <edit-info-perfil :telefone="usuario.Telefone" />
+    <edit-info-perfil :usuario="usuario" 
+      ref="editInfo" 
+      v-model:phoneNumber="phoneNumber" 
+      v-model:dataAniversario="dataAniversario" 
+      v-model:genero="genero"
+      :isEdit="isEdit" />
     <div v-if="!isEdit" class="d-flex justify-content-center custom-button">
-      <button class="button-success">Editar</button>
+      <button class="button-success" @click="isEdit = true">Editar</button>
     </div>
     <div v-else class="d-flex justify-content-center custom-button">
-      <button class="button-success">Salvar</button>
-      <button class="button-cancel">Cancelar</button>
+      <button class="button-success" @click="updated">Salvar</button>
+      <button class="button-cancel" @click="cancelEdit">Cancelar</button>
     </div>
   </div>
 </template>
 
 <script>
+import { Usuario } from '@/assets/classes/Usuario';
 import Avatar from '@/components/avatar.vue'
 import EditInfoPerfil from '@/components/editInfoPerfil.vue';
 
 export default {
   name: 'UserView',
   props: {
-    usuario: null
+    usuario: Usuario
   },
   components: {
     Avatar,
@@ -47,7 +53,25 @@ export default {
   },
   data: () => {
     return { 
-      isEdit: false
+      isEdit: false,
+      phoneNumber: null,
+      dataAniversario: null,
+      genero: null
+    }
+  },
+  methods: {
+    async updated() {
+      var obj = {
+        PhoneNumber: this.phoneNumber,
+        DataAniversario: this.dataAniversario,
+        Genero: parseInt(this.genero)
+      }
+      this.usuario.AddData(obj);
+      this.usuario.updated();
+    },
+    cancelEdit() {
+      this.isEdit = false;
+      this.$refs['editInfo'].clearInputs();
     }
   }
 }

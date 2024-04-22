@@ -2,28 +2,49 @@
   <div class="m-4 justify-content-grid custom-form">
     <div class="d-flex align-items-center">
       <font-awesome-icon class="custom-icons" :icon="['fas', 'mobile-screen']" id="telefone" />
-      <input id="telefone" placeholder="(__) _____-____" type="text" name="telefone" :value="telefone" aria-describedby="telefone" />
+      <input :disabled="getIsDisabled" id="telefone" placeholder="(__) _____-____" 
+        type="text" 
+        name="telefone" x
+        :value="usuario.PhoneNumber"
+        @input="$emit('update:phoneNumber', $event.target.value)" 
+        aria-describedby="telefone" />
     </div>
     <div class="d-flex align-items-center">
-      <font-awesome-icon class="custom-icons" :icon="['fas', 'calendar-days']" id="telefone" />
-      <input type="date" name="dataAniversario" :value="telefone" />
+      <font-awesome-icon class="custom-icons" :icon="['fas', 'calendar-days']" id="dataAniversario" />
+      <input :disabled="getIsDisabled" type="date" name="dataAniversario" :value="usuario.DataAniversario" @input="$emit('update:dataAniversario', $event.target.value)" />
     </div>
     <div class="d-flex align-items-center">
-      <font-awesome-icon class="custom-icons" :icon="['fas', 'venus-mars']" id="telefone" />
-      <select name="genero">
-        <option :value="null">Selecione...</option>
-        <option value="1">Masculino</option>
-        <option value="2">Feminino</option>
+      <font-awesome-icon class="custom-icons" :icon="['fas', 'venus-mars']" id="genero" />
+      <select :disabled="getIsDisabled" name="genero" :value="usuario.Genero" @input="$emit('update:genero', $event.target.value)">
+        <option value="">Selecione...</option>
+        <option :value="1">Masculino</option>
+        <option :value="2">Feminino</option>
       </select>
     </div>
   </div>
 </template>
 
 <script>
+import { Usuario } from '@/assets/classes/Usuario';
+
 export default {
   name: 'EditInfoPerfil',
+  emits: ['update:phoneNumber', 'update:dataAniversario', 'update:genero'],
   props: {
-    telefone: String
+    usuario: new Usuario(),
+    isEdit: Boolean
+  },
+  computed: {
+    getIsDisabled() {
+      return this.isEdit != true;
+    }
+  },
+  methods: {
+    clearInputs() {
+      this.phoneNumber = this.usuario.PhoneNumber;
+      this.dataAniversario = this.usuario.DataAniversario;
+      this.genero = this.usuario.Genero;
+    }
   }
 }
 </script>
@@ -59,5 +80,9 @@ export default {
     flex-wrap: wrap;
     justify-content: center;
   }
+}
+
+input:disabled, select:disabled {
+  background-color: rgb(200, 200, 200, .25);
 }
 </style>

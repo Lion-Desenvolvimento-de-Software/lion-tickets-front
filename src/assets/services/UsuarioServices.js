@@ -82,5 +82,11 @@ export default {
     } catch(err) {
       throw err.response.data;
     }
+  },
+
+  async updated(obj) {
+    console.log(obj)
+    const { data } = await axios.put(`${api}/usuario`, obj);
+    return data;
   }
 }

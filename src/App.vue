@@ -1,9 +1,12 @@
 <template>
   <spinner :isLoading="loadingFethingData"></spinner>
-  <colapse-profile />
+  <collapse-profile :Usuario="usuario"
+    @fecharCollapse="fecharCollapse" 
+    @logof="logof"
+    :class="usuario && isOpenCollapse ? 'open-collapse' : 'close-collapse'" />
   <nav-bar :usuario="usuario" 
             v-if="$route.meta.navbar"
-            @logof="logof"
+            @openCollapse="openCollapse"
             class="nav" />
   <router-view :usuario="usuario"
                 @ConfirmarCodigo="ConfirmarCodigo"
@@ -23,7 +26,7 @@ import { Usuario } from './assets/classes/Usuario';
 import UsuarioServices from './assets/services/UsuarioServices';
 import spinner from './components/spinner.vue';
 import toast from './components/toasts/toast.vue';
-import colapseProfile from './components/colapses/colapseProfile.vue';
+import collapseProfile from './components/colapses/collapseProfile.vue';
 
 export default {
   name: 'app',
@@ -34,18 +37,19 @@ export default {
       usuario: new Usuario(),
 
       mensagem: null,
-      isShow: false
+      isShow: false,
+      isOpenCollapse: false
     }
   },
   compatConfig: { MODE: 3 },
   created() {
-    this.fetchData();
+    if (this.usuario?.Id == null) this.fetchData();
   },
   components: {
     navBar,
     spinner,
     toast,
-    colapseProfile
+    collapseProfile
   },
   computed: {
     getIsError() {
@@ -137,6 +141,12 @@ export default {
     showToast() {
       this.$refs['toast'].show();
     },
+    openCollapse() {
+      this.isOpenCollapse = true;
+    },
+    fecharCollapse() {
+      this.isOpenCollapse = false;
+    }
   }
 }
 </script>
@@ -165,5 +175,12 @@ nav {
 
 .home {
   padding-top: 4.5rem;
+}
+
+.open-collapse {
+  transform: translateX(0%);
+}
+.close-collapse {
+  transform: translateX(100%);
 }
 </style>

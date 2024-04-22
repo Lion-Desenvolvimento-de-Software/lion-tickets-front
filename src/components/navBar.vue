@@ -40,27 +40,12 @@
 				</div>
 				<div v-else class="dropstart">
 					<img class="nav-link dropdown-toggle btn p-0"
-						data-bs-toggle="dropdown" 
+						@click="$emit('openCollapse')"
 						aria-expanded="false" 
 						src="@/assets/images/R.png" 
 						height="30" 
 						width="30"
 						v-if="$route.params.Id != usuario.Id" />
-
-					<ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
-						<li>
-							<router-link class="dropdown-item"
-													:to="{ name: 'Usuarios', params: { Id: usuario?.Id } }">
-								Perfil
-							</router-link>
-						</li>
-						<li>
-							<hr class="dropdown-divider" />
-						</li>
-						<li>
-							<a class="btn dropdown-item" @click="$emit('logof')">Logof</a>
-						</li>
-					</ul>
 				</div>
 			</div>
 		</div>
@@ -78,6 +63,7 @@ export default {
 			default: null
 		}
 	},
+	emits: ['openCollapse'],
   components: { RouterLink },
 	data() {
 		return {

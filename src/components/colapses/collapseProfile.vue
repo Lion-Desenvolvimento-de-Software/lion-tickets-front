@@ -1,12 +1,17 @@
 <template>
   <div class="colapse-geral">
+    <div class="custom-fechar-colapse" @click="$emit('fecharCollapse')">
+      <span>X</span>
+    </div>
     <div class="custom-colapse">
       <h1>Hello</h1>
       <div class="custom-items">
         <ul>
-          <button><li>teste1</li></button>
-          <button><li>teste2</li></button>
-          <button><li>teste3</li></button>
+          <router-link :to="`/usuarios/${usuario?.Id}`"><li>Perfil</li></router-link>
+        </ul>
+        <hr/>
+        <ul>
+          <button @click="$emit('logof')"><li>Sair</li></button>
         </ul>
       </div>
     </div>
@@ -14,12 +19,23 @@
 </template>
 
 <script>
+import { Usuario } from '@/assets/classes/Usuario';
+
 export default {
-  name: "colapseProfile"
+  name: "colapseProfile",
+  props: {
+    usuario: Usuario
+  },
+  emits: ['fecharCollapse', 'logof'],
 }
 </script>
 
 <style scoped>
+a {
+  text-decoration: none;
+  color: #000;
+}
+
 .colapse-geral {
   right: 0;
   width: 200px;
@@ -27,14 +43,14 @@ export default {
   position: fixed;
   background: orange;
   z-index: 1200;
-
+  padding: 25px;
+  transition: .5s;
 }
 
 .custom-colapse {
   padding: 2em 0;
   margin: 1em 0 0 0;
   display: flex;
-  justify-content: start;
   flex-direction: column;
   gap: 25px;
   height: 100%;
@@ -65,7 +81,7 @@ export default {
   height: 2px;
   width: 0;
   margin: auto;
-  background-color: white;
+  background-color: blue;
   transition: width .5s ease;
 }
 
@@ -78,16 +94,13 @@ export default {
   width: 100%;
 }
 
-@keyframes linha-menu{
-    0% {
-        width: 0;
-        height: 2px;
-        border-bottom-color: transparent;
-    }
-    100% {
-        width: 100%;
-        height: 2px;
-        border-bottom-color: #000;
-    }
+.custom-fechar-colapse {
+  width: auto;
+  height: auto;
+  position: absolute;
+  cursor: pointer;
+}
+.custom-fechar-colapse span {
+  font-size: 18px;
 }
 </style>

@@ -22,9 +22,9 @@
       </div>
     </div>
     <edit-info-perfil :usuario="usuario" 
-      ref="editInfo" 
-      v-model:phoneNumber="phoneNumber" 
-      v-model:dataAniversario="dataAniversario" 
+      ref="editInfo"
+      v-model:phone-number="phoneNumber" 
+      v-model:data-aniversario="dataAniversario" 
       v-model:genero="genero"
       :isEdit="isEdit" />
     <div v-if="!isEdit" class="d-flex justify-content-center custom-button">
@@ -38,14 +38,14 @@
 </template>
 
 <script>
-import { Usuario } from '@/assets/classes/Usuario';
 import Avatar from '@/components/avatar.vue'
 import EditInfoPerfil from '@/components/editInfoPerfil.vue';
+import UsuarioServices from '@/assets/services/UsuarioServices';
 
 export default {
   name: 'UserView',
   props: {
-    usuario: Usuario
+    usuario: Object
   },
   components: {
     Avatar,
@@ -59,7 +59,23 @@ export default {
       genero: null
     }
   },
+  created() {
+    this.$watch(
+      () => this.$route.params.Id,
+      this.fetchData,
+      { immediate: true }
+    )
+  },
   methods: {
+    async fetchData(id) {
+      try {
+        var user = await UsuarioServices.getUserById(id);
+        this.usuario.AddData({ PhoneNumber: user.phoneNumber, DataAniversario: user.dataAniversario, Genero: user.genero });
+        this.addDataUser();
+      } catch(err) {
+        console.log(err);
+      }
+    },
     async updated() {
       var obj = {
         PhoneNumber: this.phoneNumber,
@@ -67,12 +83,24 @@ export default {
         Genero: parseInt(this.genero)
       }
       this.usuario.AddData(obj);
-      this.usuario.updated();
+      this.usuario.updated().then(res => {
+        this.isEdit = false;
+        this.$emit('setIsError', false);
+        this.$emit('setMensagemToast', res);
+        this.$emit('showToast');
+      }).catch(err => {
+        console.log(err)
+      });
+    },
+    addDataUser() {
+      this.phoneNumber = this.usuario.PhoneNumber;
+      this.dataAniversario = this.usuario.DataAniversario.split("T")[0];
+      this.genero = this.usuario.Genero;
     },
     cancelEdit() {
       this.isEdit = false;
       this.$refs['editInfo'].clearInputs();
-    }
+    },
   }
 }
 </script>

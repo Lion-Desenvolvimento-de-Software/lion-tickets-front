@@ -17,6 +17,7 @@ const routes = [
     path: '/usuarios/:Id',
     name: 'Usuarios',
     component: UserView,
+    props: true,
     meta: { navbar: true }
   },
 ]

@@ -2,7 +2,7 @@ import axios from 'axios'
 const api = '/api'
 
 export default {
-  async getUser(id) {
+  async getUserById(id) {
     const { data } = await axios.get(`${api}/usuario/${id}`);
     return data;
   },
@@ -85,7 +85,6 @@ export default {
   },
 
   async updated(obj) {
-    console.log(obj)
     const { data } = await axios.put(`${api}/usuario`, obj);
     return data;
   }

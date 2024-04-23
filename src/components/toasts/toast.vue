@@ -41,6 +41,7 @@ export default {
 .custom-toast {
   position: absolute;
   top: 0%;
+  z-index: 1500;
 }
 
 </style>

@@ -4,7 +4,13 @@
       <span>X</span>
     </div>
     <div class="custom-colapse">
-      <h1>Hello</h1>
+      <div class="d-flex w-100 justify-content-center">
+        <img class="p-0"
+              aria-expanded="false" 
+              src="@/assets/images/R.png" 
+              height="75" 
+              width="75" />
+      </div>
       <div class="custom-items">
         <ul>
           <router-link @click="$emit('fecharCollapse')" :to="`/usuarios/${usuario?.Id}`"><li>Perfil</li></router-link>

@@ -105,15 +105,16 @@ export default {
       var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
       if (!this.email && !this.isError)
           return true;
-      return this.email.match(pattern) && !this.isError ? true : false;
+      return this.email.match(pattern) ? true : false;
     },
     isPasswordValidLength() {
-      if (!this.senha)
+      if (!this.senha && !this.isError)
           return true;
       return this.senha.length > 5;
     },
     isPasswordConfirmed() {
-      if (!this.senhaConfirmada) return true;
+      if (!this.senhaConfirmada && !this.isError) return true;
+      else if (!this.senhaConfirmada && this.isError) return false;
       return this.senha === this.senhaConfirmada;
     }
   },
@@ -123,6 +124,9 @@ export default {
     },
     userName() {
       this.isError = false;
+    },
+    senha() {
+      this.isPasswordConfirmed = (this.senha === this.senhaConfirmada);
     }
   },
   props: {
@@ -139,34 +143,41 @@ export default {
       this.senhaVisivel = !this.senhaVisivel;
     },
     async ActionForm() {
-      this.$emit("setLoading", true);
-      this.clearErrors();
-      if(this.hasSingin()) {
-        if(this.isProx) {
-          UsuarioServices.hasUserName(this.userName).then(() => {
-            this.clearErrors();
-            let obj = {
-              "UserName": this.userName,
-              "Email": this.email,
-              "PasswordHash": this.senha,
-              "Genero": Number(this.genero),
-              "DataAniversario": this.dataAniversario
-            };
-            this.$emit("cadastrar", obj);
-          }).catch(err => {
-            this.$emit('setMessageError', err);
-            this.isError = true;
+      try {
+        this.$emit("setLoading", true);
+        this.clearErrors();
+        if(this.isCadastro) {
+          if (!this.hasDataRegister()) throw "Preencha os campos para prosseguir!";
+          this.isValidsRegister()
+          if(this.isProx) {
+            UsuarioServices.hasUserName(this.userName).then(() => {
+              this.clearErrors();
+              let obj = {
+                "UserName": this.userName,
+                "Email": this.email,
+                "PasswordHash": this.senha,
+                "Genero": Number(this.genero),
+                "DataAniversario": this.dataAniversario
+              };
+              this.$emit("cadastrar", obj);
+            }).catch(err => {
+              this.$emit('setMessageError', err);
+              this.isError = true;
+              this.$emit("setLoading", false);
+            });
+          }
+          else {
+            var hasEmail =  await this.hasEmail();
             this.$emit("setLoading", false);
-          });
+            if(hasEmail) this.addError("Email já cadastrado!!");
+            else this.isProx = true;
+          }
+        } else {
+          if(this.isValidEmail && this.isPasswordValidLength) this.$emit("entrar", this.email, this.senha);
         }
-        else {
-          var hasEmail =  await this.hasEmail();
-          this.$emit("setLoading", false);
-          if(hasEmail) this.addError("Email já cadastrado!!");
-          else this.isProx = true;
-        }
-      } else if(!this.isCadastro) {
-        if(this.isValidEmail && this.isPasswordValidLength) this.$emit("entrar", this.email, this.senha);
+      } catch(err) {
+        this.addError(err);
+        this.$emit("setLoading", false);
       }
     },
     
@@ -175,8 +186,7 @@ export default {
       return await UsuarioServices.hasEmail(this.email);
     },
 
-    async redefinicaoSenha(callback) {
-      console.log(callback)
+    async redefinicaoSenha() {
       this.clearErrors();
       var hasEmail = await this.hasEmail();
       if(hasEmail) this.$emit("RedefinirSenha", this.email);
@@ -193,17 +203,12 @@ export default {
       this.$emit("setMensagemSucesso", message);
       this.isError = false;
     },
-    
-    hasSingin() {
-      return this.isCadastro && this.hasData() && this.isValidsSingin();
-      
+    hasDataRegister() {
+      return this.email && this.senha && this.senhaConfirmada;
     },
-    hasData() {
-      if(this.isCadastro) return this.email && this.senha && this.senhaConfirmada;
-      else return this.email && this.senha;
-    },
-    isValidsSingin() {
-      return this.isValidEmail && this.isPasswordValidLength && this.isPasswordConfirmed;
+    isValidsRegister() {
+      if (!this.isPasswordValidLength) throw "Insira no mínimo 6 digitos na senha!";
+      if (!this.isPasswordConfirmed) throw "Senha de confirmação não é igual!";
     },
     clear() {
       this.email = '';

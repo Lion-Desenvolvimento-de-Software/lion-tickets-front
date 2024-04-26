@@ -117,9 +117,9 @@ export default {
       UsuarioServices.register(obj).then(res => {
         this.emailConfirmation = res.data.email;
         UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(response => {
-          this.$router.push(response.uri);
+          this.$router.push(response);
         }).catch(async err => {
-          await this.$emit('setIsError', true);
+          this.$emit('setIsError', true);
           mensagem = 'O Email inserido não é válido!';
           console.log(err);
         }).finally(() => {
@@ -127,8 +127,11 @@ export default {
           this.$emit('setMensagemToast', mensagem);
           this.$emit('showToast');
         })
-      }).catch(err => {
-        console.log(err);
+      }).catch(() => {
+        mensagem = "Você não completou o formulário corretamente, preencha os campos que faltam!"
+        this.$emit('setIsError', true);
+        this.$emit('setMensagemToast', mensagem);
+        this.$emit('showToast');
       })
     },
     async ReenviarConfirmacao() {

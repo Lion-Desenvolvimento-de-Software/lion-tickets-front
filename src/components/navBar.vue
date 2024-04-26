@@ -39,12 +39,13 @@
 					</RouterLink>
 				</div>
 				<div v-else class="dropstart">
-					<img class="nav-link dropdown-toggle btn p-0"
+					<img class="btn p-0 custom-imagem-perfil"
 						@click="$emit('openCollapse')"
 						aria-expanded="false" 
-						src="@/assets/images/R.png" 
-						height="30" 
-						width="30"
+						:src="usuario?.UrlImagemPerfil ?? require('@/assets/images/R.png')"
+						alt="Imagem do Perfil"
+						height="40" 
+						width="40"
 						v-if="$route.params.Id != usuario.Id" />
 				</div>
 			</div>
@@ -53,13 +54,14 @@
 </template>
 
 <script>
+import { Usuario } from '@/assets/classes/Usuario';
 import { RouterLink } from 'vue-router';
 
 export default {
 	name: 'navBar',
 	props: {
 		usuario: {
-			type: Object,
+			type: Usuario,
 			default: null
 		}
 	},
@@ -113,5 +115,9 @@ li::after {
 li:hover::after {
   width: 100%;
   background: blue;
+}
+
+.custom-imagem-perfil {
+	border-radius: 50%;
 }
 </style>

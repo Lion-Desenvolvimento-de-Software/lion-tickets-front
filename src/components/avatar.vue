@@ -1,15 +1,22 @@
 <template>
   <div class="box">
-    <label class="avatar">
-      <img src="../assets/images/R.png" />
-    </label>
+    <button class="avatar" @click="evento">
+      <img :src="urlImagemPerfil ?? require('@/assets/images/R.png')" alt="Imagem do Perfil" />
+    </button>
   </div>
 </template>
 
 <script>
 export default {
   name: 'Avatar',
-
+  props: {
+    urlImagemPerfil: null
+  },
+  methods: {
+    evento(e) {
+      console.log(e.target)
+    }
+  }
 }
 </script>
 
@@ -54,5 +61,9 @@ export default {
     box-sizing: border-box;
     border: 4px solid silver;
     border-radius: 50%;
+}
+
+.avatar img {
+  border-radius: 50%;
 }
 </style>

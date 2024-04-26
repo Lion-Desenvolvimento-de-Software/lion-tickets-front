@@ -15,8 +15,8 @@
     </div>
     <div class="d-flex align-items-center">
       <font-awesome-icon class="custom-icons" :icon="['fas', 'venus-mars']" id="genero" />
-      <select :disabled="getIsDisabled" name="genero" :value="genero" @input="$emit('update:genero', $event.target.value)">
-        <option value="">Selecione...</option>
+      <select :disabled="getIsDisabled" name="genero" :value="genero" @input="$emit('update:genero', parseInt($event.target.value))">
+        <option :value="0">Selecione...</option>
         <option :value="1">Masculino</option>
         <option :value="2">Feminino</option>
       </select>
@@ -39,13 +39,6 @@ export default {
       return this.isEdit != true;
     },
   },
-  methods: {
-    clearInputs() {
-      // this.phoneNumber = this.usuario.PhoneNumber;
-      // this.dataAniversario = this.usuario.DataAniversario;
-      // this.genero = this.usuario.Genero;
-    }
-  }
 }
 </script>
 

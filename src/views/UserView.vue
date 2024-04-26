@@ -1,7 +1,7 @@
 <template>
   <div class="container custom-component-general my-5">
     <div class="wreaper h-100">
-      <avatar class="mb-5"/>
+      <avatar class="mb-5" :urlImagemPerfil="urlImagemPerfil"/>
       <div class="w-100">
         <h2>{{ usuario.UserName }}</h2>
         <p>{{ usuario.Email }}</p>
@@ -45,7 +45,8 @@ import UsuarioServices from '@/assets/services/UsuarioServices';
 export default {
   name: 'UserView',
   props: {
-    usuario: Object
+    usuario: Object,
+    isUserYou: Boolean
   },
   components: {
     Avatar,
@@ -56,7 +57,8 @@ export default {
       isEdit: false,
       phoneNumber: null,
       dataAniversario: null,
-      genero: null
+      genero: null,
+      urlImagemPerfil: null
     }
   },
   created() {
@@ -70,8 +72,9 @@ export default {
     async fetchData(id) {
       try {
         var user = await UsuarioServices.getUserById(id);
-        this.usuario.AddData({ PhoneNumber: user.phoneNumber, DataAniversario: user.dataAniversario, Genero: user.genero });
-        this.addDataUser();
+        let obj = { PhoneNumber: user.phoneNumber, DataAniversario: user.dataAniversario, Genero: user.genero ?? 0 };
+        this.addDataUser(obj);
+        this.addImage(user.urlImagemPerfil);
       } catch(err) {
         console.log(err);
       }
@@ -80,7 +83,7 @@ export default {
       var obj = {
         PhoneNumber: this.phoneNumber,
         DataAniversario: this.dataAniversario,
-        Genero: parseInt(this.genero)
+        Genero: this.genero != 0 ? this.genero : null
       }
       this.usuario.AddData(obj);
       this.usuario.updated().then(res => {
@@ -92,14 +95,17 @@ export default {
         console.log(err)
       });
     },
-    addDataUser() {
-      this.phoneNumber = this.usuario.PhoneNumber;
-      this.dataAniversario = this.usuario.DataAniversario.split("T")[0];
-      this.genero = this.usuario.Genero;
+    addDataUser(user) {
+      this.phoneNumber = user.PhoneNumber;
+      this.dataAniversario = user.DataAniversario.split("T")[0];
+      this.genero = user.Genero;
+    },
+    addImage(url) {
+      this.urlImagemPerfil = url;
     },
     cancelEdit() {
       this.isEdit = false;
-      this.$refs['editInfo'].clearInputs();
+      this.addDataUser(this.usuario);
     },
   }
 }

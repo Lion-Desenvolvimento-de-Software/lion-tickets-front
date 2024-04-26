@@ -77,7 +77,9 @@ export default {
             UserName: res.userName,
             Email: res.email,
             PhoneNumber: res.phoneNumber,
-            Genero: res.genero
+            Genero: res.genero,
+            DataAniversario: res.dataAniversario.split("T")[0],
+            UrlImagemPerfil: res.urlImagemPerfil
           }
           this.usuario.AddData(obj);
           window.localStorage.setItem("isAuthenticated", true);

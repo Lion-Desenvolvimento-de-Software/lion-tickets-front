@@ -35,7 +35,7 @@ export default {
     },
     model: String
   },
-  emits: ['update:model'],
+  emits: ['update:model', 'ViewPassword'],
 }
 </script>
 
@@ -97,6 +97,7 @@ svg {
 
 .visionPassword {
   cursor: pointer;
+  user-select: none;
 }
 .invalid-input {
   border-bottom-color: red;

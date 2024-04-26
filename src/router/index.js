@@ -28,10 +28,10 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from) => {
-  if(!await canUserAccess(to)) return { path: from.path }
+  if(!canUserAccess(to)) return { path: from.path }
 })
 
-async function canUserAccess(to) {
+function canUserAccess(to) {
   if(window.localStorage.getItem("isAuthenticated") && to.name == 'Login') return false;
   return true;
 }

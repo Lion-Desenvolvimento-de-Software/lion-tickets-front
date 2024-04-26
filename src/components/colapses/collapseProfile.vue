@@ -5,9 +5,10 @@
     </div>
     <div class="custom-colapse">
       <div class="d-flex w-100 justify-content-center">
-        <img class="p-0"
+        <img class="p-0 custom-imagem-perfil"
               aria-expanded="false" 
-              src="@/assets/images/R.png" 
+              :src="usuario?.UrlImagemPerfil ?? require('@/assets/images/R.png')"
+              alt="Imagem do Perfil"
               height="75" 
               width="75" />
       </div>
@@ -106,5 +107,9 @@ a {
 }
 .custom-fechar-colapse span {
   font-size: 18px;
+}
+
+.custom-imagem-perfil {
+  border-radius: 50%;
 }
 </style>

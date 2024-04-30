@@ -126,7 +126,7 @@ export default {
       this.isError = false;
     },
     senha() {
-      this.isPasswordConfirmed = (this.senha === this.senhaConfirmada);
+      if(this.isCadastro) this.isPasswordConfirmed = (this.senha === this.senhaConfirmada);
     }
   },
   props: {
@@ -146,9 +146,11 @@ export default {
       try {
         this.$emit("setLoading", true);
         this.clearErrors();
+        console.log("Aqui 1")
         if(this.isCadastro) {
-          if (!this.hasDataRegister()) throw "Preencha os campos para prosseguir!";
+          if (!this.hasDataRegister() && !this.isProx) throw "Preencha os campos para prosseguir!";
           this.isValidsRegister()
+          console.log("aqui 2")
           if(this.isProx) {
             UsuarioServices.hasUserName(this.userName).then(() => {
               this.clearErrors();
@@ -160,6 +162,7 @@ export default {
                 "DataAniversario": this.dataAniversario
               };
               this.$emit("cadastrar", obj);
+              console.log("aqui 3")
             }).catch(err => {
               this.$emit('setMessageError', err);
               this.isError = true;

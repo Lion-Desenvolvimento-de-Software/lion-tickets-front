@@ -42,7 +42,7 @@
 					<img class="btn p-0 custom-imagem-perfil"
 						@click="$emit('openCollapse')"
 						aria-expanded="false" 
-						:src="usuario?.UrlImagemPerfil ?? require('@/assets/images/R.png')"
+						:src="getImagemPerfil"
 						alt="Imagem do Perfil"
 						height="40" 
 						width="40"
@@ -74,6 +74,11 @@ export default {
 	},
 	mounted() {
 		window.addEventListener("scroll", this.onScroll)
+	},
+	computed: {
+		getImagemPerfil() {
+			return !this.usuario?.UrlImagemPerfil ? require("@/assets/images/R.png") : this.usuario?.UrlImagemPerfil;
+		}
 	},
 	methods: {
 		onScroll() {

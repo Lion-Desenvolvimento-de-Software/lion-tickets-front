@@ -1,7 +1,7 @@
 <template>
   <div class="container custom-component-general my-5">
     <div class="wreaper h-100">
-      <avatar class="mb-5" :urlImagemPerfil="urlImagemPerfil"/>
+      <avatar class="mb-5" :urlImagemPerfil="urlImagemPerfil" @alterarImagem="$refs['modal-anexo-imagem'].show()"/>
       <div class="w-100">
         <h2>{{ usuario.UserName }}</h2>
         <p>{{ usuario.Email }}</p>
@@ -34,6 +34,7 @@
       <button class="button-success" @click="updated">Salvar</button>
       <button class="button-cancel" @click="cancelEdit">Cancelar</button>
     </div>
+    <modal-anexo-imagem id="modal_anexo_imagem" ref="modal-anexo-imagem" />
   </div>
 </template>
 
@@ -41,6 +42,7 @@
 import Avatar from '@/components/avatar.vue'
 import EditInfoPerfil from '@/components/editInfoPerfil.vue';
 import UsuarioServices from '@/assets/services/UsuarioServices';
+import ModalAnexoImagem from '@/components/modals/ModalAnexoImagem.vue';
 
 export default {
   name: 'UserView',
@@ -50,7 +52,8 @@ export default {
   },
   components: {
     Avatar,
-    EditInfoPerfil
+    EditInfoPerfil,
+    ModalAnexoImagem
   },
   data: () => {
     return { 
@@ -60,6 +63,9 @@ export default {
       genero: null,
       urlImagemPerfil: null
     }
+  },
+  beforeCreate() {
+    console.log(this.isEdit)
   },
   created() {
     this.$watch(

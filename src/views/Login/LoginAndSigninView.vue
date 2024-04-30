@@ -119,11 +119,12 @@ export default {
         UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(response => {
           this.$router.push(response);
         }).catch(async err => {
-          this.$emit('setIsError', true);
+          this.isError = true;
           mensagem = 'O Email inserido não é válido!';
           console.log(err);
         }).finally(() => {
           this.isLoading = false;
+          this.$emit('setIsError', this.isError);
           this.$emit('setMensagemToast', mensagem);
           this.$emit('showToast');
         })
@@ -132,6 +133,7 @@ export default {
         this.$emit('setIsError', true);
         this.$emit('setMensagemToast', mensagem);
         this.$emit('showToast');
+        this.isLoading = false;
       })
     },
     async ReenviarConfirmacao() {

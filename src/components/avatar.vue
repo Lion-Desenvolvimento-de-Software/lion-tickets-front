@@ -1,7 +1,7 @@
 <template>
   <div class="box">
-    <button class="avatar" @click="evento">
-      <img :src="urlImagemPerfil ?? require('@/assets/images/R.png')" alt="Imagem do Perfil" />
+    <button class="avatar" @click="$emit('alterarImagem')">
+      <img :src="getImagemPerfil" alt="Imagem do Perfil" />
     </button>
   </div>
 </template>
@@ -12,11 +12,12 @@ export default {
   props: {
     urlImagemPerfil: null
   },
-  methods: {
-    evento(e) {
-      console.log(e.target)
-    }
-  }
+  computed: {
+    getImagemPerfil() {
+			return !this.urlImagemPerfil ? require("@/assets/images/R.png") : this.urlImagemPerfil;
+		}
+  },
+  emits: ['alterarImagem']
 }
 </script>
 

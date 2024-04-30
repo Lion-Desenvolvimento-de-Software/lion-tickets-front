@@ -7,7 +7,7 @@
       <div class="d-flex w-100 justify-content-center">
         <img class="p-0 custom-imagem-perfil"
               aria-expanded="false" 
-              :src="usuario?.UrlImagemPerfil ?? require('@/assets/images/R.png')"
+              :src="getImagemPerfil"
               alt="Imagem do Perfil"
               height="75" 
               width="75" />
@@ -30,6 +30,11 @@ export default {
   name: "colapseProfile",
   props: {
     usuario: Object
+  },
+  computed: {
+    getImagemPerfil() {
+			return !this.usuario?.UrlImagemPerfil ? require("@/assets/images/R.png") : this.usuario?.UrlImagemPerfil;
+		}
   },
   emits: ['fecharCollapse', 'logof'],
 }

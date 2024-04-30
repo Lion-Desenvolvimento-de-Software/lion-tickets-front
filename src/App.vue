@@ -57,7 +57,10 @@ export default {
     },
     getUsuario() {
       return this.usuario;
-    }
+    },
+		getImagemPerfil() {
+			return !this.usuario?.UrlImagemPerfil ? require("@/assets/images/R.png") : this.usuario?.UrlImagemPerfil;
+		}
   },
   methods: {
     setUsuario(user) {

@@ -64,9 +64,6 @@ export default {
       urlImagemPerfil: null
     }
   },
-  beforeCreate() {
-    console.log(this.isEdit)
-  },
   created() {
     this.$watch(
       () => this.$route.params.Id,

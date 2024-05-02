@@ -11,7 +11,8 @@
         <div class="modal-body">
           <div class="custom-detail-file">
             <div class="custom-anexo-file">
-              <input type="file" />
+              <span class="file-custom">{{ file?.name ?? 'Selecione um arquivo...' }}</span>
+              <input type="file" accept="image/png, image/jpeg" @change="previwFile">
             </div>
           </div>
         </div>
@@ -31,6 +32,11 @@ let thisModalObj = null;
 
 export default {
   name: 'ModalAnexoImagem',
+  data() {
+    return {
+      file: null
+    }
+  },
   mounted: () => {
     thisModalObj = new Modal($('#modal_anexo_imagem'));
     thisModalObj.show();
@@ -41,11 +47,77 @@ export default {
     },
     hide() {
       thisModalObj.hide()
+    },
+    previwFile(event) {
+      this.file = event.target.files[0];
     }
   }
 }
 </script>
 
 <style scoped>
+input[type="file"] {
+  display: none;
+}
+.custom-detail-file {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
 
+.custom-anexo-file {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  width: 100%;
+  height: 75%;
+  margin: 0 50px;
+  border: 1px solid #000;
+  border-radius: 15px;
+}
+
+.custom-anexo-file span {
+  position: absolute;
+  left: 0;
+  padding: 0 8px;
+  height: 100%;
+  width: calc(100% - 75px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: start;
+  align-content: center;
+}
+
+.custom-anexo-file input {
+  position: absolute;
+  inset: 0;
+  font-size: 20px;
+  opacity: 0;
+  height: 100%;
+  width: 100%;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.custom-anexo-file input::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.custom-anexo-file::before {
+  content: "Anexar";
+  padding: 7px 15px;
+  background-color: #ccc;
+  color: #333;
+  height: 100%;
+  position: absolute;
+  right: 0;
+}
 </style>

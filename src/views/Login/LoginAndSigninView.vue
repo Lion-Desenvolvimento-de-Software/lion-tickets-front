@@ -117,7 +117,8 @@ export default {
       UsuarioServices.register(obj).then(res => {
         this.emailConfirmation = res.data.email;
         UsuarioServices.SendConfirmationEmail(this.emailConfirmation).then(response => {
-          this.$router.push(response);
+          mensagem = response.mensagem;
+          this.$router.push(response.uri);
         }).catch(async err => {
           this.isError = true;
           mensagem = 'O Email inserido não é válido!';

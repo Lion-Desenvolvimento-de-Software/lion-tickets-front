@@ -81,7 +81,7 @@ export default {
             Email: res.email,
             PhoneNumber: res.phoneNumber,
             Genero: res.genero,
-            DataAniversario: res.dataAniversario.split("T")[0],
+            DataAniversario: res.dataAniversario?.split("T")[0],
             UrlImagemPerfil: res.urlImagemPerfil
           }
           this.usuario.AddData(obj);

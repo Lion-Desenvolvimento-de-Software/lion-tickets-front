@@ -100,7 +100,7 @@ export default {
     },
     addDataUser(user) {
       this.phoneNumber = user.PhoneNumber;
-      this.dataAniversario = user.DataAniversario.split("T")[0];
+      this.dataAniversario = user.DataAniversario?.split("T")[0];
       this.genero = user.Genero;
     },
     addImage(url) {

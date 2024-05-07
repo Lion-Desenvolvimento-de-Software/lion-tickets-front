@@ -13,6 +13,7 @@ library.add(...icons);
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
 import "@/assets/styles/global.css"
+import 'vue-advanced-cropper/dist/style.css';
 
 axios.defaults.baseURL = 'https://localhost:44361'
 axios.defaults.headers.common['Content-Type'] = 'application/json'

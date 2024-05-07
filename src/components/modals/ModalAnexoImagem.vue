@@ -12,8 +12,28 @@
           <div class="custom-detail-file">
             <div class="custom-anexo-file">
               <span class="file-custom">{{ file?.name ?? 'Selecione um arquivo...' }}</span>
-              <input type="file" accept="image/png, image/jpeg" @change="previwFile">
+              <input type="file" accept="image/png, image/jpeg" @change="handleFileChange">
             </div>
+          </div>
+          <div v-if="file">
+            <cropper class="cropper"
+                  :src="imageData"
+                  :stancil-size="{
+                    width: 300,
+                    height: 300
+                  }"
+                  :stencil-props="{
+                    handlers: {},
+                    aspectRatio: 1
+                  }"
+                  :debounce="false"
+                  @change="change" />
+
+            <preview :width="120"
+                    :height="120"
+                    :image="result.image"
+                    :coordinates="result.coordinates"
+                    class="custom-preview" />
           </div>
         </div>
         <div class="modal-footer">
@@ -28,14 +48,30 @@
 <script>
 import $ from 'jquery'
 import { Modal } from "bootstrap";
+
+import 'vue-advanced-cropper/dist/theme.compact.css';
+
+import { Cropper, Preview } from 'vue-advanced-cropper';
+import 'vue-advanced-cropper/dist/style.css';
+
 let thisModalObj = null;
 
 export default {
   name: 'ModalAnexoImagem',
   data() {
     return {
-      file: null
+      file: null,
+      cropper: null,
+      imageData: null,
+      result: {
+				coordinates: null,
+				image: null
+			}
     }
+  },
+  components: {
+    Cropper,
+    Preview,
   },
   mounted: () => {
     thisModalObj = new Modal($('#modal_anexo_imagem'));
@@ -48,9 +84,22 @@ export default {
     hide() {
       thisModalObj.hide()
     },
-    previwFile(event) {
+    handleFileChange(event) {
+      if (event.target.files.length <= 0) return;
       this.file = event.target.files[0];
-    }
+      var reader = new FileReader();
+      reader.onload = (e) => {
+        this.imageData = e.target.result;
+      };
+      reader.readAsDataURL(this.file)
+    },
+    change({ coordinates, image }) {
+      this.result = {
+				coordinates,
+				image
+			};
+      console.log(coordinates)
+		}
   }
 }
 </script>
@@ -119,5 +168,16 @@ input[type="file"] {
   height: 100%;
   position: absolute;
   right: 0;
+}
+
+.cropper {
+	height: 400px;
+	width: 600px;
+	background: #DDD;
+}
+
+.custom-preview {
+  border-radius: 50%;
+  margin: 10px;
 }
 </style>

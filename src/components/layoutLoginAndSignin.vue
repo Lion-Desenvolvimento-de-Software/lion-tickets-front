@@ -146,33 +146,23 @@ export default {
       try {
         this.$emit("setLoading", true);
         this.clearErrors();
-        console.log("Aqui 1")
         if(this.isCadastro) {
-          if (!this.hasDataRegister() && !this.isProx) throw "Preencha os campos para prosseguir!";
+          this.hasDataRegister();
           this.isValidsRegister()
-          console.log("aqui 2")
           if(this.isProx) {
-            UsuarioServices.hasUserName(this.userName).then(() => {
-              this.clearErrors();
-              let obj = {
-                "UserName": this.userName,
-                "Email": this.email,
-                "PasswordHash": this.senha,
-                "Genero": Number(this.genero),
-                "DataAniversario": this.dataAniversario
-              };
-              this.$emit("cadastrar", obj);
-              console.log("aqui 3")
-            }).catch(err => {
-              this.$emit('setMessageError', err);
-              this.isError = true;
-              this.$emit("setLoading", false);
-            });
+            let obj = {
+              "UserName": this.userName,
+              "Email": this.email,
+              "PasswordHash": this.senha,
+              "Genero": Number(this.genero),
+              "DataAniversario": this.dataAniversario
+            };
+            this.$emit("cadastrar", obj);
           }
           else {
             var hasEmail =  await this.hasEmail();
             this.$emit("setLoading", false);
-            if(hasEmail) this.addError("Email já cadastrado!!");
+            if(hasEmail) throw "Email já cadastrado!!";
             else this.isProx = true;
           }
         } else {
@@ -200,14 +190,16 @@ export default {
       this.$emit('setMessageError', message);
       this.isError = true;
       if(this.isCadastro) this.isProx = false;
+      this.$emit("setLoading", false);
     },
 
     addSuccess(message) {
       this.$emit("setMensagemSucesso", message);
       this.isError = false;
+      this.$emit("setLoading", false);
     },
     hasDataRegister() {
-      return this.email && this.senha && this.senhaConfirmada;
+      if((!this.email || !this.senha || !this.senhaConfirmada) && !this.isProx) throw "Preencha os campos para prosseguir!";
     },
     isValidsRegister() {
       if (!this.isPasswordValidLength) throw "Insira no mínimo 6 digitos na senha!";

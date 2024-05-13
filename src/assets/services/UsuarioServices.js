@@ -39,8 +39,12 @@ export default {
   },
 
   async register(userData) {
-    var response = await axios.post(`/Account/Register`, userData);
-    return response;
+    try{
+      var response = await axios.post(`/Account/Register`, userData);
+      return response;
+    } catch(err) {
+      throw err.response.data
+    }
   },
 
   async login(dados) {

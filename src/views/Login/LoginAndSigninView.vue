@@ -129,11 +129,9 @@ export default {
           this.$emit('setMensagemToast', mensagem);
           this.$emit('showToast');
         })
-      }).catch(() => {
-        mensagem = "Você não completou o formulário corretamente, preencha os campos que faltam!"
-        this.$emit('setIsError', true);
-        this.$emit('setMensagemToast', mensagem);
-        this.$emit('showToast');
+      }).catch(err => {
+        mensagem = err
+        this.setMessageError(mensagem)
         this.isLoading = false;
       })
     },

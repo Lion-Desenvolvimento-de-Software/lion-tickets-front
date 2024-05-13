@@ -75,7 +75,6 @@ export default {
   },
   mounted: () => {
     thisModalObj = new Modal($('#modal_anexo_imagem'));
-    thisModalObj.show();
   },
   methods: {
     show() {

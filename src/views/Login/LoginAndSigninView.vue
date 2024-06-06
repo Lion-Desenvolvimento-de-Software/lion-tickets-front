@@ -43,7 +43,7 @@
 
 <script>
 import { Usuario } from '@/assets/classes/Usuario';
-import UsuarioServices from '@/assets/services/UsuarioServices';
+import UsuarioServices from '@/services/UsuarioServices';
 import layoutFormulario from '@/components/layoutLoginAndSignin.vue';
 import spinner from '@/components/spinner.vue';
 

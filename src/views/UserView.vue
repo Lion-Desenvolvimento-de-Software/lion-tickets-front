@@ -41,7 +41,7 @@
 <script>
 import Avatar from '@/components/avatar.vue'
 import EditInfoPerfil from '@/components/editInfoPerfil.vue';
-import UsuarioServices from '@/assets/services/UsuarioServices';
+import UsuarioServices from '@/services/UsuarioServices';
 import ModalAnexoImagem from '@/components/modals/ModalAnexoImagem.vue';
 
 export default {

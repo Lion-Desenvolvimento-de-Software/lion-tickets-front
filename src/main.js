@@ -4,6 +4,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import axios from 'axios'
+import userManager from './services/userManager'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import icons from './assets/icons/icons.js'
@@ -15,9 +16,34 @@ import "bootstrap"
 import "@/assets/styles/global.css"
 import 'vue-advanced-cropper/dist/style.css';
 
-axios.defaults.baseURL = 'https://localhost:44361'
+axios.defaults.baseURL = 'https://localhost:4440'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 axios.defaults.withCredentials = true
 
+axios.interceptors.request.use(async config => {
+  await userManager.getUser().then(user => {
+    console.log(user);
+    if (user && !user.expired) {
+      config.headers.Authorization = `Bearer ${user.access_token}`;
+    }
+  });
 
-createApp(App).component("font-awesome-icon", FontAwesomeIcon).use(store).use(router).mount('#app')
+  return config
+}, error => {
+  return Promise.reject(error);
+});
+
+axios.interceptors.response.use(response => {
+  console.log("Hello")
+  return response;
+}, async (error) => {
+  if (error.response && error.response.status === 401) {
+    await userManager.signinRedirect();
+  }
+  return Promise.reject(error);
+})
+
+const app = createApp(App);
+
+app.component("font-awesome-icon", FontAwesomeIcon).use(store).use(router).mount('#app')
+

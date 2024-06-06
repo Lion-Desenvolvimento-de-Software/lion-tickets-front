@@ -9,12 +9,16 @@ export default {
 
   async GetUserAuthenticated() {
     try {
-      const { data } = await axios.get(`/Account/GetUserAuthenticated`);
-      return data;
+      axios.get('/api/v1/Product').then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err);
+      })
+      // const response = await axios.get(`/api/v1/Product`);
+      // console.log(response?.data)
+      // return response?.data;
     } catch(err) {
-      if(err.response.status == 401) {
-        throw "Você não está logado!";
-      }
+      console.log(err)
     }
     
   },
@@ -49,7 +53,7 @@ export default {
 
   async login(dados) {
     try {
-      var { data } = await axios.post(`/Account/login`, dados);
+      var { data } = await axios.post(`https://localhost:44360/Account/login`, dados);
       return data;
     } catch(err) {
       console.log(err)

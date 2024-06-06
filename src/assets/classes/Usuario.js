@@ -1,4 +1,4 @@
-import usuarioServices from '@/assets/services/UsuarioServices'
+import usuarioServices from '@/services/UsuarioServices'
 
 export class Usuario {
   constructor() {
@@ -14,6 +14,9 @@ export class Usuario {
   AddData(userData) {
     Object.assign(this, userData);
     if (this.Id == null) delete this['Id'];
+  }
+  clearData() {
+    Object.assign(this, null);
   }
 
   async post() {

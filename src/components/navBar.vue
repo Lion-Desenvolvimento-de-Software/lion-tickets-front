@@ -34,9 +34,9 @@
 					</li>
 				</ul>
 				<div v-if="!usuario?.Id" class="d-flex justify-content-end">
-					<RouterLink to="/login">
-						<button class="btn btn-success mx-1">Entrar</button>
-					</RouterLink>
+					<!--<RouterLink to="/login">-->
+						<button class="btn btn-success mx-1" @click="login">Entrar</button>
+					<!--</RouterLink>-->
 				</div>
 				<div v-else class="dropstart">
 					<img class="btn p-0 custom-imagem-perfil"
@@ -56,6 +56,7 @@
 <script>
 import { Usuario } from '@/assets/classes/Usuario';
 import { RouterLink } from 'vue-router';
+import userManager from '@/services/userManager';
 
 export default {
 	name: 'navBar',
@@ -83,6 +84,14 @@ export default {
 	methods: {
 		onScroll() {
 			this.BGHader = window.top.scrollY < 50 ? 'bg-transparent' : 'bg-info-subtle'
+		},
+		login() {
+			console.log("Iniciando processo de login...");
+      userManager.signinRedirect().then(() => {
+        console.log("Redirecionamento concluído.");
+      }).catch(error => {
+        console.error("Erro durante o redirecionamento:", error);
+      });
 		}
 	}
 }

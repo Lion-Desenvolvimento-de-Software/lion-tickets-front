@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ProdutosView from '@/views/ProdutosView.vue'
 import UserView from '@/views/UserView.vue'
+import callback from '@/views/callback'
+
+import userManager from '@/services/userManager'
 
 const routes = [
   ...require(/* webpackChunkName: "login" */ '@/router/Login/LoginRoutes').default,
@@ -18,8 +21,17 @@ const routes = [
     name: 'Usuarios',
     component: UserView,
     props: true,
-    meta: { navbar: true }
+    meta: { 
+      navbar: true, 
+      requiresAuth: true
+    }
   },
+  {
+    path: '/callback',
+    name: 'Callback',
+    component: callback,
+    meta: { navbar: false }
+  }
 ]
 
 const router = createRouter({
@@ -27,13 +39,20 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach(async (to, from) => {
-  if(!canUserAccess(to)) return { path: from.path }
-})
-
-function canUserAccess(to) {
-  if(window.localStorage.getItem("isAuthenticated") && to.name == 'Login') return false;
-  return true;
+const isAuthenticated = async () => {
+  return await userManager.getUser();
 }
+
+router.beforeEach(async (to, from, next) => {
+
+  if (to.matched.some(record => record.meta.requiresAuth)){
+    if(!isAuthenticated() && this.$route.name == 'login') next({ path: '/login', query: { redirect: to.fullPath } });
+    else next();
+  } else {
+    console.log(to, from);
+    if (isAuthenticated() && to.path == '/login') next({ path: from.path })
+    next();
+  }
+})
 
 export default router

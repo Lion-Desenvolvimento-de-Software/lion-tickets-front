@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import UsuarioServices from '@/assets/services/UsuarioServices';
+import UsuarioServices from '@/services/UsuarioServices';
 import inputWithIcon from './inputs/inputWithIcon.vue'
 import selectWithIcon from './inputs/selectWithIcon.vue';
 import inputDate from './inputs/inputDate.vue';

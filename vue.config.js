@@ -11,5 +11,14 @@ module.exports = defineConfig({
     // devServer: {
     //   https: true
     // }
+  },
+  chainWebpack: config => {
+    config.plugin('html').tap(args => {
+      args[0].meta = {
+        // Adicione a CSP aqui
+        'http-equiv': { 'http-equiv': 'Content-Security-Policy', 'content': "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://localhost:44360;" }
+      }
+      return args
+    })
   }
 })

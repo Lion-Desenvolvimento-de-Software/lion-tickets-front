@@ -23,10 +23,11 @@
 <script>
 import navBar from '@/components/navBar.vue'
 import { Usuario } from './assets/classes/Usuario';
-import UsuarioServices from './assets/services/UsuarioServices';
+import UsuarioServices from './services/UsuarioServices';
 import spinner from './components/spinner.vue';
 import toast from './components/toasts/toast.vue';
 import collapseProfile from './components/colapses/collapseProfile.vue';
+import userManager from './services/userManager';
 
 export default {
   name: 'app',
@@ -43,7 +44,15 @@ export default {
   },
   compatConfig: { MODE: 3 },
   created() {
-    this.fetchData();
+    userManager.getUser().then(res => {
+      if(!res) throw "usuário deslogado!";
+      if(res.expired) throw "usuário deslogado!";
+      console.log("Teste = ", res);
+      this.setUsuario(res.profile);
+    }).catch(async err => {
+      console.log("Erro = ", err);
+      userManager.removeUser();
+    });
   },
   components: {
     navBar,
@@ -65,10 +74,14 @@ export default {
   methods: {
     setUsuario(user) {
       let obj = {
-        Id: user.id,
+        Id: user.sub,
+        UserName: user.name,
         Email: user.email,
-        UserName: user.userName
-      };
+        PhoneNumber: user.phone_number,
+        Genero: user.gender,
+        DataAniversario: user.birthdate,
+        //UrlImagemPerfil: res.profile.urlImagemPerfil
+      }
       this.usuario.AddData(obj);
     },
     async fetchData() {
@@ -99,7 +112,7 @@ export default {
     },
     async logof() {
       this.usuario = null;
-      await UsuarioServices.logof();
+      await userManager.signoutRedirect();
       this.isOpenCollapse = false;
     },
     async ConfirmarCodigo(code) {

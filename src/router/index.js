@@ -9,6 +9,7 @@ const routes = [
   ...require(/* webpackChunkName: "Home" */ '@/router/Home').default,
   ...require(/* webpackChunkName: "Eventos" */ '@/router/Eventos/Eventos').default,
   ...require(/* webpackChunkName: "ConfirmacaoCodigo" */ '@/router/ConfirmacaoCodigo').default,
+  ...require(/* webpackChunkName: "ConfirmacaoCodigo" */ '@/router/admin/LoginAdmin').default,
   {
     path: '/produtos/:productsName?/:id?',
     name: 'Produtos',

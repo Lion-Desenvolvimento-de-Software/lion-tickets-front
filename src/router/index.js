@@ -6,7 +6,6 @@ import callback from '@/views/callback'
 import userManager from '@/services/userManager'
 
 const routes = [
-  ...require(/* webpackChunkName: "login" */ '@/router/Login/LoginRoutes').default,
   ...require(/* webpackChunkName: "Home" */ '@/router/Home').default,
   ...require(/* webpackChunkName: "Eventos" */ '@/router/Eventos/Eventos').default,
   ...require(/* webpackChunkName: "ConfirmacaoCodigo" */ '@/router/ConfirmacaoCodigo').default,

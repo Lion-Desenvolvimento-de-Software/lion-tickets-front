@@ -58,7 +58,7 @@ export default {
     navBar,
     spinner,
     toast,
-    collapseProfile
+    collapseProfile,
   },
   computed: {
     getIsError() {

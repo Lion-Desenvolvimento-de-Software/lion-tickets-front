@@ -7,8 +7,20 @@ export default [
   },
   {
     path: '/admin',
-    name: 'Home',
+    name: 'HomeAdmin',
     component: () => import('@/views/admin/home'),
-    meta: { navbar: false }
-  }
+    meta: { navbar: false },
+    children: [
+      {
+        path: '',
+        name: 'AdminHome',
+        component: () => import('@/views/admin/dashboard'),
+      },
+      {
+        path: 'dashboard',
+        name: 'AdminDashboard',
+        component: () => import('@/views/admin/dashboard'),
+      },
+    ]
+  },
 ]

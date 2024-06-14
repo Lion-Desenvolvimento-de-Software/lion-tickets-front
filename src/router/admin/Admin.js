@@ -13,13 +13,28 @@ export default [
     children: [
       {
         path: '',
-        name: 'AdminHome',
+        name: 'HomeAdmin',
         component: () => import('@/views/admin/dashboard'),
       },
       {
         path: 'dashboard',
-        name: 'AdminDashboard',
+        name: 'DashboardAdmin',
         component: () => import('@/views/admin/dashboard'),
+      },
+      {
+        path: 'produtos',
+        name: 'ProdutosAdmin',
+        component: () => import('@/views/admin/produtos'),
+      },
+      {
+        path: 'empresas',
+        name: 'EmpresasAdmin',
+        component: () => import('@/views/admin/empresas'),
+      },
+      {
+        path: 'usuarios',
+        name: 'UsuariosAdmin',
+        component: () => import('@/views/admin/usuarios'),
       },
     ]
   },

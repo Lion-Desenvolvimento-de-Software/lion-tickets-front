@@ -42,6 +42,7 @@ export default {
   padding: 15px 0;
   background-color: orange;
   box-shadow: 1px 0px 7px 1px rgba(0, 0, 0, .5);
+  font-size: 18px;
 }
 
 .custom-pages {
@@ -62,6 +63,8 @@ export default {
   background: linear-gradient(to left, orange 50%, lightblue 50%) right;
   background-size: 200%;
   transition: .2s ease-out;
+  height: 35px;
+  align-content: center;
 }
 
   .custom-items .item:hover {
@@ -72,6 +75,7 @@ export default {
 .custom-items .item a {
   color: black;
   display: block;
+  height: 100%;
 }
 
 .selecionado {

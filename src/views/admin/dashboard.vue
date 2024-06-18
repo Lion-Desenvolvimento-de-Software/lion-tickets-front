@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-principal">
+  <div class="custom-principal mb-2">
     <div class="layout">
       <div class="grid-item">
         <DoughnutChart style="width: 100%; height: 100%;" :options="options" :chartData="testData" />
@@ -57,7 +57,7 @@ export default {
   height: 100%;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: 1fr 1fr;
   gap: 10px;
   padding: 15px;
 }
@@ -69,8 +69,7 @@ export default {
 
 .grid-item {
   padding: 1em;
-  max-width: 690px;
-  width: auto !important;
-  height: 350px !important;
+  width: 100% !important;
+  height: 360px !important;
 }
 </style>

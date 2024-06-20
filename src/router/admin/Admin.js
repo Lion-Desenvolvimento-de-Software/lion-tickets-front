@@ -29,7 +29,14 @@ export default [
       {
         path: 'empresas',
         name: 'EmpresasAdmin',
-        component: () => import('@/views/admin/empresas'),
+        component: () => import('@/views/admin/Empresa/empresas'),
+        children: [
+          {
+            path: 'new',
+            name: 'EmpresasAdmin',
+            component: () => import('@/views/admin/Empresa/Form')
+          }
+        ]
       },
       {
         path: 'usuarios',

@@ -4,11 +4,11 @@
       <div class="row">
         <div class="col d-flex custom-input">
           <label>Nome da empresa:</label>
-          <input type="text" name="NomeEmpresa" autofocus />
+          <input type="text" name="NomeEmpresa" placeholder="Insira o nome da empresa" autofocus />
         </div>
         <div class="col d-flex custom-input">
           <label>CNPJ:</label>
-          <input type="text" name="NomeEmpresa" />
+          <input type="text" name="CNPJ" placeholder="99999999/0001-76" />
         </div>
       </div>
       <div class="row">
@@ -19,9 +19,8 @@
       </div>
       <div class="row">
         <div class="col d-flex custom-button">
-          <button class="btn btn-success">
-            Salvar
-          </button>
+          <button class="btn btn-outline-secondary">Cancelar</button>
+          <button class="btn btn-success">Salvar</button>
         </div>
       </div>
     </div>
@@ -64,6 +63,9 @@ export default {
 .custom-button {
   width: 100%;
   justify-content: end;
-  margin: 5px;
+}
+
+.custom-button button {
+  margin: 0 5px;
 }
 </style>

@@ -19,7 +19,7 @@ import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js';
 
 Chart.register(DoughnutController, ArcElement, Tooltip);
 
-axios.defaults.baseURL = 'https://localhost:4440'
+axios.defaults.baseURL = 'https://localhost:44380'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 axios.defaults.withCredentials = true
 

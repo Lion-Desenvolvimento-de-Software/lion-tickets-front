@@ -12,7 +12,7 @@
             <input type="password" v-model="password" id="password" required>
             <label for="password">Password</label>
           </div>
-          <button class="btn btn-success w-50">Login</button>
+          <button class="btn btn-success w-50" @click="logar">Login</button>
         </div>
       </div>
     </div>
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import loginService from '@/services/admin/loginService';
+
 export default {
   name: "loginAdmin",
   emits: ['update:username'],
@@ -38,6 +40,13 @@ export default {
   computed: {
     getIconUser() {
       return this.iconUser;
+    }
+  },
+
+  methods: {
+    async logar() {
+      await loginService.loginAsync(this.username, this.password);
+      this.$router.push('/admin');
     }
   }
 }

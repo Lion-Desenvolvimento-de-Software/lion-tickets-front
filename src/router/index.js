@@ -40,19 +40,26 @@ const router = createRouter({
 })
 
 const isAuthenticated = async () => {
-  return await userManager.getUser();
+  return await userManager.getUser() ? true : false;
 }
 
 router.beforeEach(async (to, from, next) => {
-
-  if (to.matched.some(record => record.meta.requiresAuth)){
-    if(!isAuthenticated() && this.$route.name == 'login') next({ path: '/login', query: { redirect: to.fullPath } });
+  await userManager.clearStaleState();
+  var user = await userManager.getUser();
+  console.log(user?.profile)
+  if (to.path.includes("/admin/login") && user != null && user?.profile?.role.toLowerCase() != "client") next({ path: '/admin' })
+  if (to.path.includes("/admin")){
+    if (user == null || user?.profile?.role.toLowerCase() == "client" && !to.path.includes("/login")) {
+      next({ path: '/' })
+    }
+  }
+  else if (to.matched.some(record => record.meta.requiresAuth)){
+    if(!await isAuthenticated() && this.$route.name == 'login') next({ path: '/login', query: { redirect: to.fullPath } });
     else next();
   } else {
-    console.log(to, from);
-    if (isAuthenticated() && to.path == '/login') next({ path: from.path })
-    next();
+    if (await isAuthenticated() && to.path == '/login') next({ path: from.path })
   }
+  next();
 })
 
 export default router

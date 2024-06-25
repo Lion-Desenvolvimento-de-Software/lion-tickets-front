@@ -52,7 +52,7 @@ export default {
     }).catch(async err => {
       console.log("Erro = ", err);
       userManager.removeUser();
-    });
+    })
   },
   components: {
     navBar,
@@ -80,6 +80,7 @@ export default {
         PhoneNumber: user.phone_number,
         Genero: user.gender,
         DataAniversario: user.birthdate,
+        Role: user.role
         //UrlImagemPerfil: res.profile.urlImagemPerfil
       }
       this.usuario.AddData(obj);

@@ -8,7 +8,8 @@ export class Usuario {
     this.PhoneNumber = null,
     this.Genero = null,
     this.DataAniversario = null,
-    this.UrlImagemPerfil = null
+    this.UrlImagemPerfil = null,
+    this.Role = null
   }
 
   AddData(userData) {

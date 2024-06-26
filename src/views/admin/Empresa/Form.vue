@@ -4,23 +4,23 @@
       <div class="row">
         <div class="col d-flex custom-input">
           <label>Nome da empresa:</label>
-          <input type="text" name="NomeEmpresa" placeholder="Insira o nome da empresa" autofocus />
+          <input v-model="nome" type="text" name="NomeEmpresa" placeholder="Insira o nome da empresa" autofocus />
         </div>
         <div class="col d-flex custom-input">
           <label>CNPJ:</label>
-          <input type="text" name="CNPJ" placeholder="99999999/0001-76" />
+          <input v-model="cnpj" type="text" name="CNPJ" placeholder="99999999/0001-76" />
         </div>
       </div>
       <div class="row">
         <div class="col d-flex custom-input">
           <label>Descrição:</label>
-          <textarea name="descricao"></textarea>
+          <textarea v-model="descricao" name="descricao"></textarea>
         </div>
       </div>
       <div class="row">
         <div class="col d-flex custom-button">
           <button class="btn btn-outline-secondary">Cancelar</button>
-          <button class="btn btn-success">Salvar</button>
+          <button class="btn btn-success" @click="salvar">Salvar</button>
         </div>
       </div>
     </div>
@@ -28,8 +28,39 @@
 </template>
 
 <script>
+import empresaService from '@/services/admin/empresaService';
+
 export default {
-  name: 'Form'
+  name: 'Form',
+  data() {
+    return {
+      types: [
+        { Id: 0, title: "Empresa" },
+        { Id: 1, title: "Usuario" },
+        { Id: 2, title: "Ticket" },
+        { Id: 3, titile: "Produto" }
+      ],
+      nome: null,
+      cnpj: null,
+      descricao: null
+    }
+  },
+  props: {
+    typeForm: {
+      type: Number,
+      default: 0
+    }
+  },
+  methods: {
+    async salvar() {
+      var obj = {
+        "Nome": this.nome,
+        "CNPJ": this.cnpj,
+        "Descricao": this.descricao
+      };
+      await empresaService.salvarEmpresa(obj);
+    }
+  }
 }
 </script>
 

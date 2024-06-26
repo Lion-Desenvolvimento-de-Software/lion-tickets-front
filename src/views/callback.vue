@@ -4,6 +4,7 @@
 
 <script>
 import userManager from '@/services/userManager';
+import axios from 'axios';
 
 export default {
   name: 'Callback',
@@ -18,6 +19,7 @@ export default {
       }
       else {
         userManager.signinCallback().then(async res => {
+          axios.defaults.headers.common["Authorization"] = `Bearer ${res.access_token}`
           this.$router.push('/');
           this.$emit('setUsuario', res.profile);
         }).catch(err => {

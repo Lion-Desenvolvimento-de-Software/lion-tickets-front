@@ -6,7 +6,7 @@
       <div class="w-100 d-flex justify-content-between custom-layout-action">
         <div class="custom-filters w-100"></div>
         <div class="custom-action-data">
-          <button class="btn btn-success">Adicionar</button>
+          <RouterLink to="/admin/empresas/new"><button class="btn btn-success">Adicionar</button></RouterLink>
         </div>
       </div>
 
@@ -41,19 +41,11 @@ export default {
   data() {
     return {
       fields: [
-        "Id", "Nome", "CNPJ", "Ativo"
+        "Id", "Nome", "CNPJ", "Ativo", "Ação"
       ],
       items: [
         { Id: 1, Nome: "Lion Sync", CNPJ: "161421671/0001", Ativo: 0 },
         { Id: 2, Nome: "Lion Sync", CNPJ: "161421671/0001", Ativo: 0 },
-        { Id: 3, Nome: "Lion Sync", CNPJ: "161421671/0001", Ativo: 0 },
-        { Id: 4, Nome: "Lion Sync", CNPJ: "161421671/0001", Ativo: 0 },
-        { Id: 5, Nome: "Lion Sync", CNPJ: "161421671/0001", Ativo: 0 },
-        { Id: 6, Nome: "Lion Sync", CNPJ: "161421671/0001", Ativo: 0 },
-        { Id: 7, Nome: "Lion Sync", CNPJ: "161421671/0001", Ativo: 0 },
-        { Id: 8, Nome: "Lion Sync", CNPJ: "161421671/0001", Ativo: 0 },
-        { Id: 9, Nome: "Lion Sync", CNPJ: "161421671/0001", Ativo: 0 },
-        { Id: 10, Nome: "Lion Sync", CNPJ: "161421671/0001", Ativo: 0 },
       ]
     }
   },

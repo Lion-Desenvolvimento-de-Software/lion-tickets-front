@@ -47,9 +47,8 @@ router.beforeEach(async (to, from, next) => {
   await userManager.clearStaleState();
   var user = await userManager.getUser();
   console.log(user?.profile)
-  if (to.path.includes("/admin/login") && user != null && user?.profile?.role.toLowerCase() != "client") next({ path: '/admin' })
   if (to.path.includes("/admin")){
-    if (user == null || user?.profile?.role.toLowerCase() == "client" && !to.path.includes("/login")) {
+    if ((user == null || user?.profile?.role == "Client") && !to.path.includes("/login")) {
       next({ path: '/' })
     }
   }

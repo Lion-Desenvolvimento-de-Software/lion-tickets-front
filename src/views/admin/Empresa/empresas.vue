@@ -16,7 +16,7 @@
           <tr>
             <th v-for="field in fields" :key="field">{{ field }}</th>
           </tr>
-          <tr v-for="item in items" :key="item.Id">
+          <tr v-for="item in getItems" :key="item.Id">
             <td v-for="field in fields" :key="field">{{ item[field] }}</td>
           </tr>
         </table>
@@ -24,36 +24,83 @@
           <button>
             <font-awesome-icon :icon="['fas', 'backward-step']" />
           </button>
-          <button v-for="(_, index) in getPagination" :key="index">{{ index + 1 }}</button>
+          <button v-for="(_, index) in getCountPaginations" :key="index" @click="getEmpresas(index + 1)">{{ index + 1 }}</button>
           <button>
             <font-awesome-icon :icon="['fas', 'forward-step']" />
           </button>
         </div>
       </div>
     </div>
-    <RouterView v-else></RouterView>
+    <RouterView v-else
+                @getEmpresas="getEmpresas"
+                @salvarEmpresa="salvarEmpresa">
+    </RouterView>
   </div>
 </template>
 
 <script>
+import empresaService from '@/services/admin/empresaService';
+
 export default {
   name: 'EmpresasAdmin',
   data() {
     return {
       fields: [
-        "Id", "Nome", "CNPJ", "Ativo", "Ação"
+        "id", "nome", "descricao", "cnpj", "ativo", "Ação"
       ],
-      items: [
-        { Id: 1, Nome: "Lion Sync", CNPJ: "161421671/0001", Ativo: 0 },
-        { Id: 2, Nome: "Lion Sync", CNPJ: "161421671/0001", Ativo: 0 },
-      ]
+      items: [],
+      countData: 0,
     }
   },
 
+  emits: ['setLoading', 'showToastSuccess', 'showToastError'],
+
+  async mounted() {
+    this.$emit('setLoading', true);
+    await this.getEmpresas();
+    await this.getCount();
+    this.$emit('setLoading', false);
+  },
+
   computed: {
-    getPagination() {
-      return Number.parseInt(Math.ceil(this.items.length / 10).toString().slice(0, 6));
+    getItems() {
+      return this.items;
+    },
+
+    getCountPaginations() {
+      return this.countData;
     }
+  },
+
+  methods: {
+    async getEmpresas(pagina = 1) {
+      this.$emit('setLoading', true);
+      try {
+        this.items = await empresaService.getEmpresas(pagina);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        this.$emit('setLoading', false);
+      }
+    },
+
+    async salvarEmpresa(obj) {
+      this.$emit('setLoading', true);
+      try {
+        await empresaService.salvarEmpresa(obj);
+        this.$emit('showToastSuccess', 'Empresa cadastrado com sucesso!');
+        this.$router.back();
+        this.items = await empresaService.getEmpresas();
+      } catch (err) {
+        console.log(err);
+      } finally {
+        this.$emit('setLoading', false);
+      }
+    },
+
+    async getCount() {
+      this.countData = await empresaService.getCount();
+    },
   }
 }
 </script>
@@ -64,7 +111,6 @@ table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
   width: 100%;
-  height: calc(100% - 65px);
 }
 
 td, th {

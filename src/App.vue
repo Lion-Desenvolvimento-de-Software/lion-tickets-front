@@ -14,7 +14,10 @@
                 @setMensagemToast="setMensagemToast"
                 @setIsError="setIsError"
                 @showToast="showToast"
-                @setUsuario="setUsuario" />
+                @setUsuario="setUsuario"
+                @setLoading="setLoading"
+                @showToastSuccess="showToastSuccess"
+                @showToastError="showToastError" />
   <div class="d-flex justify-content-center">
     <toast id="toastId" ref="toast" :mensagem="this.mensagem" class="text-white" :class="!getIsError ? `bg-success` : `bg-danger`" />
   </div>
@@ -157,11 +160,21 @@ export default {
       this.mensagem = mensagem;
     },
     
-    async setIsError(isError) {
+    setIsError(isError) {
       this.isError = isError;
     },
 
     showToast() {
+      this.$refs['toast'].show();
+    },
+    showToastSuccess(mensagem) {
+      this.isError = false;
+      this.mensagem = mensagem;
+      this.$refs['toast'].show();
+    },
+    showToastError(mensagem) {
+      this.isError = true;
+      this.mensagem = mensagem;
       this.$refs['toast'].show();
     },
     openCollapse() {
@@ -169,6 +182,9 @@ export default {
     },
     fecharCollapse() {
       this.isOpenCollapse = false;
+    },
+    setLoading(isLoading = false) {
+      this.loadingFethingData = isLoading;
     }
   }
 }

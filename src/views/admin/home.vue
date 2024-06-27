@@ -17,7 +17,10 @@
           </div>
         </div>
       </div>
-    <router-view class="custom-pages"></router-view>
+    <router-view @setLoading="setLoading" 
+                  @showToastSuccess="showToastSuccess" 
+                  @showToastError="showToastError"
+                  class="custom-pages"></router-view>
     </div>
   </div>
 </template>
@@ -25,6 +28,18 @@
 <script>
 export default {
   name: 'HomeAdmin',
+  emits: ['setLoading', 'showToastSuccess', 'showToastError'],
+  methods: {
+    setLoading(isLoading) {
+      this.$emit('setLoading', isLoading);
+    },
+    showToastSuccess(mensagem) {
+      this.$emit('showToastSuccess', mensagem)
+    },
+    showToastError(mensagem) {
+      this.$emit('showToastError', mensagem)
+    }
+  }
 }
 </script>
 

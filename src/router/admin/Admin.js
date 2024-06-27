@@ -9,7 +9,7 @@ export default [
     path: '/admin',
     name: 'HomeAdmin',
     component: () => import('@/views/admin/home'),
-    meta: { navbar: false },
+    meta: { navbar: false, requiresAuth: true, roles: ['Admin', 'Gerente', 'Vendedor'] },
     children: [
       {
         path: '',
@@ -30,6 +30,7 @@ export default [
         path: 'empresas',
         name: 'EmpresasAdmin',
         component: () => import('@/views/admin/Empresa/empresas'),
+        meta: { roles: ['Admin'] },
         children: [
           {
             path: 'new',
@@ -42,6 +43,7 @@ export default [
         path: 'usuarios',
         name: 'UsuariosAdmin',
         component: () => import('@/views/admin/usuarios'),
+        meta: { roles: ['Admin', 'Gerente'] },
       },
     ]
   },

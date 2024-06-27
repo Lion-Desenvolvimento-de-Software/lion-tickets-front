@@ -28,10 +28,9 @@
 </template>
 
 <script>
-import empresaService from '@/services/admin/empresaService';
-
 export default {
   name: 'Form',
+  emits: ['salvarEmpresa'],
   data() {
     return {
       types: [
@@ -52,13 +51,13 @@ export default {
     }
   },
   methods: {
-    async salvar() {
+    salvar() {
       var obj = {
         "Nome": this.nome,
         "CNPJ": this.cnpj,
         "Descricao": this.descricao
       };
-      await empresaService.salvarEmpresa(obj);
+      this.$emit('salvarEmpresa', obj);
     }
   }
 }

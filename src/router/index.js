@@ -47,16 +47,11 @@ router.beforeEach(async (to, from, next) => {
   await userManager.clearStaleState();
   var user = await userManager.getUser();
   console.log(user?.profile)
-  if (to.path.includes("/admin")){
-    if ((user == null || user?.profile?.role == "Client") && !to.path.includes("/login")) {
-      next({ path: '/' })
-    }
-  }
-  else if (to.matched.some(record => record.meta.requiresAuth)){
-    if(!await isAuthenticated() && this.$route.name == 'login') next({ path: '/login', query: { redirect: to.fullPath } });
-    else next();
+  if (to.matched.some(record => record.meta.requiresAuth)){
+    if(user != null && to.meta.roles.some(item => item == user?.profile?.role)) next();
+    else next(from.path);
   } else {
-    if (await isAuthenticated() && to.path == '/login') next({ path: from.path })
+    if ((await isAuthenticated()) && to.path == '/login') next({ path: from.path })
   }
   next();
 })

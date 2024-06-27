@@ -9,6 +9,7 @@ const userManager = new UserManager({
   response_type: "code",
   scope: "openid profile lion_tickets",
   post_logout_redirect_uri: "http://localhost:8080/logout",
+  loadUserInfo: true
 });
 
 // Adicione logs detalhados em diferentes partes do processo

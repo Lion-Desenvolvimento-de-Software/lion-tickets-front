@@ -8,6 +8,8 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons"
 import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons"
 import { faBackwardStep } from "@fortawesome/free-solid-svg-icons"
 import { faForwardStep } from "@fortawesome/free-solid-svg-icons"
+import { faPen } from "@fortawesome/free-solid-svg-icons"
+import { faTrash } from "@fortawesome/free-solid-svg-icons"
 
 export default [
   faMobileScreen,
@@ -19,5 +21,7 @@ export default [
   faArrowsRotate,
   faLockOpen,
   faBackwardStep,
-  faForwardStep
+  faForwardStep,
+  faPen,
+  faTrash
 ]

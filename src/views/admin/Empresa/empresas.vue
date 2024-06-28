@@ -12,22 +12,31 @@
 
       <!-- Tudo componente para tabela de dados -->
       <div class="layout-table py-3">
-        <table>
-          <tr>
-            <th v-for="field in fields" :key="field">{{ field }}</th>
-          </tr>
-          <tr v-for="item in getItems" :key="item.Id">
-            <td v-for="field in fields" :key="field">{{ item[field] }}</td>
-          </tr>
-        </table>
+        <b-table id="my-table"
+                :items="getItems" 
+                :fields="fields" 
+                striped 
+                hover
+                small
+                :per-page="10"
+                :current-page="getCurrentPageDivisionTen"
+          >
+          <template #cell(Ação)="row">
+            <div class="d-flex justify-content-center spacing-x">
+              <button class="btn btn-success" @click="editar(row)"><font-awesome-icon :icon="['fa', 'pen']" /></button>
+              <button class="btn btn-danger" @click="deletar(row)"><font-awesome-icon :icon="['fas', 'trash']" /></button>
+            </div>
+          </template>
+        </b-table>
         <div class="pagination">
-          <button>
-            <font-awesome-icon :icon="['fas', 'backward-step']" />
-          </button>
-          <button v-for="(_, index) in getCountPaginations" :key="index" @click="getEmpresas(index + 1)">{{ index + 1 }}</button>
-          <button>
-            <font-awesome-icon :icon="['fas', 'forward-step']" />
-          </button>
+          {{ countData }}
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="getCountPaginations"
+            :per-page="10"
+            aria-controls="my-table"
+            @change="getEmpresas"
+          ></b-pagination>
         </div>
       </div>
     </div>
@@ -46,10 +55,11 @@ export default {
   data() {
     return {
       fields: [
-        "id", "nome", "descricao", "cnpj", "ativo", "Ação"
+        "id", "nome", "descricao", "cnpj", "Ação"
       ],
       items: [],
       countData: 0,
+      currentPage: 1
     }
   },
 
@@ -63,12 +73,20 @@ export default {
   },
 
   computed: {
+    getRows() {
+      return this.items.length;
+    },
+
     getItems() {
       return this.items;
     },
 
     getCountPaginations() {
       return this.countData;
+    },
+
+    getCurrentPageDivisionTen() {
+      return (this.currentPage / 10)
     }
   },
 
@@ -77,6 +95,7 @@ export default {
       this.$emit('setLoading', true);
       try {
         this.items = await empresaService.getEmpresas(pagina);
+        console.log(this.items)
       } catch (err) {
         console.log(err);
       } finally {
@@ -90,7 +109,7 @@ export default {
         await empresaService.salvarEmpresa(obj);
         this.$emit('showToastSuccess', 'Empresa cadastrado com sucesso!');
         this.$router.back();
-        this.items = await empresaService.getEmpresas();
+        this.items = await this.getEmpresas();
       } catch (err) {
         console.log(err);
       } finally {
@@ -106,23 +125,6 @@ export default {
 </script>
 
 <style scoped>
-
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even) {
-  background-color: #dddddd;
-}
-
 .layout-table {
   height: 640px;
   display: flex;
@@ -140,5 +142,9 @@ tr:nth-child(even) {
 
 .custom-layout-action {
   column-gap: 15px;
+}
+
+.spacing-x {
+  column-gap: 10px;
 }
 </style>

@@ -5,6 +5,7 @@ import router from './router'
 import store from './store'
 import axios from 'axios'
 import userManager from './services/userManager'
+import BootstrapVue from 'bootstrap-vue';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import icons from './assets/icons/icons.js'
@@ -13,6 +14,10 @@ library.add(...icons);
 
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
+
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+
 import "@/assets/styles/global.css"
 import 'vue-advanced-cropper/dist/style.css';
 import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js';
@@ -48,5 +53,5 @@ axios.interceptors.response.use(response => {
 
 const app = createApp(App);
 
-app.component("font-awesome-icon", FontAwesomeIcon).use(store).use(router).mount('#app')
+app.component("font-awesome-icon", FontAwesomeIcon).use(BootstrapVue).use(store).use(router).mount('#app')
 

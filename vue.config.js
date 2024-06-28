@@ -11,6 +11,11 @@ module.exports = defineConfig({
     // devServer: {
     //   https: true
     // }
+    resolve: {
+      alias: {
+        vue: '@vue/compat',
+      },
+    },
   },
   chainWebpack: config => {
     config.plugin('html').tap(args => {

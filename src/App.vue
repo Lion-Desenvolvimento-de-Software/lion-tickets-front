@@ -45,7 +45,6 @@ export default {
       isOpenCollapse: false
     }
   },
-  compatConfig: { MODE: 3 },
   created() {
     userManager.getUser().then(res => {
       if(!res) throw "usuário deslogado!";

@@ -19,8 +19,8 @@
       </div>
       <div class="row">
         <div class="col d-flex custom-button">
-          <button class="btn btn-outline-secondary">Cancelar</button>
-          <button class="btn btn-success" @click="salvar">Salvar</button>
+          <button class="btn btn-outline-secondary" @click="cancelar">Cancelar</button>
+          <button class="btn btn-success" @click="salvarOrEditar">{{ $route.params.id == 'new' ? 'Salvar' : 'Editar' }}</button>
         </div>
       </div>
     </div>
@@ -39,25 +39,41 @@ export default {
         { Id: 2, title: "Ticket" },
         { Id: 3, titile: "Produto" }
       ],
-      nome: null,
-      cnpj: null,
-      descricao: null
+      nome: this.Nome,
+      cnpj: this.Cnpj,
+      descricao: this.Descricao
     }
   },
   props: {
     typeForm: {
       type: Number,
       default: 0
+    },
+    Nome: String,
+    Cnpj: String,
+    Descricao: String
+  },
+  created() {
+    console.log(this.$route.params)
+    if (this.$route.params.id == 'new') {
+      this.nome = null,
+      this.cnpj = null,
+      this.descricao = null
     }
   },
   methods: {
-    salvar() {
+    salvarOrEditar() {
       var obj = {
+        "Id": this.$route.params.id == 'new' ? null : this.$route.params.id,
         "Nome": this.nome,
         "CNPJ": this.cnpj,
         "Descricao": this.descricao
       };
-      this.$emit('salvarEmpresa', obj);
+      this.$emit(this.$route.params.id == 'new' ? 'salvarEmpresa' : 'editarEmpresa', obj);
+    },
+
+    cancelar() {
+      this.$router.back();
     }
   }
 }

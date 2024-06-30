@@ -23,8 +23,8 @@
           >
           <template #cell(Ação)="row">
             <div class="d-flex justify-content-center spacing-x">
-              <button class="btn btn-success" @click="editar(row)"><font-awesome-icon :icon="['fa', 'pen']" /></button>
-              <button class="btn btn-danger" @click="deletar(row)"><font-awesome-icon :icon="['fas', 'trash']" /></button>
+              <RouterLink :to="`/admin/empresas/${row.item.id}`" @click="dados = row.item"><button class="btn btn-success"><font-awesome-icon :icon="['fa', 'pen']" /></button></RouterLink>
+              <button class="btn btn-danger" @click="deletar(row.item.id)"><font-awesome-icon :icon="['fas', 'trash']" /></button>
             </div>
           </template>
         </b-table>
@@ -41,8 +41,11 @@
       </div>
     </div>
     <RouterView v-else
-                @getEmpresas="getEmpresas"
-                @salvarEmpresa="salvarEmpresa">
+                @salvarEmpresa="salvarEmpresa"
+                @editarEmpresa="editarEmpresa"
+                :Nome="dados.nome"
+                :Cnpj="dados.cnpj"
+                :Descricao="dados.descricao">
     </RouterView>
   </div>
 </template>
@@ -59,7 +62,13 @@ export default {
       ],
       items: [],
       countData: 0,
-      currentPage: 1
+      currentPage: 1,
+
+      dados: {
+        nome: null,
+        cnpj: null,
+        descricao: null
+      }
     }
   },
 
@@ -95,7 +104,6 @@ export default {
       this.$emit('setLoading', true);
       try {
         this.items = await empresaService.getEmpresas(pagina);
-        console.log(this.items)
       } catch (err) {
         console.log(err);
       } finally {
@@ -109,7 +117,23 @@ export default {
         await empresaService.salvarEmpresa(obj);
         this.$emit('showToastSuccess', 'Empresa cadastrado com sucesso!');
         this.$router.back();
-        this.items = await this.getEmpresas();
+        this.items = await empresaService.getEmpresas(this.currentPage);
+        await this.getCount();
+      } catch (err) {
+        console.log(err);
+      } finally {
+        this.$emit('setLoading', false);
+      }
+    },
+
+    async editarEmpresa(obj) {
+      this.$emit('setLoading', true);
+      try {
+        await empresaService.editarEmpresa(obj);
+        this.$emit('showToastSuccess', 'Empresa editado com sucesso!');
+        this.$router.back();
+        this.items = await empresaService.getEmpresas(this.currentPage);
+        await this.getCount();
       } catch (err) {
         console.log(err);
       } finally {
@@ -120,6 +144,18 @@ export default {
     async getCount() {
       this.countData = await empresaService.getCount();
     },
+
+    async deletar(id) {
+      try {
+        await empresaService.DeletarEmpresa(id);
+        this.$emit('showToastSuccess', 'Empresa deletado com sucesso!');
+        this.currentPage = 1;
+        this.items = await empresaService.getEmpresas();
+        await this.getCount();
+      } catch (err) {
+        console.log(err);
+      }
+    }
   }
 }
 </script>

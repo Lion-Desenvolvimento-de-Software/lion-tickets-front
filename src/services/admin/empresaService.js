@@ -13,5 +13,16 @@ export default {
 
   async salvarEmpresa(obj) {
     await axios.post("api/v1/empresa", obj, { headers: { "Content-Type": "application/json" } });
+  },
+
+  async editarEmpresa(obj) {
+    await axios.put("api/v1/empresa", obj, { headers: { "Content-Type": "application/json" } });
+  },
+
+  async UpdateEmpresa(obj) {
+    await axios.put("api/v1/empresa", obj, { headers: { "Content-Type": "application/json" } })
+  },
+  async DeletarEmpresa(id) {
+    await axios.delete(`api/v1/empresa/${id}`);
   }
 }

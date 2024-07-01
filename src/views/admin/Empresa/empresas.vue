@@ -6,7 +6,7 @@
       <div class="w-100 d-flex justify-content-between custom-layout-action">
         <div class="custom-filters w-100"></div>
         <div class="custom-action-data">
-          <RouterLink to="/admin/empresas/new"><button class="btn btn-success">Adicionar</button></RouterLink>
+          <RouterLink to="/admin/empresas/new"><button class="btn btn-success" @click="clearDados">Adicionar</button></RouterLink>
         </div>
       </div>
 
@@ -43,9 +43,34 @@
     <RouterView v-else
                 @salvarEmpresa="salvarEmpresa"
                 @editarEmpresa="editarEmpresa"
-                :Nome="dados.nome"
-                :Cnpj="dados.cnpj"
-                :Descricao="dados.descricao">
+                :errors="getErrors"
+                v-slot="{ Component }">
+      <component :is="Component">
+        <div class="row">
+          <div class="col d-flex custom-input">
+            <label>Nome da empresa:</label>
+            <input v-model="dados.nome" type="text" name="NomeEmpresa" placeholder="Insira o nome da empresa" autofocus />
+            <span class="text-danger font-size">{{ getErrors?.nome[0] }}</span>
+          </div>
+          <div class="col d-flex custom-input">
+            <label>CNPJ:</label>
+            <input v-model="dados.cnpj" type="text" name="CNPJ" placeholder="99999999/0001-76" />
+            <span class="text-danger font-size">{{ getErrors?.cnpj[0] }}</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col d-flex custom-input">
+            <label>Descrição:</label>
+            <textarea v-model="dados.descricao" name="descricao"></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col d-flex custom-button">
+            <button class="btn btn-outline-secondary" @click="cancelar">Cancelar</button>
+            <button class="btn btn-success" @click="salvarEmpresa()">{{ $route.params.id == 'new' ? 'Salvar' : 'Editar' }}</button>
+          </div>
+        </div>
+      </component>
     </RouterView>
   </div>
 </template>
@@ -67,8 +92,10 @@ export default {
       dados: {
         nome: null,
         cnpj: null,
-        descricao: null
-      }
+        descricao: null,
+      },
+
+      errors: null
     }
   },
 
@@ -96,6 +123,10 @@ export default {
 
     getCurrentPageDivisionTen() {
       return (this.currentPage / 10)
+    },
+
+    getErrors() {
+      return this.errors;
     }
   },
 
@@ -111,31 +142,20 @@ export default {
       }
     },
 
-    async salvarEmpresa(obj) {
+    async salvarEmpresa(isEditar = this.$route.params.id != 'new') {
       this.$emit('setLoading', true);
       try {
-        await empresaService.salvarEmpresa(obj);
-        this.$emit('showToastSuccess', 'Empresa cadastrado com sucesso!');
+        !isEditar ? await empresaService.salvarEmpresa(this.dados) : await empresaService.UpdateEmpresa(this.dados);
+        this.$emit('showToastSuccess', `Empresa ${!isEditar ? 'cadastrado' : 'editado'} com sucesso!`);
         this.$router.back();
         this.items = await empresaService.getEmpresas(this.currentPage);
         await this.getCount();
       } catch (err) {
-        console.log(err);
-      } finally {
-        this.$emit('setLoading', false);
-      }
-    },
-
-    async editarEmpresa(obj) {
-      this.$emit('setLoading', true);
-      try {
-        await empresaService.editarEmpresa(obj);
-        this.$emit('showToastSuccess', 'Empresa editado com sucesso!');
-        this.$router.back();
-        this.items = await empresaService.getEmpresas(this.currentPage);
-        await this.getCount();
-      } catch (err) {
-        console.log(err);
+        let obj = {
+          cnpj: err.response.data.errors['CNPJ'],
+          nome: err.response.data.errors['Nome']
+        }
+        this.errors = obj;
       } finally {
         this.$emit('setLoading', false);
       }
@@ -155,6 +175,16 @@ export default {
       } catch (err) {
         console.log(err);
       }
+    },
+    async cancelar() {
+      this.$router.back();
+    },
+
+    clearDados() {
+      this.dados.nome = null;
+      this.dados.cnpj = null;
+      this.dados.descricao = null;
+      this.errors = null;
     }
   }
 }
@@ -182,5 +212,42 @@ export default {
 
 .spacing-x {
   column-gap: 10px;
+}
+
+.custom-input {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.custom-input input, textarea {
+  border-radius: 10px;
+  border: 1px solid #000;
+  padding: 2px 10px;
+  width: 100%;
+}
+
+.custom-input label {
+  padding: 0 5px;
+}
+
+.custom-input input:focus {
+  outline: none;
+}
+
+.custom-button {
+  width: 100%;
+  justify-content: end;
+}
+
+.custom-button button {
+  margin: 0 5px;
+}
+
+.font-size {
+  font-size: 12px;
+}
+
+.error {
+  border-color: red !important;
 }
 </style>

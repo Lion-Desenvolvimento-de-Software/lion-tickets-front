@@ -35,12 +35,12 @@ export default [
           {
             path: 'new',
             name: 'EmpresasAdmin',
-            component: () => import('@/views/admin/Empresa/Form'),
+            component: () => import('@/views/admin/Form'),
           },
           {
             path: ':id',
             name: 'EmpresasAdmin',
-            component: () => import('@/views/admin/Empresa/Form'),
+            component: () => import('@/views/admin/Form'),
             props: { Nome: "" }
           }
         ]

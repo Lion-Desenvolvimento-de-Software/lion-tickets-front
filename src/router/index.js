@@ -8,7 +8,6 @@ import userManager from '@/services/userManager'
 const routes = [
   ...require(/* webpackChunkName: "Home" */ '@/router/Home').default,
   ...require(/* webpackChunkName: "Eventos" */ '@/router/Eventos/Eventos').default,
-  ...require(/* webpackChunkName: "ConfirmacaoCodigo" */ '@/router/ConfirmacaoCodigo').default,
   ...require(/* webpackChunkName: "ConfirmacaoCodigo" */ '@/router/admin/Admin').default,
   {
     path: '/produtos/:productsName?/:id?',
@@ -53,7 +52,7 @@ router.beforeEach(async (to, from, next) => {
   } else {
     if ((await isAuthenticated()) && to.path == '/login') next({ path: from.path })
   }
-  next();
+  next()
 })
 
 export default router

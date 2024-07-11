@@ -18,7 +18,7 @@ export default {
         await userManager.removeUser();
       }
       else {
-        userManager.signinCallback().then(async res => {
+        userManager.signinRedirectCallback().then(async res => {
           axios.defaults.headers.common["Authorization"] = `Bearer ${res.access_token}`
           this.$router.push('/');
           this.$emit('setUsuario', res.profile);

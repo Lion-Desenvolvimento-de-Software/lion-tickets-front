@@ -18,7 +18,7 @@
                 small>
           <template #cell(action)="{ item }">
             <div class="d-flex justify-content-center spacing-x">
-              <RouterLink :to="`/admin/empresas/${item.id}`" @click="dados = row.item">
+              <RouterLink :to="`/admin/usuarios/${item.id}`" @click="dados = row.item">
                 <button class="btn btn-success">
                   <font-awesome-icon :icon="['fa', 'pen']" />
                 </button>
@@ -29,12 +29,76 @@
         </b-table>
       </div>
     </div>
+    <RouterView v-else
+          @salvar="salvarUsuario"
+          v-slot="{ Component }">
+      <component :is="Component">
+        <div class="row">
+          <div class="col d-flex custom-input">
+            <label>Primeiro nome: *</label>
+            <input v-model="dados.FirstName" type="text" name="Primeiro nome" placeholder="Insira o primeiro nome" autofocus />
+            <!-- <span class="text-danger font-size">{{ getErrors?.nome[0] }}</span> -->
+          </div>
+          <div class="col d-flex custom-input">
+            <label>Ultimo nome: *</label>
+            <input v-model="dados.LastName" type="text" name="Ultimo nome" />
+            <!-- <span class="text-danger font-size">{{ getErrors?.cnpj[0] }}</span> -->
+          </div>
+        </div>
+        <div class="row">
+          <div class="col d-flex custom-input">
+            <label>Nome do usuário: *</label>
+            <input type="text" v-model="dados.Username" name="Nome do Usuário" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col d-flex custom-input">
+            <label>Email: *</label>
+            <input type="email" v-model="dados.Email" name="email" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col d-flex custom-input">
+            <label>Senha: *</label>
+            <input type="password" v-model="dados.Password" name="password" />
+          </div>
+          <div class="col d-flex custom-input">
+            <label>Confirmar senha: *</label>
+            <input type="password" v-model="dados.ConfirmPassword" name="confirmar senha" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col d-flex custom-input">
+            <label>Telefone:</label>
+            <input type="tel" v-model="dados.PhoneNumber" @input="mascaraTelefone" name="Telefone" placeholder="(11) 99999-9999" />
+          </div>
+          <div class="col d-flex custom-input">
+            <label>Genero: *</label>
+            <select v-model="dados.Genero" name="Genero">
+              <option :value="null" selected>Selecione...</option>
+              <option value="1">Masculino</option>
+              <option value="2">Feminino</option>
+            </select>
+          </div>
+          <div class="col d-flex custom-input">
+            <label>Data de Aniversário:</label>
+            <input type="date" v-model="dados.BirthDay" name="BirthDay" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col d-flex custom-button">
+            <button class="btn btn-outline-secondary" @click="cancelar">Cancelar</button>
+            <button class="btn btn-success" :disabled="!hasDatasInserted" @click="salvarEmpresa()">{{ $route.params.id == 'new' ? 'Salvar' : 'Editar' }}</button>
+          </div>
+        </div>
+      </component>
+    </RouterView>
   </div>
 </template>
 
 <script>
 import UsuarioServices from '@/services/UsuarioServices';
-import UserManager from '@/services/userManager'
+import UserManager from '@/services/userManager';
 
 export default {
   name: 'UsuariosAdmin',
@@ -48,15 +112,88 @@ export default {
         { key: 'action', label: '' }
       ],
       users: null,
+      dados: {
+        FirstName: null,
+        LastName: null,
+        Username: null,
+        Email: null,
+        PhoneNumber: null,
+        Genero: null,
+        DataAniversario: null,
+        Password: null,
+        ConfirmPassword: null
+      },
     }
   },
+
   mounted() {
     this.getUsers();
   },
+
+  computed: {
+    hasDatasInserted() {
+      return (this.hasFirstAndLastName && this.hasUsername && this.hasEmail && this.hasGenero && this.hasPassword && this.isPasswordConfirm)
+    },
+    hasFirstAndLastName() {
+      return (this.dados.FirstName && this.dados.LastName) ? true : false;
+    },
+    hasUsername() {
+      return this.dados.Username ? true : false;
+    },
+    hasEmail() {
+      const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return regex.test(this.dados.Email);
+    },
+    hasGenero() {
+      return this.dados.Genero ? true : false;
+    },
+    hasPassword(){
+      return (this.dados.Password.length >= 6) ? true : false;
+    },
+    isPasswordConfirm() {
+      return (this.dados.Password == this.dados.ConfirmPassword) ? true : false;
+    }
+  },
+
   methods: {
     async getUsers() {
       var user = await UserManager.getUser();
       this.users = await UsuarioServices.GetUsers(user.profile.role);
+    },
+
+    async salvarUsuario() {
+
+    },
+
+    mascaraTelefone(value) {
+      let tecla = value;
+      console.log(value)
+      let telefone = this.dados.PhoneNumber.replace(/\D+/g, "");
+
+      if (/^[0-9]$/i.test(tecla.data)) {
+        let tamanho = telefone.length;
+
+        if (tamanho >= 12) {
+          this.dados.PhoneNumber = this.dados.PhoneNumber.replaceAll(/\d$/g, "");
+          return;
+        }
+        
+        if (tamanho > 10) {
+          telefone = telefone.replace(/^(\d\d)(\d{5})(\d{4}).*/, "($1) $2-$3");
+        } else if (tamanho > 5) {
+          telefone = telefone.replace(/^(\d\d)(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+        } else if (tamanho > 2) {
+          telefone = telefone.replace(/^(\d\d)(\d{0,5})/, "($1) $2");
+        } else {
+          telefone = telefone.replace(/^(\d*)/, "($1");
+        }
+
+        this.dados.PhoneNumber = telefone;
+      }
+
+      if (!["deleteContentBackward", "deleteContentForward"].includes(tecla.type)) {
+        return;
+      }
     }
   }
 }
@@ -74,5 +211,42 @@ export default {
 
 .spacing-x {
   column-gap: 10px;
+}
+
+.custom-input {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.custom-input input, textarea, select {
+  border-radius: 10px;
+  border: 1px solid #000;
+  padding: 2px 10px;
+  width: 100%;
+}
+
+.custom-input select {
+  height: 30px;
+}
+
+.custom-input label {
+  padding: 0 5px;
+}
+
+.custom-input input:focus {
+  outline: none;
+}
+
+.custom-button {
+  width: 100%;
+  justify-content: end;
+}
+
+.custom-button button {
+  margin: 0 5px;
+}
+
+.font-size {
+  font-size: 12px;
 }
 </style>

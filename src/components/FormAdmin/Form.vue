@@ -9,19 +9,13 @@
 <script>
 export default {
   name: 'Form',
-  emits: ['salvarEmpresa'],
+  emits: ['salvar'],
   created() {
     console.log(this.$route.params)
     if (this.$route.params.id == 'new') {
       this.nome = null,
       this.cnpj = null,
       this.descricao = null
-    }
-  },
-
-  computed: {
-    getErrors() {
-      return this.errors;
     }
   },
 

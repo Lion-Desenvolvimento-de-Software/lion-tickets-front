@@ -41,8 +41,7 @@
       </div>
     </div>
     <RouterView v-else
-                @salvarEmpresa="salvarEmpresa"
-                @editarEmpresa="editarEmpresa"
+                @salvar="salvarEmpresa"
                 :errors="getErrors"
                 v-slot="{ Component }">
       <component :is="Component">

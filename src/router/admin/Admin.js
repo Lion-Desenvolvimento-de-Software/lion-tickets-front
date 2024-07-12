@@ -35,12 +35,12 @@ export default [
           {
             path: 'new',
             name: 'EmpresasAdmin',
-            component: () => import('@/views/admin/Form'),
+            component: () => import('@/components/FormAdmin/Form.vue'),
           },
           {
             path: ':id',
             name: 'EmpresasAdmin',
-            component: () => import('@/views/admin/Form'),
+            component: () => import('@/components/FormAdmin/Form.vue'),
             props: { Nome: "" }
           }
         ]
@@ -50,6 +50,18 @@ export default [
         name: 'UsuariosAdmin',
         component: () => import('@/views/admin/usuarios'),
         meta: { roles: ['Admin', 'Gerente'] },
+        children: [
+          {
+            path: 'new',
+            name: 'UsuariosAdmin',
+            component: () => import('@/components/FormAdmin/Form.vue'),
+          },
+          {
+            path: ':id',
+            name: 'UsuariosAdmin',
+            component: () => import('@/components/FormAdmin/Form.vue')
+          }
+        ]
       },
     ]
   },

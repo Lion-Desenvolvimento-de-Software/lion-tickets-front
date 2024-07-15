@@ -84,11 +84,20 @@
             <label>Data de Aniversário:</label>
             <input type="date" v-model="dados.BirthDay" name="BirthDay" />
           </div>
+          <div class="col d-flex custom-input">
+            <label>Função: *</label>
+            <select v-model="dados.RoleName" name="Genero">
+              <option :value="null" selected>Selecione...</option>
+              <option v-if="user?.role == 'Admin'" value="Admin">Admin</option>
+              <option v-if="['Admin', 'Gerente'].includes(user?.role)" value="Gerente">Gerente</option>
+              <option v-if="user?.role == 'Gerente'" value="Vendedor">Vendedor</option>
+            </select>
+          </div>
         </div>
         <div class="row">
           <div class="col d-flex custom-button">
             <button class="btn btn-outline-secondary" @click="cancelar">Cancelar</button>
-            <button class="btn btn-success" :disabled="!hasDatasInserted" @click="salvarEmpresa()">{{ $route.params.id == 'new' ? 'Salvar' : 'Editar' }}</button>
+            <button class="btn btn-success" :disabled="!hasDatasInserted" @click="salvarUsuario()">{{ $route.params.id == 'new' ? 'Salvar' : 'Editar' }}</button>
           </div>
         </div>
       </component>
@@ -121,8 +130,10 @@ export default {
         Genero: null,
         DataAniversario: null,
         Password: null,
-        ConfirmPassword: null
+        ConfirmPassword: null,
+        RoleName: null
       },
+      user: null,
     }
   },
 
@@ -132,7 +143,7 @@ export default {
 
   computed: {
     hasDatasInserted() {
-      return (this.hasFirstAndLastName && this.hasUsername && this.hasEmail && this.hasGenero && this.hasPassword && this.isPasswordConfirm)
+      return (this.hasFirstAndLastName && this.hasUsername && this.hasEmail && this.hasGenero && this.hasPassword && this.isPasswordConfirm && this.hasRole)
     },
     hasFirstAndLastName() {
       return (this.dados.FirstName && this.dados.LastName) ? true : false;
@@ -152,22 +163,42 @@ export default {
     },
     isPasswordConfirm() {
       return (this.dados.Password == this.dados.ConfirmPassword) ? true : false;
+    },
+    hasRole() {
+      return this.dados.RoleName ? true : false;
+    },
+    getMensagem() {
+      return this.mensagem;
+    },
+    getIsError() {
+      return this.isError
     }
   },
 
+  emits: ['showToastSuccess', 'showToastError'],
+
   methods: {
     async getUsers() {
-      var user = await UserManager.getUser();
-      this.users = await UsuarioServices.GetUsers(user.profile.role);
+      this.user = (await UserManager.getUser()).profile;
+      this.users = await UsuarioServices.GetUsers(this.user.role);
     },
 
     async salvarUsuario() {
-
+      UsuarioServices.Criar(this.dados).then(() => {
+        this.$emit('showToastSuccess', 'Criado com sucesso');
+        this.$router.back();
+        this.getUsers();
+      }).catch(err => {
+        console.log(err);
+        this.$emit('showToastError', err);
+      })
     },
 
     mascaraTelefone(value) {
+      this.$watch('dados.PhoneNumber', () => {
+        this.dados.PhoneNumber = this.dados.PhoneNumber.replace(/[a-zA-Z]+/g, "");
+      })
       let tecla = value;
-      console.log(value)
       let telefone = this.dados.PhoneNumber.replace(/\D+/g, "");
 
       if (/^[0-9]$/i.test(tecla.data)) {

@@ -21,13 +21,7 @@ export default {
 
   methods: {
     salvarOrEditar() {
-      var obj = {
-        "Id": this.$route.params.id == 'new' ? null : this.$route.params.id,
-        "Nome": this.nome,
-        "CNPJ": this.cnpj,
-        "Descricao": this.descricao
-      };
-      this.$emit(this.$route.params.id == 'new' ? 'salvarEmpresa' : 'editarEmpresa', obj);
+      this.$emit('salvar');
     },
 
     cancelar() {

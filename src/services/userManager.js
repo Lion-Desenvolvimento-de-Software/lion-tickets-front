@@ -37,4 +37,4 @@ userManager.events.addUserSignedOut(() => {
   console.log('User signed out');
 });
 
-export default userManager;
+export default userManager

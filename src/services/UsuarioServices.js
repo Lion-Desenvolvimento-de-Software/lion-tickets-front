@@ -18,5 +18,15 @@ export default {
       console.log('Criar', err);
       throw err.response.data;
     }
+  },
+  async Update(dados) {
+    try {
+      console.log(dados);
+      const response = await axios.post('https://localhost:44360/account/UpdateUser', dados, { headers: { 'Content-Type': 'application/json' } });
+      return response;
+    } catch(err) {
+      console.log('Criar', err);
+      throw err;
+    }
   }
 }

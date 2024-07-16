@@ -6,7 +6,7 @@
       <div class="w-100 d-flex justify-content-between custom-layout-action">
         <div class="custom-filters w-100"></div>
         <div class="custom-action-data">
-          <RouterLink to="/admin/usuarios/new"><button class="btn btn-success" @click="clearDados">Adicionar</button></RouterLink>
+          <RouterLink to="/admin/usuarios/new"><button class="btn btn-success" @click="isEdit = false">Adicionar</button></RouterLink>
         </div>
       </div>
 
@@ -17,8 +17,9 @@
                 hover
                 small>
           <template #cell(action)="{ item }">
+            {{ item }}
             <div class="d-flex justify-content-center spacing-x">
-              <RouterLink :to="`/admin/usuarios/${item.id}`" @click="dados = row.item">
+              <RouterLink :to="`/admin/usuarios/${item.id}`" @click="addDataEdit(item)">
                 <button class="btn btn-success">
                   <font-awesome-icon :icon="['fa', 'pen']" />
                 </button>
@@ -57,7 +58,7 @@
             <input type="email" v-model="dados.Email" name="email" />
           </div>
         </div>
-        <div class="row">
+        <div class="row" v-if="!isEdit">
           <div class="col d-flex custom-input">
             <label>Senha: *</label>
             <input type="password" v-model="dados.Password" name="password" />
@@ -82,7 +83,7 @@
           </div>
           <div class="col d-flex custom-input">
             <label>Data de Aniversário:</label>
-            <input type="date" v-model="dados.BirthDay" name="BirthDay" />
+            <input type="date" v-model="dados.DataAniversario" name="BirthDay" />
           </div>
           <div class="col d-flex custom-input">
             <label>Função: *</label>
@@ -97,7 +98,9 @@
         <div class="row">
           <div class="col d-flex custom-button">
             <button class="btn btn-outline-secondary" @click="cancelar">Cancelar</button>
-            <button class="btn btn-success" :disabled="!hasDatasInserted" @click="salvarUsuario()">{{ $route.params.id == 'new' ? 'Salvar' : 'Editar' }}</button>
+            <button class="btn btn-success" :disabled="!hasDatasInserted" @click="$route.params.id == 'new' ? salvarUsuario() : updateUsuario()">
+              {{ $route.params.id == 'new' ? 'Salvar' : 'Editar' }}
+            </button>
           </div>
         </div>
       </component>
@@ -122,6 +125,7 @@ export default {
       ],
       users: null,
       dados: {
+        Id: null,
         FirstName: null,
         LastName: null,
         Username: null,
@@ -134,10 +138,12 @@ export default {
         RoleName: null
       },
       user: null,
+      isEdit: false
     }
   },
 
   mounted() {
+    if (this.$route.params['id'] != "new") this.isEdit = true;
     this.getUsers();
   },
 
@@ -159,10 +165,10 @@ export default {
       return this.dados.Genero ? true : false;
     },
     hasPassword(){
-      return (this.dados.Password.length >= 6) ? true : false;
+      return ((this.dados.Password != null && this.dados.Password.length >= 6) || this.isEdit) ? true : false;
     },
     isPasswordConfirm() {
-      return (this.dados.Password == this.dados.ConfirmPassword) ? true : false;
+      return ((this.dados.Password == this.dados.ConfirmPassword) || this.isEdit) ? true : false;
     },
     hasRole() {
       return this.dados.RoleName ? true : false;
@@ -181,11 +187,24 @@ export default {
     async getUsers() {
       this.user = (await UserManager.getUser()).profile;
       this.users = await UsuarioServices.GetUsers(this.user.role);
+      if (this.isEdit) this.addDataEdit(this.users.find(item => item.id == this.$route.params.id));
     },
 
     async salvarUsuario() {
       UsuarioServices.Criar(this.dados).then(() => {
         this.$emit('showToastSuccess', 'Criado com sucesso');
+        this.$router.back();
+        this.getUsers();
+      }).catch(err => {
+        console.log(err);
+        this.$emit('showToastError', err);
+      })
+    },
+
+    async updateUsuario() {
+      this.dados.Genero = Number(this.dados.Genero);
+      UsuarioServices.Update(this.dados).then(() => {
+        this.$emit('showToastSuccess', 'Atualizado com sucesso!');
         this.$router.back();
         this.getUsers();
       }).catch(err => {
@@ -225,6 +244,19 @@ export default {
       if (!["deleteContentBackward", "deleteContentForward"].includes(tecla.type)) {
         return;
       }
+    },
+    addDataEdit(item) {
+      this.isEdit = true;
+      this.dados.Id = item?.id;
+      this.dados.DataAniversario = item?.dataAniversario;
+      this.dados.Genero = item?.genero;
+      this.dados.Email = item?.email;
+      this.dados.Username = item?.userName;
+      this.dados.PhoneNumber = item?.phoneNumber;
+      this.dados.RoleName = item?.roleName;
+    },
+    cancelar() {
+      this.$router.back();
     }
   }
 }

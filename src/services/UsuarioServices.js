@@ -12,6 +12,7 @@ export default {
 
   async Criar(dados) {
     try {
+      console.log(dados);
       const { data } = await axios.post('https://localhost:44360/account/registerAdmin', dados, { headers: { 'Content-Type': 'application/json' } });
       return data;
     } catch(err) {
@@ -21,11 +22,19 @@ export default {
   },
   async Update(dados) {
     try {
-      console.log(dados);
       const response = await axios.post('https://localhost:44360/account/UpdateUser', dados, { headers: { 'Content-Type': 'application/json' } });
       return response;
     } catch(err) {
       console.log('Criar', err);
+      throw err;
+    }
+  },
+  async Delete(id) {
+    try {
+      const { data } = await axios.post(`https://localhost:44360/api/v1/users/DeletarUsuario/${id}`);
+      return data;
+    } catch(err) {
+      console.log('Delete: ', err);
       throw err;
     }
   }

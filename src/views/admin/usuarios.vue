@@ -17,14 +17,13 @@
                 hover
                 small>
           <template #cell(action)="{ item }">
-            {{ item }}
             <div class="d-flex justify-content-center spacing-x">
               <RouterLink :to="`/admin/usuarios/${item.id}`" @click="addDataEdit(item)">
                 <button class="btn btn-success">
                   <font-awesome-icon :icon="['fa', 'pen']" />
                 </button>
               </RouterLink>
-              <button class="btn btn-danger" @click="deletar(row.item.id)"><font-awesome-icon :icon="['fas', 'trash']" /></button>
+              <button class="btn btn-danger" @click="deletar(item.id)"><font-awesome-icon :icon="['fas', 'trash']" /></button>
             </div>
           </template>
         </b-table>
@@ -34,7 +33,7 @@
           @salvar="salvarUsuario"
           v-slot="{ Component }">
       <component :is="Component">
-        <div class="row">
+        <div class="row" v-if="!isEdit">
           <div class="col d-flex custom-input">
             <label>Primeiro nome: *</label>
             <input v-model="dados.FirstName" type="text" name="Primeiro nome" placeholder="Insira o primeiro nome" autofocus />
@@ -152,7 +151,7 @@ export default {
       return (this.hasFirstAndLastName && this.hasUsername && this.hasEmail && this.hasGenero && this.hasPassword && this.isPasswordConfirm && this.hasRole)
     },
     hasFirstAndLastName() {
-      return (this.dados.FirstName && this.dados.LastName) ? true : false;
+      return ((this.dados.FirstName && this.dados.LastName) || this.isEdit) ? true : false;
     },
     hasUsername() {
       return this.dados.Username ? true : false;
@@ -191,6 +190,7 @@ export default {
     },
 
     async salvarUsuario() {
+      this.dados.Genero = Number(this.dados.Genero);
       UsuarioServices.Criar(this.dados).then(() => {
         this.$emit('showToastSuccess', 'Criado com sucesso');
         this.$router.back();
@@ -206,6 +206,16 @@ export default {
       UsuarioServices.Update(this.dados).then(() => {
         this.$emit('showToastSuccess', 'Atualizado com sucesso!');
         this.$router.back();
+        this.getUsers();
+      }).catch(err => {
+        console.log(err);
+        this.$emit('showToastError', err);
+      })
+    },
+
+    async deletar(id) {
+      UsuarioServices.Delete(id).then(res => {
+        this.$emit('showToastSuccess', res);
         this.getUsers();
       }).catch(err => {
         console.log(err);

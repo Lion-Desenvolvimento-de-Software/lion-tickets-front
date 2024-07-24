@@ -6,7 +6,7 @@
       <div class="w-100 d-flex justify-content-between custom-layout-action">
         <div class="custom-filters w-100"></div>
         <div class="custom-action-data">
-          <RouterLink to="/admin/usuarios/new"><button class="btn btn-success" @click="isEdit = false">Adicionar</button></RouterLink>
+          <RouterLink to="/admin/usuarios/new"><button class="btn btn-success" @click="claerDatas">Adicionar</button></RouterLink>
         </div>
       </div>
 
@@ -41,7 +41,7 @@
           </div>
           <div class="col d-flex custom-input">
             <label>Ultimo nome: *</label>
-            <input v-model="dados.LastName" type="text" name="Ultimo nome" />
+            <input v-model="dados.LastName" type="text" name="Ultimo nome" placeholder="Insira o último nome"  />
             <!-- <span class="text-danger font-size">{{ getErrors?.cnpj[0] }}</span> -->
           </div>
         </div>
@@ -86,11 +86,18 @@
           </div>
           <div class="col d-flex custom-input">
             <label>Função: *</label>
-            <select v-model="dados.RoleName" name="Genero">
+            <select v-model="dados.RoleName" name="RoleName">
               <option :value="null" selected>Selecione...</option>
               <option v-if="user?.role == 'Admin'" value="Admin">Admin</option>
               <option v-if="['Admin', 'Gerente'].includes(user?.role)" value="Gerente">Gerente</option>
               <option v-if="user?.role == 'Gerente'" value="Vendedor">Vendedor</option>
+            </select>
+          </div>
+          <div class="col d-flex custom-input" v-if="dados.RoleName != null && dados.RoleName != 'Admin' && user?.role == 'Admin' && $route.params.id == 'new'">
+            <label>Company: *</label>
+            <select v-model="dados.CompanyId" name="RoleName">
+              <option :value="null" selected>Selecione...</option>
+              <option v-for="company in companies" :value="company.id" :key="company.Id">{{ company.nome }}</option>
             </select>
           </div>
         </div>
@@ -109,6 +116,7 @@
 
 <script>
 import UsuarioServices from '@/services/UsuarioServices';
+import EmpresaService from '@/services/admin/empresaService';
 import UserManager from '@/services/userManager';
 
 export default {
@@ -134,10 +142,12 @@ export default {
         DataAniversario: null,
         Password: null,
         ConfirmPassword: null,
-        RoleName: null
+        RoleName: null,
+        CompanyId: null
       },
       user: null,
-      isEdit: false
+      isEdit: false,
+      companies: null
     }
   },
 
@@ -185,7 +195,13 @@ export default {
   methods: {
     async getUsers() {
       this.user = (await UserManager.getUser()).profile;
-      this.users = await UsuarioServices.GetUsers(this.user.role);
+      if (this.user.role == "Admin") {
+        this.companies = await EmpresaService.getEmpresasAll();
+        this.users = await UsuarioServices.GetUsers(this.user.role);
+      }
+
+
+
       if (this.isEdit) this.addDataEdit(this.users.find(item => item.id == this.$route.params.id));
     },
 
@@ -265,8 +281,19 @@ export default {
       this.dados.PhoneNumber = item?.phoneNumber;
       this.dados.RoleName = item?.roleName;
     },
+    claerDatas() {
+      this.isEdit = false;
+      this.dados.Id = null;
+      this.dados.DataAniversario = null;
+      this.dados.Genero = null;
+      this.dados.Email = null;
+      this.dados.Username = null;
+      this.dados.PhoneNumber = null;
+      this.dados.RoleName = null;
+    },
     cancelar() {
       this.$router.back();
+      this.claerDatas();
     }
   }
 }

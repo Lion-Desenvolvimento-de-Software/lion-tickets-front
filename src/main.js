@@ -42,7 +42,6 @@ axios.interceptors.request.use(async config => {
 });
 
 axios.interceptors.response.use(response => {
-  console.log("Hello")
   return response;
 }, async (error) => {
   if (error.response && error.response.status === 401) {

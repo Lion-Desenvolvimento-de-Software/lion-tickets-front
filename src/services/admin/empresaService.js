@@ -2,13 +2,43 @@ import axios from "axios";
 
 export default {
   async getEmpresas(pagination = 1) {
-    var { data } = await axios.get(`api/v1/empresa/getAll/${pagination}`);
-    return data;
+    try {
+      var { data } = await axios.get(`api/v1/empresa/getAll/${pagination}`);
+      return data;
+    } catch(err) {
+      console.log(err);
+      throw err;
+    }
+  },
+
+  async getEmpresasAll() {
+    try {
+      var { data } = await axios.get(`api/v1/empresa/getAll`);
+      return data;
+    } catch(err) {
+      console.log(err);
+      throw err;
+    }
+  },
+
+  async getEmpresasByUser(userId) {
+    try {
+      var { data } = await axios.get(`api/v1/UsersCompany/GetCompanyByUser/${userId}`);
+      return data;
+    } catch(err) {
+      console.log(err);
+      throw err;
+    }
   },
 
   async getCount() {
-    var { data } = await axios.get(`api/v1/empresa/getCount`);
-    return data;
+    try {
+      var { data } = await axios.get(`api/v1/empresa/getCount`);
+      return data;
+    } catch(err) {
+      console.log(err);
+      throw err;
+    }
   },
 
   async salvarEmpresa(obj) {

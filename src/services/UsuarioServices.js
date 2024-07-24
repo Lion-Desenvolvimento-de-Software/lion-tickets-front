@@ -7,6 +7,7 @@ export default {
       return data;
     } catch (err) {
       console.log("GetUsers: ", err);
+      throw err;
     }
   },
 

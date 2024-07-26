@@ -21,9 +21,9 @@ export default {
     }
   },
 
-  async getEmpresasByUser(userId) {
+  async getUsersByUserId(userId) {
     try {
-      var { data } = await axios.get(`api/v1/UsersCompany/GetCompanyByUser/${userId}`);
+      var { data } = await axios.get(`api/v1/UsersCompany/GetUsersByUserId/${userId}`);
       return data;
     } catch(err) {
       console.log(err);
@@ -43,6 +43,10 @@ export default {
 
   async salvarEmpresa(obj) {
     await axios.post("api/v1/empresa", obj, { headers: { "Content-Type": "application/json" } });
+  },
+
+  async salvarUsuarioParaEmpresa(obj) {
+    await axios.post("api/v1/UsersCompany", obj, { headers: { "Content-Type": "application/json" } })
   },
 
   async editarEmpresa(obj) {

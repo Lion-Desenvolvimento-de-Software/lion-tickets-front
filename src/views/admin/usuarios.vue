@@ -198,16 +198,19 @@ export default {
       if (this.user.role == "Admin") {
         this.companies = await EmpresaService.getEmpresasAll();
         this.users = await UsuarioServices.GetUsers(this.user.role);
+      } else {
+        let usersIds = await EmpresaService.getUsersByUserId(this.user.sub);
+        this.users = await UsuarioServices.GetUsersByIds(usersIds.map(value => value.userId));
       }
-
-
 
       if (this.isEdit) this.addDataEdit(this.users.find(item => item.id == this.$route.params.id));
     },
 
     async salvarUsuario() {
       this.dados.Genero = Number(this.dados.Genero);
-      UsuarioServices.Criar(this.dados).then(() => {
+      UsuarioServices.Criar(this.dados).then(async res => {
+        if (this.dados.RoleName != 'Admin') await EmpresaService.salvarUsuarioParaEmpresa({UserId: res.id, CompanyId: Number(this.dados.CompanyId)});
+
         this.$emit('showToastSuccess', 'Criado com sucesso');
         this.$router.back();
         this.getUsers();

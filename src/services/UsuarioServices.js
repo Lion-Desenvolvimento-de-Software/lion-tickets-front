@@ -11,9 +11,18 @@ export default {
     }
   },
 
+  async GetUsersByIds(users) {
+    try {
+      const { data } = await axios.post(`https://localhost:44360/api/v1/users/GetUsersByIds`, users, { headers: { 'Content-Type': "application/json" } });
+      return data;
+    } catch (err) {
+      console.log("GetUsers: ", err);
+      throw err;
+    }
+  },
+
   async Criar(dados) {
     try {
-      console.log(dados);
       const { data } = await axios.post('https://localhost:44360/account/registerAdmin', dados, { headers: { 'Content-Type': 'application/json' } });
       return data;
     } catch(err) {

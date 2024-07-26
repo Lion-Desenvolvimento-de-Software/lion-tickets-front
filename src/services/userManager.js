@@ -8,7 +8,7 @@ const userManager = new UserManager({
   redirect_uri: "http://localhost:8080/callback",
   response_type: "code",
   scope: "openid profile lion_tickets",
-  post_logout_redirect_uri: "http://localhost:8080/logout",
+  post_logout_redirect_uri: "http://localhost:8080/",
   loadUserInfo: true
 });
 

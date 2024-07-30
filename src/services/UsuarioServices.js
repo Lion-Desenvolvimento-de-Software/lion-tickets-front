@@ -1,9 +1,9 @@
 import axios from 'axios'
 
 export default {
-  async GetUsers(role = "Admin") {
+  async GetUsers(role = "Admin", pagination = 0) {
     try {
-      const { data } = await axios.get(`https://localhost:44360/api/v1/users/GetUsers/${role}`);
+      const { data } = await axios.get(`https://localhost:44360/api/v1/users/GetUsers/${role}/${pagination}`);
       return data;
     } catch (err) {
       console.log("GetUsers: ", err);
@@ -11,9 +11,9 @@ export default {
     }
   },
 
-  async GetUsersByIds(users) {
+  async GetUsersByIds(users, pagination = 0) {
     try {
-      const { data } = await axios.post(`https://localhost:44360/api/v1/users/GetUsersByIds`, users, { headers: { 'Content-Type': "application/json" } });
+      const { data } = await axios.post(`https://localhost:44360/api/v1/users/GetUsersByIds/${pagination}`, users, { headers: { 'Content-Type': "application/json" } });
       return data;
     } catch (err) {
       console.log("GetUsers: ", err);

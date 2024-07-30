@@ -11,11 +11,13 @@
       </div>
 
       <div class="layout-table py-3">
-        <b-table :items="users" 
+        <b-table :items="users?.data" 
                 :fields="fields"
                 striped 
                 hover
-                small>
+                small
+                :per-page="10"
+                :current-page="getCurrentPageDivisionTen">
           <template #cell(action)="{ item }">
             <div class="d-flex justify-content-center spacing-x">
               <RouterLink :to="`/admin/usuarios/${item.id}`" @click="addDataEdit(item)">
@@ -27,6 +29,16 @@
             </div>
           </template>
         </b-table>
+        <div class="pagination">
+          {{ countData }}
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="getCountPaginations"
+            :per-page="10"
+            aria-controls="my-table"
+            @change="getUsers"
+          ></b-pagination>
+        </div>
       </div>
     </div>
     <RouterView v-else
@@ -86,7 +98,7 @@
           </div>
           <div class="col d-flex custom-input">
             <label>Função: *</label>
-            <select v-model="dados.RoleName" name="RoleName">
+            <select v-model="dados.RoleName" name="RoleName" @input="selectRole">
               <option :value="null" selected>Selecione...</option>
               <option v-if="user?.role == 'Admin'" value="Admin">Admin</option>
               <option v-if="['Admin', 'Gerente'].includes(user?.role)" value="Gerente">Gerente</option>
@@ -95,7 +107,7 @@
           </div>
           <div class="col d-flex custom-input" v-if="dados.RoleName != null && dados.RoleName != 'Admin' && user?.role == 'Admin' && $route.params.id == 'new'">
             <label>Company: *</label>
-            <select v-model="dados.CompanyId" name="RoleName">
+            <select v-model="dados.CompanyId" name="CompanyId">
               <option :value="null" selected>Selecione...</option>
               <option v-for="company in companies" :value="company.id" :key="company.Id">{{ company.nome }}</option>
             </select>
@@ -147,7 +159,9 @@ export default {
       },
       user: null,
       isEdit: false,
-      companies: null
+      companies: null,
+      countData: 1,
+      currentPage: 0
     }
   },
 
@@ -158,7 +172,7 @@ export default {
 
   computed: {
     hasDatasInserted() {
-      return (this.hasFirstAndLastName && this.hasUsername && this.hasEmail && this.hasGenero && this.hasPassword && this.isPasswordConfirm && this.hasRole)
+      return (this.hasFirstAndLastName && this.hasUsername && this.hasEmail && this.hasGenero && this.hasPassword && this.isPasswordConfirm && this.hasRole && this.hasCompany)
     },
     hasFirstAndLastName() {
       return ((this.dados.FirstName && this.dados.LastName) || this.isEdit) ? true : false;
@@ -182,12 +196,23 @@ export default {
     hasRole() {
       return this.dados.RoleName ? true : false;
     },
+    hasCompany() {
+      if (this.user.role != "Admin") return true;
+      return this.dados.RoleName == "Admin" || (this.dados.RoleName && this.dados.RoleName != "Admin" && this.dados.CompanyId) ? true : false;
+    },
     getMensagem() {
       return this.mensagem;
     },
     getIsError() {
       return this.isError
-    }
+    },
+
+    getCurrentPageDivisionTen() {
+      return (this.currentPage / 10)
+    },
+    getCountPaginations() {
+      return this.countData;
+    },
   },
 
   emits: ['showToastSuccess', 'showToastError'],
@@ -197,18 +222,20 @@ export default {
       this.user = (await UserManager.getUser()).profile;
       if (this.user.role == "Admin") {
         this.companies = await EmpresaService.getEmpresasAll();
-        this.users = await UsuarioServices.GetUsers(this.user.role);
+        this.users = await UsuarioServices.GetUsers(this.user.role, (this.currentPage - 1));
       } else {
         let usersIds = await EmpresaService.getUsersByUserId(this.user.sub);
-        this.users = await UsuarioServices.GetUsersByIds(usersIds.map(value => value.userId));
+        this.users = await UsuarioServices.GetUsersByIds(usersIds.map(value => value.userId), (this.currentPage - 1));
       }
 
-      if (this.isEdit) this.addDataEdit(this.users.find(item => item.id == this.$route.params.id));
+      this.countData = this.users.countTotal;
+
+      if (this.isEdit) this.addDataEdit(this.users.data.find(item => item.id == this.$route.params.id));
     },
 
     async salvarUsuario() {
       this.dados.Genero = Number(this.dados.Genero);
-      UsuarioServices.Criar(this.dados).then(async res => {
+      UsuarioServices.Criar(this.dados).then(async (res) => {
         if (this.dados.RoleName != 'Admin') await EmpresaService.salvarUsuarioParaEmpresa({UserId: res.id, CompanyId: Number(this.dados.CompanyId)});
 
         this.$emit('showToastSuccess', 'Criado com sucesso');
@@ -297,6 +324,9 @@ export default {
     cancelar() {
       this.$router.back();
       this.claerDatas();
+    },
+    selectRole() {
+      if (!this.dados.RoleName || this.dados.RoleName == "Admin") this.dados.CompanyId = null;
     }
   }
 }
@@ -351,5 +381,11 @@ export default {
 
 .font-size {
   font-size: 12px;
+}
+
+.pagination {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: 1fr;
 }
 </style>

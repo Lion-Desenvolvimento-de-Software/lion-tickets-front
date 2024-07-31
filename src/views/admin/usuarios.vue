@@ -25,7 +25,7 @@
                   <font-awesome-icon :icon="['fa', 'pen']" />
                 </button>
               </RouterLink>
-              <button class="btn btn-danger" @click="deletar(item.id)"><font-awesome-icon :icon="['fas', 'trash']" /></button>
+              <button v-if="user.sub != item.id" class="btn btn-danger" @click="deletar(item.id)"><font-awesome-icon :icon="['fas', 'trash']" /></button>
             </div>
           </template>
         </b-table>
@@ -96,7 +96,7 @@
             <label>Data de Aniversário:</label>
             <input type="date" v-model="dados.DataAniversario" name="BirthDay" />
           </div>
-          <div class="col d-flex custom-input">
+          <div class="col d-flex custom-input" v-if="dados.Id != user?.sub">
             <label>Função: *</label>
             <select v-model="dados.RoleName" name="RoleName" @input="selectRole">
               <option :value="null" selected>Selecione...</option>
@@ -163,6 +163,10 @@ export default {
       countData: 1,
       currentPage: 0
     }
+  },
+
+  props: {
+    Company: null
   },
 
   mounted() {
@@ -236,7 +240,9 @@ export default {
     async salvarUsuario() {
       this.dados.Genero = Number(this.dados.Genero);
       UsuarioServices.Criar(this.dados).then(async (res) => {
-        if (this.dados.RoleName != 'Admin') await EmpresaService.salvarUsuarioParaEmpresa({UserId: res.id, CompanyId: Number(this.dados.CompanyId)});
+        if (this.dados.RoleName != 'Admin' && this.Company != null) {
+          await EmpresaService.salvarUsuarioParaEmpresa({UserId: res.id, CompanyId: Number(this.Company.Id)});
+        }
 
         this.$emit('showToastSuccess', 'Criado com sucesso');
         this.$router.back();
@@ -260,13 +266,18 @@ export default {
     },
 
     async deletar(id) {
-      UsuarioServices.Delete(id).then(res => {
-        this.$emit('showToastSuccess', res);
-        this.getUsers();
+      EmpresaService.RemoveUserOfCompany(id).then(() => {
+        UsuarioServices.Delete(id).then(res => {
+          this.$emit('showToastSuccess', res);
+          this.getUsers();
+        }).catch(err => {
+          console.log(err);
+          this.$emit('showToastError', err);
+        });
       }).catch(err => {
         console.log(err);
-        this.$emit('showToastError', err);
-      })
+        this.$emit('showToastError', "Houve um problema ao deletar usuário com a empresas!");
+      });
     },
 
     mascaraTelefone(value) {
@@ -304,7 +315,7 @@ export default {
     addDataEdit(item) {
       this.isEdit = true;
       this.dados.Id = item?.id;
-      this.dados.DataAniversario = item?.dataAniversario;
+      this.dados.DataAniversario = item?.dataAniversario.split("T")[0];
       this.dados.Genero = item?.genero;
       this.dados.Email = item?.email;
       this.dados.Username = item?.userName;

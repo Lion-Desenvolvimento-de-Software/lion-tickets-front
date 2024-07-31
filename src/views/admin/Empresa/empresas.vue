@@ -144,6 +144,7 @@ export default {
     async salvarEmpresa(isEditar = this.$route.params.id != 'new') {
       this.$emit('setLoading', true);
       try {
+        this.dados["id"] = this.$route.params.id != 'new' ? this.$route.params.id : null;
         !isEditar ? await empresaService.salvarEmpresa(this.dados) : await empresaService.UpdateEmpresa(this.dados);
         this.$emit('showToastSuccess', `Empresa ${!isEditar ? 'cadastrado' : 'editado'} com sucesso!`);
         this.$router.back();

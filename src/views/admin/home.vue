@@ -20,16 +20,46 @@
     <router-view @setLoading="setLoading" 
                   @showToastSuccess="showToastSuccess" 
                   @showToastError="showToastError"
+                  :Company="company"
                   class="custom-pages"></router-view>
     </div>
   </div>
 </template>
 
 <script>
+import Company from '@/assets/classes/Company.js';
+import UserManager from '@/services/userManager.js';
+import EmpresaService from '@/services/admin/empresaService.js';
+
 export default {
   name: 'HomeAdmin',
   emits: ['setLoading', 'showToastSuccess', 'showToastError'],
+  data() {
+    return {
+      company: null
+    }
+  },
+  created() {
+    this.GetCompanyByUserId();
+  },
   methods: {
+    async GetCompanyByUserId() {
+      UserManager.getUser().then(res => {
+        EmpresaService.GetCompanyByUserId(res.profile.sub).then(res => {
+          this.company = new Company();
+          this.company.AddData({
+            Id: res.id,
+            Nome: res.nome,
+            CNPJ: res.cnpj
+          });
+        }).catch(err => {
+          console.log(err)
+        });
+      }).catch(async err => {
+        console.log(err);
+        await UserManager.signinRedirectCallback();
+      })
+    },
     setLoading(isLoading) {
       this.$emit('setLoading', isLoading);
     },

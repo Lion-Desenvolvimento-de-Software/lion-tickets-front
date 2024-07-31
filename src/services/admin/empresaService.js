@@ -21,6 +21,16 @@ export default {
     }
   },
 
+  async GetCompanyByUserId(userId) {
+    try {
+      var { data } = await axios.get(`api/v1/UsersCompany/GetCompanyByUserId/${userId}`);
+      return data;
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  },
+
   async getUsersByUserId(userId) {
     try {
       var { data } = await axios.get(`api/v1/UsersCompany/GetUsersByUserId/${userId}`);
@@ -58,5 +68,8 @@ export default {
   },
   async DeletarEmpresa(id) {
     await axios.delete(`api/v1/empresa/${id}`);
+  },
+  async RemoveUserOfCompany(userId) {
+    await axios.delete(`api/v1/UsersCompany/${userId}`);
   }
 }

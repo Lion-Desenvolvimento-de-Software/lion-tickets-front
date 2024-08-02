@@ -10,6 +10,7 @@ import { faBackwardStep } from "@fortawesome/free-solid-svg-icons"
 import { faForwardStep } from "@fortawesome/free-solid-svg-icons"
 import { faPen } from "@fortawesome/free-solid-svg-icons"
 import { faTrash } from "@fortawesome/free-solid-svg-icons"
+import { faCamera } from "@fortawesome/free-solid-svg-icons"
 
 export default [
   faMobileScreen,
@@ -23,5 +24,6 @@ export default [
   faBackwardStep,
   faForwardStep,
   faPen,
-  faTrash
+  faTrash,
+  faCamera
 ]

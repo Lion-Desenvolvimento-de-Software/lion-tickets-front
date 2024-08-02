@@ -11,6 +11,16 @@ export default {
     }
   },
 
+  async getEmpresaById(id) {
+    try {
+      var { data } = await axios.get(`api/v1/empresa/${id}`);
+      return data;
+    } catch(err) {
+      console.log(err);
+      throw err;
+    }
+  },
+
   async getEmpresasAll() {
     try {
       var { data } = await axios.get(`api/v1/empresa/getAll`);

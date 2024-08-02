@@ -315,7 +315,7 @@ export default {
     addDataEdit(item) {
       this.isEdit = true;
       this.dados.Id = item?.id;
-      this.dados.DataAniversario = item?.dataAniversario.split("T")[0];
+      this.dados.DataAniversario = item?.dataAniversario?.split("T")[0];
       this.dados.Genero = item?.genero;
       this.dados.Email = item?.email;
       this.dados.Username = item?.userName;

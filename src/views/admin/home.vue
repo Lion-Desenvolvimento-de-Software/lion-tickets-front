@@ -5,7 +5,8 @@
         <div class="d-grid custom-items">
           <div class="custom-company-profile" v-if="!GetIsAdmin">
             <div class="company-profile-image">
-              <router-link :to="`/admin/empresas/${company?.Id}`">
+              {{ usuario }}
+              <router-link :to="`/admin/empresa/${company?.Id}`">
                 <img class="my-1" width="35" height="35" :src="require('@/assets/images/R.png')">
               </router-link>
             </div>
@@ -35,16 +36,15 @@
 
 <script>
 import Company from '@/assets/classes/Company.js';
-import UserManager from '@/services/userManager.js';
 import EmpresaService from '@/services/admin/empresaService.js';
+import { Usuario } from '@/assets/classes/Usuario.js';
 
 export default {
   name: 'HomeAdmin',
   emits: ['setLoading', 'showToastSuccess', 'showToastError'],
   data() {
     return {
-      company: null,
-      userProfile: null
+      company: null
     }
   },
   created() {
@@ -52,29 +52,29 @@ export default {
   },
   computed: {
     GetIsAdmin() {
-      return this.userProfile?.role == 'Admin';
+      return this.usuario?.Role == 'Admin';
+    }
+  },
+  props: {
+    usuario: {
+      type: Object,
+      default: new Usuario()
     }
   },
   methods: {
     async GetCompanyByUserId() {
-      UserManager.getUser().then(res => {
-        this.userProfile = res.profile;
-        if (res.profile.role != "Admin") {
-          EmpresaService.GetCompanyByUserId(res.profile.sub).then(res => {
-            this.company = new Company();
-            this.company.AddData({
-              Id: res.id,
-              Nome: res.nome,
-              CNPJ: res.cnpj
-            });
-          }).catch(err => {
-            console.log(err)
+      if (this.usuario.Role != "Admin") {
+        EmpresaService.GetCompanyByUserId(this.usuario.Id).then(res => {
+          this.company = new Company();
+          this.company.AddData({
+            Id: res.id,
+            Nome: res.nome,
+            CNPJ: res.cnpj
           });
-        }
-      }).catch(async err => {
-        console.log(err);
-        await UserManager.signinRedirectCallback();
-      })
+        }).catch(err => {
+          console.log(err)
+        });
+      }
     },
     setLoading(isLoading) {
       this.$emit('setLoading', isLoading);

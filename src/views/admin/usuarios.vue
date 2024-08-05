@@ -248,7 +248,6 @@ export default {
         this.$router.back();
         this.getUsers();
       }).catch(err => {
-        console.log(err);
         this.$emit('showToastError', err);
       })
     },
@@ -281,6 +280,7 @@ export default {
     },
 
     mascaraTelefone(value) {
+      if (this.dados.PhoneNumber == null) return;
       this.$watch('dados.PhoneNumber', () => {
         this.dados.PhoneNumber = this.dados.PhoneNumber.replace(/[a-zA-Z]+/g, "");
       })
@@ -398,5 +398,9 @@ export default {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: 1fr;
+}
+
+label {
+  font-size: 14px;
 }
 </style>

@@ -46,8 +46,8 @@ export default [
         ]
       },
       {
-        path: 'empresas/:id',
-        name: 'EmpresasAdmin',
+        path: 'empresa/:id',
+        name: 'Empresa',
         component: () => import('@/views/Company.vue'),
       },
       {

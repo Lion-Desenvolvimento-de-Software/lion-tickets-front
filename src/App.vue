@@ -30,6 +30,7 @@ import spinner from './components/spinner.vue';
 import toast from './components/toasts/toast.vue';
 import collapseProfile from './components/colapses/collapseProfile.vue';
 import userManager from './services/userManager';
+import axios from '@/services/axios';
 
 export default {
   name: 'app',
@@ -44,15 +45,16 @@ export default {
       isOpenCollapse: false
     }
   },
-  created() {
+  mounted() {
     userManager.getUser().then(res => {
+      console.log(res)
       if(!res) throw "usuário deslogado!";
       if(res.expired) throw "usuário deslogado!";
+      axios.setAuthorization(res.access_token);
       console.log("Teste = ", res);
       this.setUsuario(res.profile);
-    }).catch(async err => {
-      console.log("Erro = ", err);
-      userManager.removeUser();
+    }).catch(async () => {
+      await userManager.removeUser();
     })
   },
   components: {
@@ -74,6 +76,7 @@ export default {
   },
   methods: {
     setUsuario(user) {
+      console.log("Brabo: ", user)
       let obj = {
         Id: user.sub,
         UserName: user.name,

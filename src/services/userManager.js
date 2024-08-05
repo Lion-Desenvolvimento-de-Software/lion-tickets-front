@@ -1,4 +1,5 @@
 import { UserManager, WebStorageStateStore } from "oidc-client";
+import axios from '@/services/axios';
 
 const userManager = new UserManager({
   userStore: new WebStorageStateStore({ store: window.localStorage }),
@@ -15,6 +16,7 @@ const userManager = new UserManager({
 // Adicione logs detalhados em diferentes partes do processo
 userManager.events.addUserLoaded(user => {
   console.log('User loaded:', user);
+  axios.setAuthorization(user.access_token);
 });
 
 userManager.events.addUserUnloaded(() => {

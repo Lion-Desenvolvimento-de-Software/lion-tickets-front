@@ -4,26 +4,20 @@
 
 <script>
 import userManager from '@/services/userManager';
-import axios from 'axios';
 
 export default {
   name: 'Callback',
-  mounted() {
+  created() {
     this.handleCallback();
   },
+  emits: ['setUsuario'],
   methods: {
     async handleCallback() {
       var user = await userManager.getUser();
-      if (user && user.expired) {
-        await userManager.removeUser();
-      }
-      else {
-        userManager.signinCallback().then(async res => {
-          axios.defaults.headers.common["Authorization"] = `Bearer ${res.access_token}`
-          this.$router.push('/');
+      if (!user) {
+        userManager.signinRedirectCallback().then(res => {
           this.$emit('setUsuario', res.profile);
-        }).catch(err => {
-          console.log(err);
+          this.$router.push('/');
         });
       }
     }

@@ -45,7 +45,7 @@ export default {
       isOpenCollapse: false
     }
   },
-  mounted() {
+  created() {
     userManager.getUser().then(res => {
       console.log(res)
       if(!res) throw "usuário deslogado!";
@@ -75,8 +75,10 @@ export default {
 		}
   },
   methods: {
+    async checkSession() {
+      await userManager.events.addUserSignedIn()
+    },
     setUsuario(user) {
-      console.log("Brabo: ", user)
       let obj = {
         Id: user.sub,
         UserName: user.name,

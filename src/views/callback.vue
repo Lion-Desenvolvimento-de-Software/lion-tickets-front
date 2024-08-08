@@ -13,13 +13,11 @@ export default {
   emits: ['setUsuario'],
   methods: {
     async handleCallback() {
-      var user = await userManager.getUser();
-      if (!user) {
-        userManager.signinRedirectCallback().then(res => {
-          this.$emit('setUsuario', res.profile);
-          this.$router.push('/');
-        });
-      }
+      userManager.signinCallback().then(res => {
+        console.log("callback: ", res)
+        this.$emit('setUsuario', res.profile);
+        this.$router.push('/');
+      });
     }
   }
 }

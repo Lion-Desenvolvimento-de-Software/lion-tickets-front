@@ -8,9 +8,8 @@ const userManager = new UserManager({
   client_secret: "my_super_secret",
   redirect_uri: "http://localhost:8080/callback",
   response_type: "code",
-  scope: "openid profile lion_tickets",
+  scope: "openid profile offline_access lion_tickets",
   post_logout_redirect_uri: "http://localhost:8080/",
-  loadUserInfo: true
 });
 
 // Adicione logs detalhados em diferentes partes do processo
@@ -27,8 +26,9 @@ userManager.events.addAccessTokenExpiring(() => {
   console.log('Access token expiring...');
 });
 
-userManager.events.addAccessTokenExpired(() => {
+userManager.events.addAccessTokenExpired(async () => {
   console.log('Access token expired');
+  await userManager.signinCallback();
 });
 
 userManager.events.addSilentRenewError(error => {
@@ -37,6 +37,11 @@ userManager.events.addSilentRenewError(error => {
 
 userManager.events.addUserSignedOut(() => {
   console.log('User signed out');
+  userManager.signinSilent().then(user => {
+    console.log('User signed back in silently:', user);
+  }).catch(err => {
+    console.error('Error signing in silently:', err);
+  });
 });
 
 export default userManager

@@ -8,22 +8,24 @@ module.exports = defineConfig({
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false',
       })
     ],
-    // devServer: {
-    //   https: true
-    // }
+    devServer: {
+      port: 8080,
+      //server: 'https',
+      //https: true
+    },
     resolve: {
       alias: {
         vue: '@vue/compat',
       },
     },
   },
-  chainWebpack: config => {
-    config.plugin('html').tap(args => {
-      args[0].meta = {
-        // Adicione a CSP aqui
-        'http-equiv': { 'http-equiv': 'Content-Security-Policy', 'content': "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://localhost:44360;" }
-      }
-      return args
-    })
-  }
+  // chainWebpack: config => {
+  //   config.plugin('html').tap(args => {
+  //     args[0].meta = {
+  //       // Adicione a CSP aqui
+  //       'http-equiv': { 'http-equiv': 'Content-Security-Policy', 'content': "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://localhost:44360;" }
+  //     }
+  //     return args
+  //   })
+  // }
 })

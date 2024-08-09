@@ -5,7 +5,6 @@
         <div class="d-grid custom-items">
           <div class="custom-company-profile" v-if="!GetIsAdmin">
             <div class="company-profile-image">
-              {{ usuario }}
               <router-link :to="`/admin/empresa/${company?.Id}`">
                 <img class="my-1" width="35" height="35" :src="require('@/assets/images/R.png')">
               </router-link>

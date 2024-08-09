@@ -12,12 +12,12 @@
           <div class="custom-detail-file">
             <div class="custom-anexo-file">
               <span class="file-custom">{{ file?.name ?? 'Selecione um arquivo...' }}</span>
-              <input type="file" accept="image/png, image/jpeg" @change="handleFileChange">
+              <input type="file" accept="image/png, image/jpeg" @change="handleFileChange($event)">
             </div>
           </div>
           <div v-if="file">
             <cropper class="cropper"
-                  :src="imageData"
+                  :src="imageData.src"
                   :stancil-size="{
                     width: 300,
                     height: 300
@@ -27,6 +27,7 @@
                     aspectRatio: 1
                   }"
                   :debounce="false"
+                  ref="cropper"
                   @change="change" />
 
             <preview :width="120"
@@ -38,7 +39,7 @@
         </div>
         <div class="modal-footer">
           <button @click="hide" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button @click="$emit('reenviarCodigo', email)" type="button" class="btn btn-success" data-dismiss="modal">Enviar</button>
+          <button @click="enviar" type="button" class="btn btn-success" data-dismiss="modal">Enviar</button>
         </div>
       </div>
     </div>
@@ -62,7 +63,10 @@ export default {
     return {
       file: null,
       cropper: null,
-      imageData: null,
+      imageData: {
+        src: null,
+        type: null
+      },
       result: {
 				coordinates: null,
 				image: null
@@ -86,9 +90,11 @@ export default {
     handleFileChange(event) {
       if (event.target.files.length <= 0) return;
       this.file = event.target.files[0];
+      const blob = URL.createObjectURL(event.target.files[0]);
       var reader = new FileReader();
-      reader.onload = (e) => {
-        this.imageData = e.target.result;
+      reader.onload = () => {
+        this.imageData.src = blob;
+        this.imageData.type = this.file.type
       };
       reader.readAsDataURL(this.file)
     },
@@ -98,7 +104,13 @@ export default {
 				image
 			};
       console.log(coordinates)
-		}
+		},
+    enviar() {
+      const result = this.$refs.cropper.getResult();
+      this.imageData.src = result.canvas.toDataURL(this.imageData.type);
+      this.$emit('salvar', { cropperResult: this.$refs.cropper, srcImage: this.imageData });
+      this.hide();
+    }
   }
 }
 </script>

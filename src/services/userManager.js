@@ -24,11 +24,15 @@ userManager.events.addUserUnloaded(() => {
 
 userManager.events.addAccessTokenExpiring(() => {
   console.log('Access token expiring...');
+  userManager.signinSilent().then(res => {
+    console.log("login silencioso: ", res);
+  }).catch(err => {
+    console.log("Erro Login Silencioso: ", err);
+  });
 });
 
-userManager.events.addAccessTokenExpired(async () => {
+userManager.events.addAccessTokenExpired(() => {
   console.log('Access token expired');
-  await userManager.signinCallback();
 });
 
 userManager.events.addSilentRenewError(error => {

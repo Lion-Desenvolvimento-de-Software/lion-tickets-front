@@ -3,6 +3,8 @@ export default class Company {
     this.Id = null;
     this.Nome = null;
     this.CNPJ = null;
+    this.ImagemEmpresa = null;
+    this.Descricao = null;
   }
 
   AddData(dados) {

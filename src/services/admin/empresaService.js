@@ -64,6 +64,9 @@ export default {
   async salvarEmpresa(obj) {
     await axios.post("api/v1/empresa", obj, { headers: { "Content-Type": "application/json" } });
   },
+  async SalvarImagemProfile(obj) {
+    await axios.post("api/v1/empresa/SalvarImagemProfile", obj, { headers: { 'Content-Type': 'application/json' } });
+  },
 
   async salvarUsuarioParaEmpresa(obj) {
     await axios.post("api/v1/UsersCompany", obj, { headers: { "Content-Type": "application/json" } })

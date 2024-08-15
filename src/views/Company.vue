@@ -58,6 +58,7 @@ export default {
       }
     }
   },
+  emits: ['modificar'],
   props: {
     Usuario: null
   },
@@ -85,10 +86,11 @@ export default {
         Descricao: company?.descricao
       })
     },
-    salvarImagem(infoImagem) {
+    async salvarImagem(infoImagem) {
+      this.$emit('modificar');
       this.imageProfile = infoImagem.srcImage.src;
       this.styleImgComponent.blank = false;
-      EmpresaService.SalvarImagemProfile({
+      await EmpresaService.SalvarImagemProfile({
         FileBase: infoImagem.srcImage.src,
         Type: infoImagem.srcImage.type,
         CompanyId: Number(this.$route.params.id)

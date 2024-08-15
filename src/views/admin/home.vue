@@ -6,7 +6,7 @@
           <div class="custom-company-profile" v-if="!GetIsAdmin">
             <div class="company-profile-image">
               <router-link :to="`/admin/empresa/${company?.Id}`">
-                <img class="my-1" width="35" height="35" :src="require('@/assets/images/R.png')">
+                <b-img v-bind="styleImgComponent" rounded="circle" alt="Circle image" id="company-image" class="my-1 p-0 preview__image" width="35" height="35" :src="company?.ImagemEmpresa" />
               </router-link>
             </div>
           </div>
@@ -27,6 +27,7 @@
     <router-view @setLoading="setLoading" 
                   @showToastSuccess="showToastSuccess" 
                   @showToastError="showToastError"
+                  @modificar="modificar"
                   :Company="company"
                   :Usuario="usuario"
                   class="custom-pages"></router-view>
@@ -41,10 +42,10 @@ import { Usuario } from '@/assets/classes/Usuario.js';
 
 export default {
   name: 'HomeAdmin',
-  emits: ['setLoading', 'showToastSuccess', 'showToastError'],
   data() {
     return {
-      company: null
+      company: null,
+      styleImgComponent: { blank: true, blankColor: '#777', width: 120, height: 120, class: 'm1' }
     }
   },
   created() {
@@ -64,6 +65,7 @@ export default {
       default: new Usuario()
     }
   },
+  emits: ['setLoading', 'showToastSuccess', 'showToastError', 'atualizarImagem'],
   methods: {
     async GetCompanyByUserId() {
       if (this.usuario.Role != "Admin") {
@@ -72,13 +74,21 @@ export default {
           this.company.AddData({
             Id: res.id,
             Nome: res.nome,
-            CNPJ: res.cnpj
+            CNPJ: res.cnpj,
+            ImagemEmpresa: res.imagemEmpresa
           });
+          if (this.company?.ImagemEmpresa) {
+            this.styleImgComponent.blank = false;
+          }
         }).catch(err => {
           console.log(err)
         });
       }
     },
+    modificar() {
+      console.log("Entrei")
+    },
+
     setLoading(isLoading) {
       this.$emit('setLoading', isLoading);
     },
@@ -87,7 +97,7 @@ export default {
     },
     showToastError(mensagem) {
       this.$emit('showToastError', mensagem)
-    }
+    },
   }
 }
 </script>

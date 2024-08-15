@@ -82,10 +82,13 @@ export default {
   },
   methods: {
     show() {
-      thisModalObj.show()
+      thisModalObj.show();
     },
     hide() {
-      thisModalObj.hide()
+      thisModalObj.hide();
+      this.file = null;
+      this.imageData.src = null;
+      this.imageData.type = null;
     },
     handleFileChange(event) {
       if (event.target.files.length <= 0) return;
@@ -103,7 +106,6 @@ export default {
 				coordinates,
 				image
 			};
-      console.log(coordinates)
 		},
     enviar() {
       const result = this.$refs.cropper.getResult();

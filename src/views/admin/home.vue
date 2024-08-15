@@ -16,7 +16,7 @@
           <div v-if="!GetIsAdmin" class="item" :class="$route.name.includes('ProdutosAdmin') ? 'selecionado' : ''">
             <router-link to="/admin/produtos">Produtos</router-link>
           </div>
-          <div class="item" :class="$route.name.includes('UsuariosAdmin') ? 'selecionado' : ''">
+          <div v-if="GetIsGerente" class="item" :class="$route.name.includes('UsuariosAdmin') ? 'selecionado' : ''">
             <router-link to="/admin/usuarios">Usuários</router-link>
           </div>
           <div v-if="GetIsAdmin" class="item" :class="$route.name.includes('EmpresasAdmin') ? 'selecionado' : ''">
@@ -28,6 +28,7 @@
                   @showToastSuccess="showToastSuccess" 
                   @showToastError="showToastError"
                   :Company="company"
+                  :Usuario="usuario"
                   class="custom-pages"></router-view>
     </div>
   </div>
@@ -52,6 +53,9 @@ export default {
   computed: {
     GetIsAdmin() {
       return this.usuario?.Role == 'Admin';
+    },
+    GetIsGerente() {
+      return this.usuario?.Role == "Gerente";
     }
   },
   props: {

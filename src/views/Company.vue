@@ -4,10 +4,10 @@
       <div class="profile-company-image">
         <div class="vue-preview custom-preview rounded-circle" id="company-image">
           <div class="vue-preview__wrapper" style="width: 125px; height: 125px; left: calc(50% - 60px); top: calc(50% - 60px);">
-            <b-img v-bind="styleImgComponent" rounded="circle" alt="Circle image" id="company-image" class="p-0 preview__image" :src="imageProfile ? imageProfile : company.ImagemEmpresa"></b-img>
+            <b-img v-bind="styleImgComponent" rounded="circle" alt="Circle image" id="company-image" class="p-0 preview__image" :src="imageProfile ? imageProfile : getCompanyImage"></b-img>
           </div>
         </div>
-        <span class="btn custom-circle-add-image" @click="$refs['modal-anexo-imagem'].show()">
+        <span class="btn custom-circle-add-image" @click="$refs['modal-anexo-imagem'].show()" v-if="Usuario.Role == 'Gerente'">
           <font-awesome-icon :icon="['fas', 'camera']" />
         </span>
       </div>
@@ -18,13 +18,23 @@
           </div>
         </div>
         <div class="row">
-          <div class="col">
+          <div class="col custom-descricao-e-length-descricao">
             <textarea :disabled="!isEdit" class="custom-form" id="descricao" name="Descrição" v-model="company.Descricao" placeholder="Insira uma descrição" rows="4" maxlength="500" />
+            <span v-if="Usuario.Role == 'Gerente'">{{ company.Descricao?.length }}/500</span>
           </div>
         </div>
       </div>
+      <div class="custom-layout-buttons my-3" v-if="Usuario.Role == 'Gerente'">
+        <div v-if="!isEdit">
+          <button class="btn btn-success" @click="editar">Editar</button>
+        </div>
+        <div class="custom-button" v-else>
+          <button class="btn btn-outline-secondary" @click="cancelar">Cancelar</button>
+          <button class="btn btn-success" @click="salvar">Salvar</button>
+        </div>
+      </div>
     </div>
-    <modal-anexo-imagem id="modal_anexo_imagem" ref="modal-anexo-imagem" @salvar="salvar"></modal-anexo-imagem>
+    <modal-anexo-imagem id="modal_anexo_imagem" ref="modal-anexo-imagem" @salvar="salvarImagem"></modal-anexo-imagem>
   </div>
 </template>
 
@@ -40,8 +50,16 @@ export default {
       company: null,
       imageProfile: null,
       styleImgComponent: { blank: true, blankColor: '#777', width: 120, height: 120, class: 'm1' },
-      isEdit: false
+      isEdit: false,
+
+      companyAux: {
+        Nome: null,
+        Descricao: null
+      }
     }
+  },
+  props: {
+    Usuario: null
   },
   components: {
     ModalAnexoImagem
@@ -49,6 +67,11 @@ export default {
   created() {
     this.company = new Company();
     this.GetCompany();
+  },
+  computed: {
+    getCompanyImage() {
+      return this.company.ImagemEmpresa;
+    },
   },
   methods: {
     async GetCompany() {
@@ -62,7 +85,7 @@ export default {
         Descricao: company?.descricao
       })
     },
-    salvar(infoImagem) {
+    salvarImagem(infoImagem) {
       this.imageProfile = infoImagem.srcImage.src;
       this.styleImgComponent.blank = false;
       EmpresaService.SalvarImagemProfile({
@@ -70,6 +93,28 @@ export default {
         Type: infoImagem.srcImage.type,
         CompanyId: Number(this.$route.params.id)
       });
+    },
+    editar() {
+      this.companyAux.Nome = this.company.Nome;
+      this.companyAux.Descricao = this.company.Descricao;
+      this.isEdit = true;
+    },
+    async salvar() {
+      await EmpresaService.editarEmpresa(this.company);
+      this.companyAux = {
+        Nome: null,
+        Descricao: null
+      };
+      this.isEdit = false;
+    },
+    cancelar() {
+      this.company.Nome = this.companyAux.Nome;
+      this.company.Descricao = this.companyAux.Descricao;
+      this.companyAux = {
+        Nome: null,
+        Descricao: null
+      };
+      this.isEdit = false;
     },
   }
 }
@@ -153,5 +198,23 @@ textarea {
   max-height: 150px;
   resize: none;
   font-family: "Gill Sans", sans-serif;
+}
+
+.custom-descricao-e-length-descricao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 3px;
+}
+
+.custom-layout-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.custom-button {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 15px
 }
 </style>

@@ -20,8 +20,8 @@
                 :current-page="getCurrentPageDivisionTen">
           <template #cell(action)="{ item }">
             <div class="d-flex justify-content-center spacing-x">
-              <RouterLink :to="`/admin/usuarios/${item.id}`" @click="addDataEdit(item)">
-                <button class="btn btn-success">
+              <RouterLink :to="`/admin/usuarios/${item.id}`" >
+                <button class="btn btn-success" @click="addDataEdit(item)">
                   <font-awesome-icon :icon="['fa', 'pen']" />
                 </button>
               </RouterLink>

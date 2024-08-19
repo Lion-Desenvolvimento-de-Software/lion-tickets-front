@@ -22,9 +22,9 @@ export default [
         component: () => import('@/views/admin/dashboard'),
       },
       {
-        path: 'produtos',
-        name: 'ProdutosAdmin',
-        component: () => import('@/views/admin/produtos'),
+        path: 'ingressos-produtos',
+        name: 'IngressosProdutosAdmin',
+        component: () => import('@/views/admin/ingressos-produtos'),
       },
       {
         path: 'empresas',

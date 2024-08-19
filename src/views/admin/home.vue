@@ -14,7 +14,7 @@
             <router-link to="/admin/dashboard">Dashboard</router-link>
           </div>
           <div v-if="!GetIsAdmin" class="item" :class="$route.name.includes('ProdutosAdmin') ? 'selecionado' : ''">
-            <router-link to="/admin/produtos">Produtos</router-link>
+            <router-link to="/admin/ingressos-produtos">Ingressos/Produtos</router-link>
           </div>
           <div v-if="GetIsGerente" class="item" :class="$route.name.includes('UsuariosAdmin') ? 'selecionado' : ''">
             <router-link to="/admin/usuarios">Usuários</router-link>

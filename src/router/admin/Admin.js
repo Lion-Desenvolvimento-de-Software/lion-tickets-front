@@ -25,6 +25,19 @@ export default [
         path: 'ingressos-produtos',
         name: 'IngressosProdutosAdmin',
         component: () => import('@/views/admin/ingressos-produtos'),
+        children: [
+          {
+            path: 'new',
+            name: 'IngressosProdutosAdmin',
+            component: () => import('@/components/FormAdmin/Form.vue'),
+          },
+          {
+            path: ':id',
+            name: 'IngressosProdutosAdmin',
+            component: () => import('@/components/FormAdmin/Form.vue'),
+            props: { Nome: "" }
+          }
+        ]
       },
       {
         path: 'empresas',

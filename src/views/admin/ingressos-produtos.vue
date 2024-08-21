@@ -133,6 +133,9 @@ export default {
       ]
     }
   },
+  props: {
+    Company: null,
+  },
   computed: {
     canSave() {
       if (this.tipo == 1) {
@@ -160,7 +163,8 @@ export default {
         formData.append("Price", this.price);
         formData.append("Description", this.description);
         formData.append("CategoryName", this.category);
-        formData.append("ImageURL", imageBase64.replaceAll(/^data:image\/[a-zA-Z]+;base64,/g, ''));
+        formData.append("CompanyId", this.Company.Id);
+        formData.append("ImageBase64", imageBase64.replaceAll(/^data:image\/[a-zA-Z]+;base64,/g, ''));
         
         for(let index = 0; index < this.images.length; index++) {
           formData.append("Images", this.images[index]);

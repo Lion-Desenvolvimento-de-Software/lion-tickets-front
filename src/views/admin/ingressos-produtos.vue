@@ -16,8 +16,9 @@
             <b-tab title="Produtos" :title-link-class="'Produtos'">
               <tabela-com-paginacao :data="dataProdutos"
                                     :fields="fields"
+                                    :count-data="countData"
                                     v-model:current-page="currentPage" 
-                                    @change-pagination="GetProdutos(currentPage)" >
+                                    @change-pagination="GetProdutos" >
                           
                 <template #imageURL="imageURL">
                   <img :src="imageURL" width="40" height="40">
@@ -105,6 +106,7 @@ export default {
   data() {
     return {
       dataProdutos: null,
+      countData: null,
       currentPage: 1,
       tipo: null,
       name: null,
@@ -149,8 +151,14 @@ export default {
     this.GetIngressos();
   },
   methods: {
-    async GetProdutos(pagination = 0) {
-      this.dataProdutos = await ProdutosServices.GetProdutos(pagination);
+    async GetProdutos() {
+      console.log(this.currentPage)
+      ProdutosServices.GetProdutos(this.currentPage).then(res => {
+        this.dataProdutos = res.products;
+        this.countData = res.countProducts
+      }).catch(err => {
+        console.log("GetProdutos: ", err)
+      });
     },
     async GetIngressos() {
       console.log("Ingressos");

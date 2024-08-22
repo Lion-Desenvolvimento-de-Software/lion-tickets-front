@@ -28,7 +28,7 @@
         :total-rows="getCountPaginations"
         :per-page="10"
         aria-controls="my-table"
-        @change="$emit('changePagination')"
+        @change="handlePagination"
       ></b-pagination>
     </div>
   </div>
@@ -63,6 +63,12 @@ export default {
     },
   },
   emits: ['update:currentPage', 'changePagination'],
+  methods: {
+    handlePagination(event) {
+      this.$emit('update:currentPage', event)
+      this.$emit('changePagination');
+    }
+  }
 }
 </script>
 

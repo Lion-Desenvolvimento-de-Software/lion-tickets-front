@@ -1,8 +1,8 @@
 import axios from "axios"
 
 export default {
-  async GetProdutos(pagination = 0) {
-    const { data } = await axios.get(`/api/v1/Product/${pagination}`);
+  async GetProdutos(pagination) {
+    const { data } = await axios.get(`/api/v1/Product/${Number.parseInt(pagination) - 1}`);
     return data;
   },
   async GetProdutoById(id) {

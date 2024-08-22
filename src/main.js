@@ -1,4 +1,4 @@
-import { createApp, configureCompat } from 'vue'
+import { createApp } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import App from './App.vue'
 import router from './router'
@@ -12,7 +12,7 @@ import icons from './assets/icons/icons.js'
 
 library.add(...icons);
 
-import "bootstrap/dist/css/bootstrap.min.css"
+//import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
 
 import 'bootstrap/dist/css/bootstrap.css';
@@ -41,23 +41,23 @@ const app = createApp(App);
 
 app.component("font-awesome-icon", FontAwesomeIcon).use(BootstrapVue).use(store).use(router).mount('#app')
 
-configureCompat({
-  WATCH_ARRAY: 'suppress-warning',
-  RENDER_FUNCTION: 'suppress-warning',
-  INSTANCE_LISTENERS: 'suppress-warning',
-  COMPONENT_FUNCTIONAL: 'suppress-warning',
-  OPTIONS_BEFORE_DESTROY: 'suppress-warning',
-  INSTANCE_SCOPED_SLOTS: 'suppress-warning',
-  OPTIONS_DATA_MERGE: 'suppress-warning',
-  COMPONENT_V_MODEL: 'suppress-warning',
-  CUSTOM_DIR: 'suppress-warning',
-  INSTANCE_EVENT_EMITTER: 'suppress-warning',
-  ATTR_FALSE_VALUE: 'suppress-warning',
-  INSTANCE_ATTRS_CLASS_STYLE: 'suppress-warning',
-  GLOBAL_PROTOTYPE: 'suppress-warning',
-  GLOBAL_EXTEND: 'suppress-warning',
-  GLOBAL_MOUNT: 'suppress-warning',
-  OPTIONS_DESTROYED: 'suppress-warning',
-  INSTANCE_DESTROY: 'suppress-warning',
-});
+// configureCompat({
+//   WATCH_ARRAY: 'suppress-warning',
+//   RENDER_FUNCTION: 'suppress-warning',
+//   INSTANCE_LISTENERS: 'suppress-warning',
+//   COMPONENT_FUNCTIONAL: 'suppress-warning',
+//   OPTIONS_BEFORE_DESTROY: 'suppress-warning',
+//   INSTANCE_SCOPED_SLOTS: 'suppress-warning',
+//   OPTIONS_DATA_MERGE: 'suppress-warning',
+//   COMPONENT_V_MODEL: 'suppress-warning',
+//   CUSTOM_DIR: 'suppress-warning',
+//   INSTANCE_EVENT_EMITTER: 'suppress-warning',
+//   ATTR_FALSE_VALUE: 'suppress-warning',
+//   INSTANCE_ATTRS_CLASS_STYLE: 'suppress-warning',
+//   GLOBAL_PROTOTYPE: 'suppress-warning',
+//   GLOBAL_EXTEND: 'suppress-warning',
+//   GLOBAL_MOUNT: 'suppress-warning',
+//   OPTIONS_DESTROYED: 'suppress-warning',
+//   INSTANCE_DESTROY: 'suppress-warning',
+// });
 

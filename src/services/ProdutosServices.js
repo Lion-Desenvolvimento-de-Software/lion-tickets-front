@@ -10,7 +10,6 @@ export default {
     return data;
   },
   async SalvarProduto(data) {
-    console.log(data);
     await axios.post('/api/v1/Product', data, { headers: { 'Content-Type': 'application/form-data' } });
   },
   async AtualizarProduto(data) {

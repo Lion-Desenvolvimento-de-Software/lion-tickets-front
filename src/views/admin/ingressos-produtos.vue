@@ -14,14 +14,15 @@
               <tabela-com-paginacao :count-data="12"></tabela-com-paginacao>
             </b-tab>
             <b-tab title="Produtos" :title-link-class="'Produtos'">
+              {{ dataProdutos }}
               <tabela-com-paginacao :data="dataProdutos"
                                     :fields="fields"
                                     :count-data="countData"
                                     v-model:current-page="currentPage" 
                                     @change-pagination="GetProdutos" >
                           
-                <template #imageURL="imageURL">
-                  <img :src="imageURL" width="40" height="40">
+                <template #imageURL="item">
+                  <img :src="item.imageURL" width="40" height="40">
                 </template>
 
               </tabela-com-paginacao>
@@ -89,6 +90,9 @@
         </div>
       </component>
     </RouterView>
+    <b-modal size="xl" v-model="isShowModal" title="Fotos dos Produtos">
+      
+    </b-modal>
   </div>
 </template>
 
@@ -120,6 +124,7 @@ export default {
         { key: 'price', label: 'Preço' },
         { key: 'description', label: 'Descrição' },
         { key: 'categoryName', label: 'Categoria' },
+        { key: 'action', label: '' }
       ],
       options: [
         { value: null, text: 'Selecione...' },
@@ -132,7 +137,9 @@ export default {
         { value: 'Acessórios', text: 'Acessórios' },
         { value: 'Chapéus', text: 'Chapéus' },
         { value: 'Sapatos', text: 'Sapatos' },
-      ]
+      ],
+      isShowModal: false,
+      imagesProduct: []
     }
   },
   props: {
@@ -144,7 +151,7 @@ export default {
         return (this.price && this.description.length > 15 && this.category && this.images.length >= 1);
       }
       return false;
-    }
+    },
   },
   created() {
     this.GetProdutos();
@@ -165,20 +172,24 @@ export default {
     },
     async Salvar() {
       const imageBase64 = await this.convertToBase64(this.images[0]);
-      if (this.tipo == 1) {
-        let formData = new FormData();
-        formData.append("Name", this.name);
-        formData.append("Price", this.price);
-        formData.append("Description", this.description);
-        formData.append("CategoryName", this.category);
-        formData.append("CompanyId", this.Company.Id);
-        formData.append("ImageBase64", imageBase64.replaceAll(/^data:image\/[a-zA-Z]+;base64,/g, ''));
-        
-        for(let index = 0; index < this.images.length; index++) {
-          formData.append("Images", this.images[index]);
-        }
+      try {
+        if (this.tipo == 1) {
+          let formData = new FormData();
+          formData.append("Name", this.name);
+          formData.append("Price", this.price);
+          formData.append("Description", this.description);
+          formData.append("CategoryName", this.category);
+          formData.append("CompanyId", this.Company.Id);
+          formData.append("ImageBase64", imageBase64.replaceAll(/^data:image\/[a-zA-Z]+;base64,/g, ''));
+          
+          for(let index = 0; index < this.images.length; index++) {
+            formData.append("Images", this.images[index]);
+          }
 
-        await ProdutosServices.SalvarProduto(formData);
+          await ProdutosServices.SalvarProduto(formData);
+        }
+      } catch (err) {
+        console.log(err);
       }
     },
     async SalvarIngresso() {
@@ -195,6 +206,10 @@ export default {
         reader.onload = () => resolve(reader.result);
         reader.onerror = error => reject(error);
       });
+    },
+    showModal(itens) {
+      this.imagesProduct = itens.filesProduct.filter(file => ["image/jpeg", "image/png"].includes(file.type));
+      this.isShowModal = true;
     }
   }
 }

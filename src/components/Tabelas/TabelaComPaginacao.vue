@@ -8,17 +8,17 @@
             :per-page="10"
             :current-page="getCurrentPageDivisionTen">
       <template #cell(action)="{ item }">
-        <div class="d-flex justify-content-center spacing-x">
-          <RouterLink :to="`/admin/usuarios/${item.id}`" >
+        <div class="d-flex justify-content-center gap-2">
+          <RouterLink :to="`/admin/ingressos-produtos/${item.id}`" >
             <button class="btn btn-success" @click="addDataEdit(item)">
               <font-awesome-icon :icon="['fa', 'pen']" />
             </button>
           </RouterLink>
-          <button v-if="user.sub != item.id" class="btn btn-danger" @click="deletar(item.id)"><font-awesome-icon :icon="['fas', 'trash']" /></button>
+          <button class="btn btn-danger" @click="deletar(item.id)"><font-awesome-icon :icon="['fas', 'trash']" /></button>
         </div>
       </template>
       <template #cell(imageURL)="{ item }">
-        <slot name="imageURL" v-bind="item.imageURL"></slot>
+        <slot name="imageURL" v-bind="item"></slot>
       </template>
     </b-table>
     <div class="pagination">

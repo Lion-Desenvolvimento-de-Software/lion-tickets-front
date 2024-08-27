@@ -4,7 +4,7 @@
     <div class="m-5" v-if="!$route.params.id">
       <div class="custom-layout-button">
         <RouterLink :to="`${$route.fullPath}/new`">
-          <button class="btn btn-success">Adicionar</button>
+          <button class="btn btn-success" @click="clearData">Adicionar</button>
         </RouterLink>
       </div>
       <div>
@@ -14,12 +14,13 @@
               <tabela-com-paginacao :count-data="12"></tabela-com-paginacao>
             </b-tab>
             <b-tab title="Produtos" :title-link-class="'Produtos'">
-              {{ dataProdutos }}
               <tabela-com-paginacao :data="dataProdutos"
                                     :fields="fields"
                                     :count-data="countData"
                                     v-model:current-page="currentPage" 
-                                    @change-pagination="GetProdutos" >
+                                    @change-pagination="GetProdutos"
+                                    @Deletar="Deletar"
+                                    @addDataEdit="addDataEdit" >
                           
                 <template #imageURL="item">
                   <img :src="item.imageURL" width="40" height="40">
@@ -35,7 +36,7 @@
           @salvar="salvarUsuario"
           v-slot="{ Component }">
       <component :is="Component">
-        <div class="row">
+        <div class="row" v-if="!isEdit">
           <div class="col d-flex custom-input">
             <label>Tipo: *</label>
             <select v-model="tipo" :options="options">
@@ -77,15 +78,15 @@
               max-rows="6" />
           </div>
         </div>
-        <div class="row">
+        <div class="row" v-if="!isEdit">
           <div class="col">
             <input-anexo-arquivos @handleFiles="handleFiles" v-model:files="images" :multiple="true" classStyle="flex-column"></input-anexo-arquivos>
           </div>
         </div>
         <div class="row">
           <div class="d-flex justify-content-end w-100 gap-2">
-            <button class="btn btn-outline-secondary">Cancelar</button>
-            <button :disabled="!canSave" class="btn btn-success" @click="Salvar">Salvar</button>
+            <button class="btn btn-outline-secondary" @click="cancelar">Cancelar</button>
+            <button :disabled="!canSave" class="btn btn-success" @click="!isEdit ? Salvar() : Editar($route.params.id)">{{!isEdit ? 'Salvar' : 'Editar' }}</button>
           </div>
         </div>
       </component>
@@ -112,12 +113,14 @@ export default {
       dataProdutos: null,
       countData: null,
       currentPage: 1,
+
       tipo: null,
       name: null,
       price: null,
       description: "",
       images: [],
       category: null,
+      
       fields: [
         { key: 'imageURL', label: 'Fotos' },
         { key: 'id', label: 'Id' },
@@ -139,7 +142,9 @@ export default {
         { value: 'Sapatos', text: 'Sapatos' },
       ],
       isShowModal: false,
-      imagesProduct: []
+      imagesProduct: [],
+      isEdit: false,
+      tabIndex: 0
     }
   },
   props: {
@@ -148,19 +153,19 @@ export default {
   computed: {
     canSave() {
       if (this.tipo == 1) {
-        return (this.price && this.description.length > 15 && this.category && this.images.length >= 1);
+        return (this.price && this.description.length > 15 && this.category && (this.isEdit || this.images.length >= 1));
       }
       return false;
     },
   },
-  created() {
+  updated() {
     this.GetProdutos();
     this.GetIngressos();
   },
   methods: {
     async GetProdutos() {
-      console.log(this.currentPage)
-      ProdutosServices.GetProdutos(this.currentPage).then(res => {
+      console.log(this.Company)
+      ProdutosServices.GetProdutos(this.currentPage, this.Company?.Id).then(res => {
         this.dataProdutos = res.products;
         this.countData = res.countProducts
       }).catch(err => {
@@ -181,19 +186,51 @@ export default {
           formData.append("CategoryName", this.category);
           formData.append("CompanyId", this.Company.Id);
           formData.append("ImageBase64", imageBase64.replaceAll(/^data:image\/[a-zA-Z]+;base64,/g, ''));
-          
+        
           for(let index = 0; index < this.images.length; index++) {
             formData.append("Images", this.images[index]);
           }
 
           await ProdutosServices.SalvarProduto(formData);
+          this.$router.back();
+          this.GetProdutos();
         }
       } catch (err) {
         console.log(err);
       }
     },
-    async SalvarIngresso() {
-      console.log("hello world!");
+    async Editar(id) {
+      console.log(id);
+      try {
+        if (this.tipo == 1) {
+          var product = this.dataProdutos.find(item => item.id == id);
+
+          let formData = new FormData();
+          formData.append("Id", id);
+          formData.append("Name", this.name);
+          formData.append("Price", this.price);
+          formData.append("Description", this.description);
+          formData.append("CategoryName", this.category);
+          formData.append("CompanyId", this.Company.Id);
+          formData.append("ImageURL", product['imageURL']);
+
+          var data = await ProdutosServices.EditarProduto(formData)
+
+          Object.assign(this.dataProdutos.find(item => item.id == id), data);
+          this.$router.back();
+          this.GetProdutos();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async Deletar(id) {
+      if (this.tabIndex == 0) {
+        return;
+      } else {
+        await ProdutosServices.DeletarProduto(id);
+        this.GetProdutos();
+      }
     },
 
     handleFiles(files) {
@@ -210,7 +247,29 @@ export default {
     showModal(itens) {
       this.imagesProduct = itens.filesProduct.filter(file => ["image/jpeg", "image/png"].includes(file.type));
       this.isShowModal = true;
-    }
+    },
+    cancelar() {
+      this.clearData();
+      this.$router.back();
+    },
+    addDataEdit(item) {
+      console.log(item)
+      this.tipo = this.tabIndex == 1 ? 1 : 2;
+      this.name = item['name'];
+      this.price = item['price'];
+      this.description = item['description'];
+      this.category = item['categoryName'];
+      this.isEdit = true;
+    },
+    clearData() {
+      this.tipo = null;
+      this.name = null;
+      this.price = null;
+      this.description = "";
+      this.images = [];
+      this.category = null;
+      this.isEdit = false;
+    },
   }
 }
 </script>
@@ -236,5 +295,8 @@ export default {
   background-color: white;
   border: 1px solid #000;
   border-radius: 4px;
+}
+img {
+  object-fit: contain;
 }
 </style>

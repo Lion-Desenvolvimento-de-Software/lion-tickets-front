@@ -241,7 +241,9 @@ export default {
       this.dados.Genero = Number(this.dados.Genero);
       UsuarioServices.Criar(this.dados).then(async (res) => {
         if (this.dados.RoleName != 'Admin' && this.Company != null) {
-          await EmpresaService.salvarUsuarioParaEmpresa({UserId: res.id, CompanyId: Number(this.Company.Id)});
+          await EmpresaService.salvarUsuarioParaEmpresa({UserId: res.id, CompanyId: Number(this.Company.Id )});
+        } else {
+          await EmpresaService.salvarUsuarioParaEmpresa({UserId: res.id, CompanyId: Number(this.dados.CompanyId)});
         }
 
         this.$emit('showToastSuccess', 'Criado com sucesso');

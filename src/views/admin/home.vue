@@ -16,7 +16,7 @@
           <div v-if="!GetIsAdmin" class="item" :class="$route.name.includes('ProdutosAdmin') ? 'selecionado' : ''">
             <router-link to="/admin/ingressos-produtos">Ingressos/Produtos</router-link>
           </div>
-          <div v-if="GetIsGerente" class="item" :class="$route.name.includes('UsuariosAdmin') ? 'selecionado' : ''">
+          <div v-if="GetIsGerente || GetIsAdmin" class="item" :class="$route.name.includes('UsuariosAdmin') ? 'selecionado' : ''">
             <router-link to="/admin/usuarios">Usuários</router-link>
           </div>
           <div v-if="GetIsAdmin" class="item" :class="$route.name.includes('EmpresasAdmin') ? 'selecionado' : ''">
@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       company: null,
-      styleImgComponent: { blank: true, blankColor: '#777', width: 120, height: 120, class: 'm1' }
+      styleImgComponent: { blank: true, blankColor: '#777', width: 120, height: 120, class: 'm1' },
     }
   },
   created() {
@@ -68,6 +68,7 @@ export default {
   emits: ['setLoading', 'showToastSuccess', 'showToastError', 'atualizarImagem'],
   methods: {
     async GetCompanyByUserId() {
+      this.setLoading(true);
       if (this.usuario.Role != "Admin") {
         EmpresaService.GetCompanyByUserId(this.usuario.Id).then(res => {
           this.company = new Company();
@@ -77,11 +78,14 @@ export default {
             CNPJ: res.cnpj,
             ImagemEmpresa: res.imagemEmpresa
           });
+          console.log(this.company)
           if (this.company?.ImagemEmpresa) {
             this.styleImgComponent.blank = false;
           }
         }).catch(err => {
           console.log(err)
+        }).finally(() => {
+          this.setLoading(false);
         });
       }
     },

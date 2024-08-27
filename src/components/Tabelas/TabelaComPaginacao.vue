@@ -10,11 +10,11 @@
       <template #cell(action)="{ item }">
         <div class="d-flex justify-content-center gap-2">
           <RouterLink :to="`/admin/ingressos-produtos/${item.id}`" >
-            <button class="btn btn-success" @click="addDataEdit(item)">
+            <button class="btn btn-success" @click="$emit('addDataEdit', item)">
               <font-awesome-icon :icon="['fa', 'pen']" />
             </button>
           </RouterLink>
-          <button class="btn btn-danger" @click="deletar(item.id)"><font-awesome-icon :icon="['fas', 'trash']" /></button>
+          <button class="btn btn-danger" @click="$emit('Deletar', item.id)"><font-awesome-icon :icon="['fas', 'trash']" /></button>
         </div>
       </template>
       <template #cell(imageURL)="{ item }">
@@ -62,7 +62,7 @@ export default {
       return this.countData;
     },
   },
-  emits: ['update:currentPage', 'changePagination'],
+  emits: ['update:currentPage', 'changePagination', 'Deletar', 'addDataEdit'],
   methods: {
     handlePagination(event) {
       this.$emit('update:currentPage', event)

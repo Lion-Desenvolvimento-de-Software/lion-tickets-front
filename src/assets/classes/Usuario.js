@@ -3,13 +3,12 @@ import usuarioServices from '@/services/UsuarioServices'
 export class Usuario {
   constructor() {
     this.Id = null,
-    this.UserName = null,
     this.Email = null,
-    this.PhoneNumber = null,
+    this.Telefone = null,
     this.Genero = null,
-    this.DataAniversario = null,
+    this.BirthdayDate = null,
     this.UrlImagemPerfil = null,
-    this.Role = null
+    this.RoleName = null
   }
 
   AddData(userData) {

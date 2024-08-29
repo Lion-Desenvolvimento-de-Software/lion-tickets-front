@@ -68,8 +68,8 @@ export default {
   emits: ['setLoading', 'showToastSuccess', 'showToastError', 'atualizarImagem'],
   methods: {
     async GetCompanyByUserId() {
-      this.setLoading(true);
       if (this.usuario.Role != "Admin") {
+        this.setLoading(true);
         EmpresaService.GetCompanyByUserId(this.usuario.Id).then(res => {
           this.company = new Company();
           this.company.AddData({

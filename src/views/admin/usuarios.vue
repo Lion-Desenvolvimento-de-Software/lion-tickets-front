@@ -11,13 +11,17 @@
       </div>
 
       <div class="layout-table py-3">
-        <b-table :items="users?.data" 
+        <b-table :items="users" 
                 :fields="fields"
                 striped 
                 hover
                 small
                 :per-page="10"
                 :current-page="getCurrentPageDivisionTen">
+          <template #cell(genero)="{ item }">
+            <span v-if="item.genero == 0">Masculino</span>
+            <span v-else>Feminino</span>
+          </template>
           <template #cell(action)="{ item }">
             <div class="d-flex justify-content-center spacing-x">
               <RouterLink :to="`/admin/usuarios/${item.id}`" >
@@ -136,9 +140,10 @@ export default {
   data() {
     return {
       fields: [
-        { key: 'userName', label: 'Nome do Usuário' },
+        { key: 'firstName', label: 'Primeiro Nome' },
+        { key: 'lastName', label: 'Segundo Nome' },
         { key: 'email', label: 'Email' },
-        { key: 'phoneNumber', label: 'Telefone' },
+        { key: 'telefone', label: 'Telefone' },
         { key: 'genero', label: 'Genero' },
         { key: 'action', label: '' }
       ],
@@ -158,10 +163,10 @@ export default {
         CompanyId: null
       },
       user: null,
-      isEdit: false,
       companies: null,
       countData: 1,
-      currentPage: 0
+      currentPage: 1,
+      isEdit: false
     }
   },
 
@@ -170,6 +175,10 @@ export default {
   },
 
   mounted() {
+    this.isEdit = false;
+  },
+
+  created() {
     if (this.$route.params['id'] != "new") this.isEdit = true;
     this.getUsers();
   },
@@ -226,11 +235,12 @@ export default {
       this.user = (await UserManager.getUser()).profile;
       if (this.user.role == "Admin") {
         this.companies = await EmpresaService.getEmpresasAll();
-        this.users = await UsuarioServices.GetUsers(this.user.role, (this.currentPage - 1));
+        this.users = await UsuarioServices.GetUsers(0, (this.currentPage - 1));
       } else {
         let usersIds = await EmpresaService.getUsersByUserId(this.user.sub);
         this.users = await UsuarioServices.GetUsersByIds(usersIds.map(value => value.userId), (this.currentPage - 1));
       }
+      console.log(this.isEdit)
 
       this.countData = this.users.countTotal;
 
@@ -239,7 +249,15 @@ export default {
 
     async salvarUsuario() {
       this.dados.Genero = Number(this.dados.Genero);
-      UsuarioServices.Criar(this.dados).then(async (res) => {
+      UsuarioServices.Criar(this.dados, { 
+        "FirstName": this.dados.FirstName,
+        "LastName": this.dados.LastName,
+        "Email": this.dados.Email,
+        "Telefone": this.dados.PhoneNumber,
+        "BirthdayDate": this.dados.DataAniversario,
+        "RoleName": this.dados.RoleName,
+        "CompanyId": this.dados?.CompanyId
+       }).then(async (res) => {
         if (this.dados.RoleName != 'Admin' && this.Company != null) {
           await EmpresaService.salvarUsuarioParaEmpresa({UserId: res.id, CompanyId: Number(this.Company.Id )});
         } else {

@@ -158,6 +158,12 @@ export default {
       return false;
     },
   },
+  created() {
+    if (this.Company != null) {
+      this.GetProdutos();
+      this.GetIngressos();
+    }
+  },
   updated() {
     this.GetProdutos();
     this.GetIngressos();

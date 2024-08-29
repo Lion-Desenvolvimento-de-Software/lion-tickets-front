@@ -1,9 +1,9 @@
 import axios from 'axios'
 
 export default {
-  async GetUsers(role = "Admin", pagination = 0) {
+  async GetUsers(companyId, pagination = 0) {
     try {
-      const { data } = await axios.get(`https://localhost:44360/api/v1/users/GetUsers/${role}/${pagination}`);
+      const { data } = await axios.get(`/api/v1/usuario/${pagination}/${companyId}`);
       return data;
     } catch (err) {
       console.log("GetUsers: ", err);
@@ -13,7 +13,7 @@ export default {
 
   async GetUsersByIds(users, pagination = 0) {
     try {
-      const { data } = await axios.post(`https://localhost:44360/api/v1/users/GetUsersByIds/${pagination}`, users, { headers: { 'Content-Type': "application/json" } });
+      const { data } = await axios.post(`/api/v1/users/GetUsersByIds/${pagination}`, users, { headers: { 'Content-Type': "application/json" } });
       return data;
     } catch (err) {
       console.log("GetUsers: ", err);
@@ -21,14 +21,12 @@ export default {
     }
   },
 
-  async Criar(dados) {
-    try {
-      const { data } = await axios.post('https://localhost:44360/account/registerAdmin', dados, { headers: { 'Content-Type': 'application/json' } });
-      return data;
-    } catch(err) {
-      console.log('Criar', err);
-      throw err.response.data;
-    }
+  async Criar(dados, usuario) {
+    axios.post('https://localhost:44360/account/registerAdmin', dados, { headers: { 'Content-Type': 'application/json' } }).then(async () => {
+      await axios.post("/api/v1/usuario", usuario, { headers: { 'Content-Type': 'application/json' } })
+    }).catch(err => {
+      console.log(err)
+    });
   },
   async Update(dados) {
     try {
@@ -41,8 +39,8 @@ export default {
   },
   async Delete(id) {
     try {
-      const { data } = await axios.post(`https://localhost:44360/api/v1/users/DeletarUsuario/${id}`);
-      return data;
+      await axios.post(`/api/v1/users/DeletarUsuario/${id}`);
+      await axios.delete(`/api/v1/usuario/${id}`)
     } catch(err) {
       console.log('Delete: ', err);
       throw err;

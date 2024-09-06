@@ -19,7 +19,7 @@
                 :per-page="10"
                 :current-page="getCurrentPageDivisionTen">
           <template #cell(genero)="{ item }">
-            <span v-if="item.genero == 0">Masculino</span>
+            <span v-if="item.genero == 1">Masculino</span>
             <span v-else>Feminino</span>
           </template>
           <template #cell(action)="{ item }">
@@ -49,7 +49,7 @@
           @salvar="salvarUsuario"
           v-slot="{ Component }">
       <component :is="Component">
-        <div class="row" v-if="!isEdit">
+        <div class="row">
           <div class="col d-flex custom-input">
             <label>Primeiro nome: *</label>
             <input v-model="dados.FirstName" type="text" name="Primeiro nome" placeholder="Insira o primeiro nome" autofocus />
@@ -98,7 +98,7 @@
           </div>
           <div class="col d-flex custom-input">
             <label>Data de Aniversário:</label>
-            <input type="date" v-model="dados.DataAniversario" name="BirthDay" />
+            <input type="date" v-model="dados.BirthdayDate" name="BirthDay" />
           </div>
           <div class="col d-flex custom-input" v-if="dados.Id != user?.sub">
             <label>Função: *</label>
@@ -156,7 +156,7 @@ export default {
         Email: null,
         PhoneNumber: null,
         Genero: null,
-        DataAniversario: null,
+        BirthdayDate: null,
         Password: null,
         ConfirmPassword: null,
         RoleName: null,
@@ -174,12 +174,10 @@ export default {
     Company: null
   },
 
-  mounted() {
-    this.isEdit = false;
-  },
-
   created() {
-    if (this.$route.params['id'] != "new") this.isEdit = true;
+    this.isEdit = false;
+    if (this.$route.params['id'] && this.$route.params['id'] != "new") this.isEdit = true;
+    
     this.getUsers();
   },
 
@@ -188,7 +186,7 @@ export default {
       return (this.hasFirstAndLastName && this.hasUsername && this.hasEmail && this.hasGenero && this.hasPassword && this.isPasswordConfirm && this.hasRole && this.hasCompany)
     },
     hasFirstAndLastName() {
-      return ((this.dados.FirstName && this.dados.LastName) || this.isEdit) ? true : false;
+      return (this.dados.FirstName && this.dados.LastName) ? true : false;
     },
     hasUsername() {
       return this.dados.Username ? true : false;
@@ -234,30 +232,21 @@ export default {
     async getUsers() {
       this.user = (await UserManager.getUser()).profile;
       if (this.user.role == "Admin") {
-        this.companies = await EmpresaService.getEmpresasAll();
         this.users = await UsuarioServices.GetUsers(0, (this.currentPage - 1));
       } else {
-        let usersIds = await EmpresaService.getUsersByUserId(this.user.sub);
-        this.users = await UsuarioServices.GetUsersByIds(usersIds.map(value => value.userId), (this.currentPage - 1));
+        var company = await EmpresaService.GetCompanyByUserId(this.user.sub);
+        this.users = await UsuarioServices.GetUsers((this.currentPage - 1), Number(company.id));
       }
-      console.log(this.isEdit)
 
       this.countData = this.users.countTotal;
 
-      if (this.isEdit) this.addDataEdit(this.users.data.find(item => item.id == this.$route.params.id));
+      if (this.isEdit) this.addDataEdit(this.users.find(item => item.id == this.$route.params.id));
     },
 
     async salvarUsuario() {
       this.dados.Genero = Number(this.dados.Genero);
-      UsuarioServices.Criar(this.dados, { 
-        "FirstName": this.dados.FirstName,
-        "LastName": this.dados.LastName,
-        "Email": this.dados.Email,
-        "Telefone": this.dados.PhoneNumber,
-        "BirthdayDate": this.dados.DataAniversario,
-        "RoleName": this.dados.RoleName,
-        "CompanyId": this.dados?.CompanyId
-       }).then(async (res) => {
+      UsuarioServices.Criar(this.dados).then(async (res) => {
+        console.log("teste: ", res)
         if (this.dados.RoleName != 'Admin' && this.Company != null) {
           await EmpresaService.salvarUsuarioParaEmpresa({UserId: res.id, CompanyId: Number(this.Company.Id )});
         } else {
@@ -285,31 +274,32 @@ export default {
     },
 
     async deletar(id) {
-      EmpresaService.RemoveUserOfCompany(id).then(() => {
-        UsuarioServices.Delete(id).then(res => {
-          this.$emit('showToastSuccess', res);
-          this.getUsers();
+      try {
+        UsuarioServices.Delete(id).then(() => {
+          EmpresaService.RemoveUserOfCompany(id).then(res => {
+            delete this.users[id];
+            this.$emit('showToastSuccess', res);
+            this.getUsers();
+          }).catch(err => {
+            this.$emit('showToastError', err);
+          });
         }).catch(err => {
           console.log(err);
-          this.$emit('showToastError', err);
+          this.$emit('showToastError', "Houve um problema ao deletar usuário com a empresas!");
         });
-      }).catch(err => {
-        console.log(err);
-        this.$emit('showToastError', "Houve um problema ao deletar usuário com a empresas!");
-      });
+      } catch (err) {
+        this.$emit('showToastError', err);
+      }
     },
 
     mascaraTelefone(value) {
-      if (this.dados.PhoneNumber == null) return;
-      this.$watch('dados.PhoneNumber', () => {
-        this.dados.PhoneNumber = this.dados.PhoneNumber.replace(/[a-zA-Z]+/g, "");
-      })
+      if (!this.dados.PhoneNumber) return;
       let tecla = value;
       let telefone = this.dados.PhoneNumber.replace(/\D+/g, "");
-
+      
       if (/^[0-9]$/i.test(tecla.data)) {
         let tamanho = telefone.length;
-
+        
         if (tamanho >= 12) {
           this.dados.PhoneNumber = this.dados.PhoneNumber.replaceAll(/\d$/g, "");
           return;
@@ -320,10 +310,11 @@ export default {
         } else if (tamanho > 5) {
           telefone = telefone.replace(/^(\d\d)(\d{4})(\d{0,4}).*/, "($1) $2-$3");
         } else if (tamanho > 2) {
-          telefone = telefone.replace(/^(\d\d)(\d{0,5})/, "($1) $2");
+          telefone = telefone.replace(/^(\d\d)(\d{0,4})/, "($1) $2");
         } else {
-          telefone = telefone.replace(/^(\d*)/, "($1");
+          telefone = telefone.replace(/^(\d*)/, "($1)");
         }
+        console.log(this.dados.PhoneNumber)
 
         this.dados.PhoneNumber = telefone;
       }
@@ -335,17 +326,19 @@ export default {
     addDataEdit(item) {
       this.isEdit = true;
       this.dados.Id = item?.id;
-      this.dados.DataAniversario = item?.dataAniversario?.split("T")[0];
+      this.dados.BirthdayDate = item?.BirthdayDate?.split("T")[0];
       this.dados.Genero = item?.genero;
       this.dados.Email = item?.email;
-      this.dados.Username = item?.userName;
+      this.dados.Username = item?.username;
       this.dados.PhoneNumber = item?.phoneNumber;
       this.dados.RoleName = item?.roleName;
+      this.dados.FirstName = item?.firstName;
+      this.dados.LastName = item?.lastName;
     },
     claerDatas() {
       this.isEdit = false;
       this.dados.Id = null;
-      this.dados.DataAniversario = null;
+      this.dados.BirthdayDate = null;
       this.dados.Genero = null;
       this.dados.Email = null;
       this.dados.Username = null;

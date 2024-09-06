@@ -48,7 +48,7 @@ export default {
       styleImgComponent: { blank: true, blankColor: '#777', width: 120, height: 120, class: 'm1' },
     }
   },
-  created() {
+  beforeMount() {
     this.GetCompanyByUserId();
   },
   computed: {
@@ -78,7 +78,6 @@ export default {
             CNPJ: res.cnpj,
             ImagemEmpresa: res.imagemEmpresa
           });
-          console.log(this.company)
           if (this.company?.ImagemEmpresa) {
             this.styleImgComponent.blank = false;
           }

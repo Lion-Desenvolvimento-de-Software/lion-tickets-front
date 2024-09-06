@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export default {
-  async GetUsers(companyId, pagination = 0) {
+  async GetUsers(pagination = 0, companyId = null) {
     try {
       const { data } = await axios.get(`/api/v1/usuario/${pagination}/${companyId}`);
       return data;
@@ -11,9 +11,9 @@ export default {
     }
   },
 
-  async GetUsersByIds(users, pagination = 0) {
+  async GetUsersByIds(userId) {
     try {
-      const { data } = await axios.post(`/api/v1/users/GetUsersByIds/${pagination}`, users, { headers: { 'Content-Type': "application/json" } });
+      const { data } = await axios.post(`/api/v1/usuario/GetUsuarioById/${userId}`);
       return data;
     } catch (err) {
       console.log("GetUsers: ", err);
@@ -21,12 +21,9 @@ export default {
     }
   },
 
-  async Criar(dados, usuario) {
-    axios.post('https://localhost:44360/account/registerAdmin', dados, { headers: { 'Content-Type': 'application/json' } }).then(async () => {
-      await axios.post("/api/v1/usuario", usuario, { headers: { 'Content-Type': 'application/json' } })
-    }).catch(err => {
-      console.log(err)
-    });
+  async Criar(dados) {
+    const { data } = await axios.post('https://localhost:44360/account/registerAdmin', dados, { headers: { 'Content-Type': 'application/json' } });
+    return data;
   },
   async Update(dados) {
     try {
@@ -39,8 +36,13 @@ export default {
   },
   async Delete(id) {
     try {
-      await axios.post(`/api/v1/users/DeletarUsuario/${id}`);
-      await axios.delete(`/api/v1/usuario/${id}`)
+      axios.post(`https://localhost:44360/api/v1/users/DeletarUsuario/${id}`).then(async () => {
+        const { data } = await axios.delete(`/api/v1/usuario/${id}`);
+        return data;
+      }).catch(err => {
+        console.log("Delete: ", err);
+        return "Houve um erro, tente novamente!";
+      });
     } catch(err) {
       console.log('Delete: ', err);
       throw err;

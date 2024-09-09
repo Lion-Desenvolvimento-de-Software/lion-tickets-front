@@ -142,9 +142,11 @@ export default {
       fields: [
         { key: 'firstName', label: 'Primeiro Nome' },
         { key: 'lastName', label: 'Segundo Nome' },
+        { key: 'username', label: 'Nome do usuário' },
         { key: 'email', label: 'Email' },
-        { key: 'telefone', label: 'Telefone' },
+        { key: 'phoneNumber', label: 'Telefone' },
         { key: 'genero', label: 'Genero' },
+        { key: 'companyName', label: 'Empresa' },
         { key: 'action', label: '' }
       ],
       users: null,
@@ -160,7 +162,8 @@ export default {
         Password: null,
         ConfirmPassword: null,
         RoleName: null,
-        CompanyId: null
+        CompanyId: null,
+        CompanyName: null
       },
       user: null,
       companies: null,
@@ -224,6 +227,9 @@ export default {
     getCountPaginations() {
       return this.countData;
     },
+    getCompany() {
+      return this.Company;
+    }
   },
 
   emits: ['showToastSuccess', 'showToastError'],
@@ -232,10 +238,12 @@ export default {
     async getUsers() {
       this.user = (await UserManager.getUser()).profile;
       if (this.user.role == "Admin") {
+        this.companies = await EmpresaService.getEmpresasAll();
         this.users = await UsuarioServices.GetUsers(0, (this.currentPage - 1));
       } else {
         var company = await EmpresaService.GetCompanyByUserId(this.user.sub);
-        this.users = await UsuarioServices.GetUsers((this.currentPage - 1), Number(company.id));
+        console.log(company)
+        this.users = await UsuarioServices.GetUsers((this.currentPage - 1), company.id);
       }
 
       this.countData = this.users.countTotal;
@@ -245,8 +253,9 @@ export default {
 
     async salvarUsuario() {
       this.dados.Genero = Number(this.dados.Genero);
+      console.log(this.companies.find(item => item.id == this.dados.CompanyId))
+      if (this.dados.CompanyId != null) this.dados.CompanyName = this.companies.find(item => item.id == this.dados.CompanyId)?.nome;
       UsuarioServices.Criar(this.dados).then(async (res) => {
-        console.log("teste: ", res)
         if (this.dados.RoleName != 'Admin' && this.Company != null) {
           await EmpresaService.salvarUsuarioParaEmpresa({UserId: res.id, CompanyId: Number(this.Company.Id )});
         } else {
@@ -324,6 +333,7 @@ export default {
       }
     },
     addDataEdit(item) {
+      console.log(item)
       this.isEdit = true;
       this.dados.Id = item?.id;
       this.dados.BirthdayDate = item?.BirthdayDate?.split("T")[0];
@@ -334,6 +344,7 @@ export default {
       this.dados.RoleName = item?.roleName;
       this.dados.FirstName = item?.firstName;
       this.dados.LastName = item?.lastName;
+      this.dados.CompanyId = item?.companyId;
     },
     claerDatas() {
       this.isEdit = false;
@@ -344,6 +355,7 @@ export default {
       this.dados.Username = null;
       this.dados.PhoneNumber = null;
       this.dados.RoleName = null;
+      this.dados.CompanyId = null;
     },
     cancelar() {
       this.$router.back();

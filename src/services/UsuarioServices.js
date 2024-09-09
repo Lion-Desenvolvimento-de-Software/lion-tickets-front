@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export default {
-  async GetUsers(pagination = 0, companyId = null) {
+  async GetUsers(pagination = 0, companyId = 0) {
     try {
       const { data } = await axios.get(`/api/v1/usuario/${pagination}/${companyId}`);
       return data;

@@ -51,12 +51,12 @@
             <label>Nome: *</label>
             <input v-model="name" type="text" name="Nome" placeholder="Insira um titulo para venda!"  />
           </div>
-        </div>
-        <div class="row">
           <div class="col d-flex custom-input">
             <label>Preço: *</label>
             <input v-model="price" type="text" name="Preço" placeholder="0.00"  />
           </div>
+        </div>
+        <div class="row">
           <div class="col d-flex custom-input" v-if="tipo == 1">
             <label>Categoria: *</label>
             <select v-model="category" :options="categorias">
@@ -76,6 +76,47 @@
               maxlength="500"
               rows="3"
               max-rows="6" />
+          </div>
+        </div>
+        <div class="row" v-if="tipo == 2">
+          <div class="col d-flex custom-input">
+            <label>Data do Evento: *</label>
+            <b-form-datepicker id="example-datepicker" v-model="dateEvent" class="mb-2"></b-form-datepicker>
+          </div>
+        </div>
+        <div class="row" v-if="tipo == 2">
+          <div class="col d-flex custom-input">
+            <label>Hora do Evento: *</label>
+            <b-form-timepicker v-model="timeEvent" locale="en"></b-form-timepicker>
+          </div>
+        </div>
+        <div class="row" v-if="tipo == 2">
+          <div class="col-4 d-flex custom-input">
+            <label>Estado: *</label>
+            <select v-model="state" type="text" name="Estado">
+              <option :value="null" selected>Selecione...</option>
+              <option v-for="estado in estados" :key="estado" :value="estado">{{ estado }}</option>
+            </select>
+          </div>
+          <div class="col d-flex custom-input">
+            <label>Cidade: *</label>
+            <input v-model="city" type="text" name="Cidade" placeholder="Informe a cidade!"/>
+          </div>
+        </div>
+        <div class="row" v-if="tipo == 2">
+          <div class="col d-flex custom-input">
+            <label>Bairro: *</label>
+            <input v-model="street" type="text" name="Bairro" placeholder="Informe a vila!"/>
+          </div>
+          <div class="col d-flex custom-input">
+            <label>Rua: *</label>
+            <input v-model="bad" type="text" name="Rua" placeholder="Informe a Rua!"/>
+          </div>
+        </div>
+        <div class="row" v-if="tipo == 2">
+          <div class="col d-flex custom-input">
+            <label>Complemento:</label>
+            <input v-model="complement" type="text" name="Complemento" placeholder="Complemento"/>
           </div>
         </div>
         <div class="row" v-if="!isEdit">
@@ -114,12 +155,23 @@ export default {
       countData: null,
       currentPage: 1,
 
+      // product
+      category: null,
+
+      // ticket 
+      dateEvent: null,
+      timeEvent: null,
+      state: null,
+      city: null,
+      street: null,
+      bad: null,
+      complement: null,
+
       tipo: null,
       name: null,
       price: null,
       description: "",
       images: [],
-      category: null,
       
       fields: [
         { key: 'imageURL', label: 'Fotos' },
@@ -141,10 +193,13 @@ export default {
         { value: 'Chapéus', text: 'Chapéus' },
         { value: 'Sapatos', text: 'Sapatos' },
       ],
+      estados: [ 'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR',
+                 'SC', 'SP', 'SE', 'TO'
+      ],
       isShowModal: false,
       imagesProduct: [],
       isEdit: false,
-      tabIndex: 0
+      tabIndex: 0,
     }
   },
   props: {
@@ -154,8 +209,17 @@ export default {
     canSave() {
       if (this.tipo == 1) {
         return (this.price && this.description.length > 15 && this.category && (this.isEdit || this.images.length >= 1));
+      } else {
+        return (this.price 
+          && this.description.length > 15 
+          && this.dateEvent 
+          && this.timeEvent 
+          && this.state 
+          && this.city
+          && this.street
+          && this.bad
+          && (this.isEdit || this.images.length >= 1))
       }
-      return false;
     },
   },
   created() {
@@ -299,9 +363,10 @@ export default {
   width: 100%;
   padding: 0 6px;
   background-color: white;
-  border: 1px solid #000;
+  border: 1px solid rgba(0, 0, 0, 0.3);
   border-radius: 4px;
 }
+
 img {
   object-fit: contain;
 }

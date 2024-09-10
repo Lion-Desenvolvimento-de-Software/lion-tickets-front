@@ -248,23 +248,32 @@ export default {
     async Salvar() {
       const imageBase64 = await this.convertToBase64(this.images[0]);
       try {
+        let formData = new FormData();
+        formData.append("Name", this.name);
+        formData.append("Price", this.price);
+        formData.append("Description", this.description);
+        formData.append("CompanyId", this.Company.Id);
+        formData.append("ImageBase64", imageBase64.replaceAll(/^data:image\/[a-zA-Z]+;base64,/g, ''));
+
+        for(let index = 0; index < this.images.length; index++) {
+          formData.append("Images", this.images[index]);
+        }
         if (this.tipo == 1) {
-          let formData = new FormData();
-          formData.append("Name", this.name);
-          formData.append("Price", this.price);
-          formData.append("Description", this.description);
           formData.append("CategoryName", this.category);
-          formData.append("CompanyId", this.Company.Id);
-          formData.append("ImageBase64", imageBase64.replaceAll(/^data:image\/[a-zA-Z]+;base64,/g, ''));
-        
-          for(let index = 0; index < this.images.length; index++) {
-            formData.append("Images", this.images[index]);
-          }
 
           await ProdutosServices.SalvarProduto(formData);
-          this.$router.back();
-          this.GetProdutos();
         }
+        else {
+          formData.append("State", this.state);
+          formData.append("City", this.city);
+          formData.append("Street", this.street);
+          formData.append("Bad", this.bad);
+          formData.append("Complement", this.complement);
+
+          await ProdutosServices.SalvarProduto(formData);
+        }
+        this.$router.back();
+        this.GetProdutos();
       } catch (err) {
         console.log(err);
       }
@@ -275,13 +284,8 @@ export default {
         if (this.tipo == 1) {
           var product = this.dataProdutos.find(item => item.id == id);
 
-          let formData = new FormData();
+          let formData = this.addFormDataGeneric();
           formData.append("Id", id);
-          formData.append("Name", this.name);
-          formData.append("Price", this.price);
-          formData.append("Description", this.description);
-          formData.append("CategoryName", this.category);
-          formData.append("CompanyId", this.Company.Id);
           formData.append("ImageURL", product['imageURL']);
 
           var data = await ProdutosServices.EditarProduto(formData)
@@ -317,6 +321,15 @@ export default {
     showModal(itens) {
       this.imagesProduct = itens.filesProduct.filter(file => ["image/jpeg", "image/png"].includes(file.type));
       this.isShowModal = true;
+    },
+    addFormDataGenericAndGet() {
+      let formData = new FormData();
+      formData.append("Name", this.name);
+      formData.append("Price", this.price);
+      formData.append("Description", this.description);
+      formData.append("CategoryName", this.category);
+      formData.append("CompanyId", this.Company.Id);
+      return formData;
     },
     cancelar() {
       this.clearData();

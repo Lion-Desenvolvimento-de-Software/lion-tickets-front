@@ -11,13 +11,25 @@
         <b-card no-body>
           <b-tabs v-model="tabIndex" card>
             <b-tab title="Ingressos" :title-link-class="'Ingressos'">
-              <tabela-com-paginacao :count-data="12"></tabela-com-paginacao>
+              <tabela-com-paginacao :data="dataTickets"
+                                    :fields="fieldsTickets"
+                                    :count-data="countTickets"
+                                    :busy="isBusyTickets"
+                                    v-model:current-page="currentPageTickets"
+                                    @Deletar="Deletar"
+                                    @change-pagination="GetIngressos">
+                                  
+                <template #imageURL="item">
+                  <img :src="item.imageURL" width="40" height="40">
+                </template>
+              </tabela-com-paginacao>
             </b-tab>
             <b-tab title="Produtos" :title-link-class="'Produtos'">
               <tabela-com-paginacao :data="dataProdutos"
-                                    :fields="fields"
+                                    :fields="fieldsProducts"
                                     :count-data="countData"
-                                    v-model:current-page="currentPage" 
+                                    :busy="isBusyProducts"
+                                    v-model:current-page="currentPageProduct" 
                                     @change-pagination="GetProdutos"
                                     @Deletar="Deletar"
                                     @addDataEdit="addDataEdit" >
@@ -141,6 +153,7 @@
 <script>
 import TabelaComPaginacao from '@/components/Tabelas/TabelaComPaginacao.vue';
 import ProdutosServices from '@/services/ProdutosServices.js';
+import TicketServices from '@/services/TicketServices';
 import inputAnexoArquivos from '@/components/inputs/inputAnexoArquivos.vue';
 
 export default {
@@ -152,8 +165,11 @@ export default {
   data() {
     return {
       dataProdutos: null,
+      dataTickets: null,
       countData: null,
-      currentPage: 1,
+      countTickets: null,
+      currentPageProduct: 1,
+      currentPageTickets: 1,
 
       // product
       category: null,
@@ -173,12 +189,21 @@ export default {
       description: "",
       images: [],
       
-      fields: [
+      fieldsProducts: [
         { key: 'imageURL', label: 'Fotos' },
         { key: 'id', label: 'Id' },
         { key: 'price', label: 'Preço' },
         { key: 'description', label: 'Descrição' },
         { key: 'categoryName', label: 'Categoria' },
+        { key: 'action', label: '' }
+      ],
+      fieldsTickets: [
+        { key: 'imageURL', label: 'Fotos' },
+        { key: 'id', label: 'Id' },
+        { key: 'price', label: 'Preço' },
+        { key: 'description', label: 'Descrição' },
+        { key: 'dateEvent', label: 'Categoria' },
+        { key: 'timeEvent', label: 'Categoria' },
         { key: 'action', label: '' }
       ],
       options: [
@@ -200,10 +225,13 @@ export default {
       imagesProduct: [],
       isEdit: false,
       tabIndex: 0,
+      isBusyProducts: false,
+      isBusyTickets: false
     }
   },
   props: {
     Company: null,
+    Usuario: null
   },
   computed: {
     canSave() {
@@ -232,18 +260,30 @@ export default {
     this.GetProdutos();
     this.GetIngressos();
   },
+  emits: ['setLoading', "showToastSuccess", "showToastError"],
   methods: {
     async GetProdutos() {
-      console.log(this.Company)
-      ProdutosServices.GetProdutos(this.currentPage, this.Company?.Id).then(res => {
+      this.isBusyProducts = true;
+      ProdutosServices.GetProdutos(this.Company?.Id, this.currentPageProduct).then(res => {
         this.dataProdutos = res.products;
         this.countData = res.countProducts
       }).catch(err => {
         console.log("GetProdutos: ", err)
+      }).finally(() => {
+        this.isBusyProducts = false;
       });
     },
     async GetIngressos() {
-      console.log("Ingressos");
+      this.isBusyTickets = true;
+      TicketServices.GetTicketsAsync(this.Company?.Id, this.currentPageTickets).then(res => {
+        console.log(res.tickets)
+        this.dataTickets = res.tickets;
+        this.countTickets = res.countTickets
+      }).catch(err => {
+        console.log("GetProdutos: ", err)
+      }).finally(() => {
+        this.isBusyTickets = false;
+      });
     },
     async Salvar() {
       const imageBase64 = await this.convertToBase64(this.images[0]);
@@ -252,25 +292,71 @@ export default {
         formData.append("Name", this.name);
         formData.append("Price", this.price);
         formData.append("Description", this.description);
-        formData.append("CompanyId", this.Company.Id);
+        formData.append("CategoryName", this.category);
+        formData.append("TicketsHeader.CompanyId", this.Company.Id);
+        formData.append("TicketsHeader.UserId", this.Usuario.Id);
         formData.append("ImageBase64", imageBase64.replaceAll(/^data:image\/[a-zA-Z]+;base64,/g, ''));
 
         for(let index = 0; index < this.images.length; index++) {
           formData.append("Images", this.images[index]);
         }
+
         if (this.tipo == 1) {
           formData.append("CategoryName", this.category);
 
           await ProdutosServices.SalvarProduto(formData);
         }
         else {
+          formData.append("DateEvent", this.dateEvent);
+          formData.append("TimeEvent", this.timeEvent);
           formData.append("State", this.state);
           formData.append("City", this.city);
           formData.append("Street", this.street);
           formData.append("Bad", this.bad);
           formData.append("Complement", this.complement);
 
-          await ProdutosServices.SalvarProduto(formData);
+          await TicketServices.PostAsync(formData);
+        }
+        this.$router.back();
+        this.GetProdutos();
+        
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async Editar(id) {
+      try {
+        let formData = new FormData();
+        formData.append("Name", this.name);
+        formData.append("Price", this.price);
+        formData.append("Description", this.description);
+        formData.append("CategoryName", this.category);
+        formData.append("TicketsHeader.CompanyId", this.Company.Id);
+        formData.append("TicketsHeader.UserId", this.Usuario.sub);
+        formData.append("Id", id);
+        if (this.tipo == 1) {
+          var product = this.dataProdutos.find(item => item.id == id);
+          
+          formData.append("ImageURL", product['imageURL']);
+
+          var data = await ProdutosServices.EditarProduto(formData)
+
+          Object.assign(this.dataProdutos.find(item => item.id == id), data);
+        } else {
+          //var product = this.dataTickets.find(item => item.id == id);
+          
+          formData.append("ImageURL", product['imageURL']);
+
+          formData.append("DateEvent", this.state);
+          formData.append("TimeEvent", this.state);
+          formData.append("State", this.state);
+          formData.append("City", this.city);
+          formData.append("Street", this.street);
+          formData.append("Bad", this.bad);
+          formData.append("Complement", this.complement);
+
+          //var data = await TicketServices.PutAsync(formData);
+          Object.assign(this.dataProdutos.find(item => item.id == id), data);
         }
         this.$router.back();
         this.GetProdutos();
@@ -278,29 +364,13 @@ export default {
         console.log(err);
       }
     },
-    async Editar(id) {
-      console.log(id);
-      try {
-        if (this.tipo == 1) {
-          var product = this.dataProdutos.find(item => item.id == id);
-
-          let formData = this.addFormDataGeneric();
-          formData.append("Id", id);
-          formData.append("ImageURL", product['imageURL']);
-
-          var data = await ProdutosServices.EditarProduto(formData)
-
-          Object.assign(this.dataProdutos.find(item => item.id == id), data);
-          this.$router.back();
-          this.GetProdutos();
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    },
     async Deletar(id) {
       if (this.tabIndex == 0) {
-        return;
+        var isDeleted = await TicketServices.DeleteAsync(id);
+        if (isDeleted) {
+          this.$emit("showToastSuccess", "deletado com sucesso!")
+          this.GetIngressos();
+        } else this.$emit("showToastError", "Houve um erro ao deletar");
       } else {
         await ProdutosServices.DeletarProduto(id);
         this.GetProdutos();
@@ -321,15 +391,6 @@ export default {
     showModal(itens) {
       this.imagesProduct = itens.filesProduct.filter(file => ["image/jpeg", "image/png"].includes(file.type));
       this.isShowModal = true;
-    },
-    addFormDataGenericAndGet() {
-      let formData = new FormData();
-      formData.append("Name", this.name);
-      formData.append("Price", this.price);
-      formData.append("Description", this.description);
-      formData.append("CategoryName", this.category);
-      formData.append("CompanyId", this.Company.Id);
-      return formData;
     },
     cancelar() {
       this.clearData();

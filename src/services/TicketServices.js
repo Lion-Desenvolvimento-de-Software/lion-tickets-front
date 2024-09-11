@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export default {
   async GetTicketsAsync(companyId, paginate = 0) {
-    const { data } = await axios.get(`/api/v1/tickets/${companyId}/${paginate}`);
+    const { data } = await axios.get(`/api/v1/tickets/${companyId}/${Number.parseInt(paginate) - 1}`);
     return data;
   },
 
@@ -11,12 +11,12 @@ export default {
     return data;
   },
   
-  async PostAsync(data) {
-    await axios.post("/api/v1/tickets", data, { headers: { 'Content-Type': 'application/form-data' } });
+  async PostAsync(formData) {
+    await axios.post("/api/v1/tickets", formData, { headers: { 'Content-Type': 'application/form-data' } });
   },
 
-  async PutAsync(data) {
-    const { data } = await axios.put("/api/v1/tickets", data, { headers: { 'Content-Type': 'application/form-data' } });
+  async PutAsync(formData) {
+    const { data } = await axios.put("/api/v1/tickets", formData, { headers: { 'Content-Type': 'application/form-data' } });
     return data;
   },
 

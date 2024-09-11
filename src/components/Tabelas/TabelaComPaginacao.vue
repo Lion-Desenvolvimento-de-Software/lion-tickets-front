@@ -5,8 +5,16 @@
             striped 
             hover
             small
+            :busy="busy"
             :per-page="10"
             :current-page="getCurrentPageDivisionTen">
+
+      <template #table-busy>
+        <div class="text-center text-dark my-2">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong class="mx-2">Loading...</strong>
+        </div>
+      </template>
       <template #cell(action)="{ item }">
         <div class="d-flex justify-content-center gap-2">
           <RouterLink :to="`/admin/ingressos-produtos/${item.id}`" >
@@ -53,6 +61,10 @@ export default {
       default: () => ['Id', 'Nome']
     },
     countData: null,
+    busy: {
+      type: Boolean,
+      default: false
+    }
   },
   computed: {
     getCurrentPageDivisionTen() {

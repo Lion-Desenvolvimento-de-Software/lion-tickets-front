@@ -12,11 +12,11 @@ export default {
   },
   
   async PostAsync(formData) {
-    await axios.post("/api/v1/tickets", formData, { headers: { 'Content-Type': 'application/form-data' } });
+    await axios.post("/api/v1/tickets", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
   },
 
   async PutAsync(formData) {
-    const { data } = await axios.put("/api/v1/tickets", formData, { headers: { 'Content-Type': 'application/form-data' } });
+    const { data } = await axios.put("/api/v1/tickets", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
     return data;
   },
 

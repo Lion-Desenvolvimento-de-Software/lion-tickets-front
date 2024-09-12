@@ -17,7 +17,8 @@
                                     :busy="isBusyTickets"
                                     v-model:current-page="currentPageTickets"
                                     @Deletar="Deletar"
-                                    @change-pagination="GetIngressos">
+                                    @change-pagination="GetIngressos"
+                                    @addDataEdit="addDataEdit">
                                   
                 <template #imageURL="item">
                   <img :src="item.imageURL" width="40" height="40">
@@ -124,6 +125,10 @@
             <label>Rua: *</label>
             <input v-model="bad" type="text" name="Rua" placeholder="Informe a Rua!"/>
           </div>
+          <div class="col-4 d-flex custom-input">
+            <label>Número: *</label>
+            <input v-model="number" type="text" name="Número" placeholder="Número..."/>
+          </div>
         </div>
         <div class="row" v-if="tipo == 2">
           <div class="col d-flex custom-input">
@@ -181,7 +186,8 @@ export default {
       city: null,
       street: null,
       bad: null,
-      complement: null,
+      complement: "",
+      number: null,
 
       tipo: null,
       name: null,
@@ -202,8 +208,8 @@ export default {
         { key: 'id', label: 'Id' },
         { key: 'price', label: 'Preço' },
         { key: 'description', label: 'Descrição' },
-        { key: 'dateEvent', label: 'Categoria' },
-        { key: 'timeEvent', label: 'Categoria' },
+        { key: 'dateEvent', label: 'Data do Evneto' },
+        { key: 'timeEvent', label: 'Horário do Evento' },
         { key: 'action', label: '' }
       ],
       options: [
@@ -246,6 +252,7 @@ export default {
           && this.city
           && this.street
           && this.bad
+          && this.number
           && (this.isEdit || this.images.length >= 1))
       }
     },
@@ -293,8 +300,6 @@ export default {
         formData.append("Price", this.price);
         formData.append("Description", this.description);
         formData.append("CategoryName", this.category);
-        formData.append("TicketsHeader.CompanyId", this.Company.Id);
-        formData.append("TicketsHeader.UserId", this.Usuario.Id);
         formData.append("ImageBase64", imageBase64.replaceAll(/^data:image\/[a-zA-Z]+;base64,/g, ''));
 
         for(let index = 0; index < this.images.length; index++) {
@@ -303,17 +308,21 @@ export default {
 
         if (this.tipo == 1) {
           formData.append("CategoryName", this.category);
+          formData.append("CompanyId", this.Company.Id);
 
           await ProdutosServices.SalvarProduto(formData);
         }
         else {
+          formData.append("TicketsHeader.CompanyId", this.Company.Id);
+          formData.append("TicketsHeader.UserId", this.Usuario.Id);
           formData.append("DateEvent", this.dateEvent);
           formData.append("TimeEvent", this.timeEvent);
           formData.append("State", this.state);
           formData.append("City", this.city);
           formData.append("Street", this.street);
           formData.append("Bad", this.bad);
-          formData.append("Complement", this.complement);
+          formData.append("Number", this.number);
+          formData.append("Complement", this.complement ?? null);
 
           await TicketServices.PostAsync(formData);
         }
@@ -330,36 +339,48 @@ export default {
         formData.append("Name", this.name);
         formData.append("Price", this.price);
         formData.append("Description", this.description);
-        formData.append("CategoryName", this.category);
-        formData.append("TicketsHeader.CompanyId", this.Company.Id);
-        formData.append("TicketsHeader.UserId", this.Usuario.sub);
         formData.append("Id", id);
         if (this.tipo == 1) {
           var product = this.dataProdutos.find(item => item.id == id);
           
           formData.append("ImageURL", product['imageURL']);
 
-          var data = await ProdutosServices.EditarProduto(formData)
+          formData.append("CategoryName", this.category);
+          formData.append("CompanyId", this.Company.Id);
 
-          Object.assign(this.dataProdutos.find(item => item.id == id), data);
+          var dataProduto = await ProdutosServices.EditarProduto(formData)
+
+          Object.assign(this.dataProdutos.find(item => item.id == id), dataProduto);
         } else {
-          //var product = this.dataTickets.find(item => item.id == id);
-          
-          formData.append("ImageURL", product['imageURL']);
+          var ticket = this.dataTickets.find(item => item.id == id);
+          formData.append("ImageURL", ticket['imageURL']);
+          formData.append("TicketsHeader.CompanyId", this.Company.Id);
+          formData.append("TicketsHeader.UserId", this.Usuario.Id);
 
-          formData.append("DateEvent", this.state);
-          formData.append("TimeEvent", this.state);
+          ticket['files'].forEach((item, index) => {
+            formData.append(`Files[${index}].Id`, item.id);
+            formData.append(`Files[${index}].CreatedAt`, item.createdAt);
+            formData.append(`Files[${index}].UpdatedAt`, item.updatedAt);
+            formData.append(`Files[${index}].Name`, item.name);
+            formData.append(`Files[${index}].Url`, item.url);
+            formData.append(`Files[${index}].Type`, item.type);
+          })
+          
+          formData.append("DateEvent", this.dateEvent);
+          formData.append("TimeEvent", this.timeEvent);
           formData.append("State", this.state);
           formData.append("City", this.city);
           formData.append("Street", this.street);
           formData.append("Bad", this.bad);
-          formData.append("Complement", this.complement);
+          formData.append("Number", this.number);
+          formData.append("Complement", this.complement ?? "");
+          
+          var dataTicket = await TicketServices.PutAsync(formData)
 
           //var data = await TicketServices.PutAsync(formData);
-          Object.assign(this.dataProdutos.find(item => item.id == id), data);
+          Object.assign(this.dataTickets.find(item => item.id == id), dataTicket);
         }
         this.$router.back();
-        this.GetProdutos();
       } catch (err) {
         console.log(err);
       }
@@ -400,9 +421,17 @@ export default {
       console.log(item)
       this.tipo = this.tabIndex == 1 ? 1 : 2;
       this.name = item['name'];
-      this.price = item['price'];
+      this.price = item['price'].toString().replace(".", ",");
       this.description = item['description'];
       this.category = item['categoryName'];
+      this.dateEvent = item['dateEvent'];
+      this.timeEvent = item['timeEvent'];
+      this.state = item['state'];
+      this.city = item['city'];
+      this.street = item['street'];
+      this.bad = item['bad'];
+      this.number = item['number'];
+      this.complement = item['complement'];
       this.isEdit = true;
     },
     clearData() {
@@ -412,6 +441,14 @@ export default {
       this.description = "";
       this.images = [];
       this.category = null;
+      this.dateEvent = null;
+      this.timeEvent = null;
+      this.state = null;
+      this.city = null;
+      this.street = null;
+      this.bad = null;
+      this.number = null;
+      this.complement = null;
       this.isEdit = false;
     },
   }

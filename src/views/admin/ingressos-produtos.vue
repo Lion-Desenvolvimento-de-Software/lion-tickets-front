@@ -100,7 +100,7 @@
         <div class="row" v-if="tipo == 2">
           <div class="col d-flex custom-input">
             <label>Hora do Evento: *</label>
-            <b-form-timepicker v-model="timeEvent" locale="en"></b-form-timepicker>
+            <b-form-timepicker v-model="timeEvent" locale="pt"></b-form-timepicker>
           </div>
         </div>
         <div class="row" v-if="tipo == 2">

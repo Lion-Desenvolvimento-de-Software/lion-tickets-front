@@ -15,6 +15,15 @@
           <strong class="mx-2">Loading...</strong>
         </div>
       </template>
+      <template #cell(price)="{ item }">
+        <span>{{ item.price.toFixed(2) }}</span>
+      </template>
+      <template #cell(dateEvent)="{ item }">
+        <span>{{ new Date(item.dateEvent).toLocaleDateString("pt-BR") }}</span>
+      </template>
+      <template #cell(timeEvent)="{ item }">
+        <span>{{ item.timeEvent.split(":")[0] }}:{{ item.timeEvent.split(":")[1] }}</span>
+      </template>
       <template #cell(action)="{ item }">
         <div class="d-flex justify-content-center gap-2">
           <RouterLink :to="`/admin/ingressos-produtos/${item.id}`" >
@@ -73,6 +82,10 @@ export default {
     getCountPaginations() {
       return this.countData;
     },
+    getDateFormatBR(dateOrigin) {
+      let date = new Date(dateOrigin);
+      return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
+    }
   },
   emits: ['update:currentPage', 'changePagination', 'Deletar', 'addDataEdit'],
   methods: {

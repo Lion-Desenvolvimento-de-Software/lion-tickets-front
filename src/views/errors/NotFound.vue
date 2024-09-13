@@ -7,6 +7,7 @@
       <div class="not-found-title">
         <h1>404</h1>
         <strong>Página não encontrada</strong>
+        <span>Voltar a <router-link to="/">home</router-link></span>
       </div>
     </div>
   </div>
@@ -14,7 +15,7 @@
 
 <script>
 export default {
-  name: "NotFound"
+  name: "NotFound",
 }
 </script>
 

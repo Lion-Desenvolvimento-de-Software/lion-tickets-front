@@ -46,11 +46,16 @@ const isAuthenticated = async () => {
 router.beforeEach(async (to, from, next) => {
   await userManager.clearStaleState();
   var user = await userManager.getUser();
+  
   if (to.matched.some(record => record.meta.requiresAuth)){
+
     if(user != null && to.meta.roles.some(item => item == user?.profile?.role)) next();
-    else next(from.path);
+    else next("/not-found");
+
   } else {
+
     if ((await isAuthenticated()) && to.path == '/login') next({ path: from.path })
+
   }
   next()
 })

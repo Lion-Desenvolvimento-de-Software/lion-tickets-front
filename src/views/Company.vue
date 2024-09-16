@@ -124,7 +124,7 @@ export default {
 
 <style scoped>
 #profile-company {
-  height: 100vh;
+  height: 100%;
 }
 .layout {
   position: relative;

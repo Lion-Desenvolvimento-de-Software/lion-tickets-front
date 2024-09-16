@@ -9,14 +9,14 @@
             @openCollapse="openCollapse"
             class="nav" />
   <router-view :usuario="usuario"
-                @ReenviarCodigo="ReenviarCodigo"
-                @setMensagemToast="setMensagemToast"
-                @setIsError="setIsError"
-                @showToast="showToast"
-                @setUsuario="setUsuario"
-                @setLoading="setLoading"
-                @showToastSuccess="showToastSuccess"
-                @showToastError="showToastError" />
+               @ReenviarCodigo="ReenviarCodigo"
+               @setMensagemToast="setMensagemToast"
+               @setIsError="setIsError"
+               @showToast="showToast"
+               @setUsuario="setUsuario"
+               @setLoading="setLoading"
+               @showToastSuccess="showToastSuccess"
+               @showToastError="showToastError" />
   <div class="d-flex justify-content-center">
     <toast id="toastId" ref="toast" :mensagem="this.mensagem" class="text-white" :class="!getIsError ? `bg-success` : `bg-danger`" />
   </div>
@@ -181,6 +181,8 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+
+  height: 100vh;
 }
 
 nav {

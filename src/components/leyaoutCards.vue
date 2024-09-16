@@ -1,13 +1,13 @@
 <template>
   <div class="d-flex container-local">
-    <div class="custom-card">
+    <div class="custom-card" v-for="item in itens" :key="item">
       <div class="img-box">
-        <img src="https://picsum.photos/id/1045/800/450" alt="...">
+        <img :src="item.imageURL" alt="...">
       </div>
       <div class="custom-content">
-        <h2>{{nome}}</h2>
-        <p>This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-        <slot class="link-detalhes" name="botaoDetalhes"></slot>
+        <h2>{{item.name}}</h2>
+        <p>{{ item.description }}</p>
+        <slot class="link-detalhes" name="botaoDetalhes" v-bind:item="item"></slot>
       </div>
     </div>
   </div>
@@ -18,11 +18,15 @@
 export default {
   name: 'leyaoutCards',
   props: {
-    nome: {
-        type: String,
-        default: ''
-    },
-    tipo: String
+    // nome: {
+    //     type: String,
+    //     default: ''
+    // },
+    tipo: String,
+    itens: {
+      type: Array,
+      default: () => []
+    }
   },
 }
 </script>

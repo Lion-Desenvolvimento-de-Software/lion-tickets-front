@@ -58,8 +58,8 @@ export default {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: 1fr 1fr;
-  gap: 10px;
-  padding: 15px;
+  gap: 5px;
+  padding: 7px;
 }
 
 .layout .grid-item {

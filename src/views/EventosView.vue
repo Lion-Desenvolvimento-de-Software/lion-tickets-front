@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
-    <div class="main" v-if="!$route.params.id">
-      <div class="w-100 d-flex justify-content-center">
+  <div class="container my-5 py-4">
+    <div v-if="!$route.params.id">
+      <div class="w-100 d-flex justify-content-center banner">
         <h1>Eventos</h1>
       </div>
       <leyaout-cards :itens="getTickets" class="custom-layout-cards">
@@ -22,7 +22,10 @@
                 :src="image.url"
                 width="80" 
                 height="80"
-                @click="viewImage(image.url)">
+                :id="image.id"
+                :class="image.id == imageAuxId ? 'selected' : ''"
+                ref="imageAction"
+                @click="viewImage(image)">
           </section>
         </div>
       </div>
@@ -42,6 +45,7 @@ export default {
   data() {
     return {
       tickets: [],
+      imageAuxId: ''
     }
   },
   components: {
@@ -63,21 +67,33 @@ export default {
       this.$emit("setLoading", true);
       try {
         this.tickets = await TicketServices.GetAllTicketsAsync();
+        if (this.$route.params.id) {
+          this.imageAuxId = this.tickets.find(value => value.id == this.$route.params.id).files[0].id;
+        }
       } catch(err) {
         console.log(err);
       } finally {
         this.$emit("setLoading", false);
       }
     },
-    viewImage(imageURL) {
-      this.tickets.find(value => value.id == this.$route.params.id).imageURL = imageURL;
+    viewImage(image) {
+      this.tickets.find(value => value.id == this.$route.params.id).imageURL = image.url;
+      this.selectImage(image);
+    },
+    selectImage(image) {
+      this.tickets.find(value => value.id == this.$route.params.id).files.find(value => value.id == image.id)['classSelected'] = "selected";
+      this.$refs['imageAction'].find(value => value.id == this.imageAuxId).classList = null;
+      this.imageAuxId = image.id;
+      this.$refs['imageAction'].find(value => value.id == image.id).classList = "selected";
     }
   }
 }
 </script>
 
 <style scoped>
-
+.banner {
+  grid-area: banner;
+}
 .main {
   grid-area: main;
 }
@@ -95,6 +111,7 @@ export default {
   height: 100%;
   grid-template-areas: 
     "header       header        header"
+    "banner       banner        banner"
     "left-images  description   description"
     "left-images  description   description"
     "footer       footer        footer";
@@ -161,6 +178,15 @@ export default {
     margin: 0 2px;
     cursor: pointer;
   }
+
+    .custom-images-views .custom-low-images section img:hover {
+      border: 3px solid rgb(77, 92, 251);
+      box-shadow: -3px 0px 12px 0px rgb(77, 92, 251), 3px 0px 6px -2px rgb(77, 92, 251);
+    }
+
+    .custom-images-views .custom-low-images section img.selected {
+      border: 3px solid rgb(77, 92, 251);
+    }
 
 .custom-low-images #arrow-top {
   position: absolute;

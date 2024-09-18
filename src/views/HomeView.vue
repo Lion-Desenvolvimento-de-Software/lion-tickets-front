@@ -1,7 +1,7 @@
 <template>
   <div class="home">
-    <carousel />
-    <leyaout-cards :itens="getTickets">
+    <carousel class="banner" />
+    <leyaout-cards class="main" :itens="getTickets">
       <template v-slot:botaoDetalhes="{ item }">
         <RouterLink aria-disabled="true"
           :to="{ name: 'Eventos', params: { id: item.id } }">
@@ -52,3 +52,29 @@ export default {
   }
 }
 </script>
+<style scoped>
+.home {
+  display: grid;
+  grid-template-rows: 60px auto 1fr auto 50px;
+  grid-template-columns: 1fr 4fr 1fr;
+  height: 100%;
+  grid-template-areas: 
+    "header       header        header"
+    "banner       banner        banner"
+    "main         main          main"
+    "main         main          main"
+    "footer       footer        footer";
+  grid-gap: 10px;
+  padding: 10px;
+  font-weight: 600;
+  font-size: 20px;
+}
+.banner {
+  grid-area: banner;
+}
+
+.main {
+  grid-area: main;
+}
+</style>
+

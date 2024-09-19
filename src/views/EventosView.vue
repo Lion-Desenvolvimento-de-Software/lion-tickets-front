@@ -14,7 +14,7 @@
     </div>
     <div class="d-grid container-ticket position-relative" v-else>
       <div class="custom-images-views left-images">
-        <img class="image-view" :src="getTicketById?.imageURL" >
+        <img class="image-view" :src="getImageTicketLocal" >
         <div class="custom-low-images">
           <section ref="art1" id="sections">
             <img v-for="image in getTicketById?.files?.filter(value => value.type.includes('image'))" 
@@ -23,7 +23,7 @@
                 width="80" 
                 height="80"
                 :id="image.id"
-                :class="image.id == imageAuxId ? 'selected' : ''"
+                :class="getTicketById?.files[0].id == image.id ? 'selected' : ''"
                 ref="imageAction"
                 @click="viewImage(image)">
           </section>
@@ -45,7 +45,8 @@ export default {
   data() {
     return {
       tickets: [],
-      imageAuxId: ''
+      imageAuxId: '',
+      imageURLView: ''
     }
   },
   components: {
@@ -54,6 +55,15 @@ export default {
   created() {
     this.getTicketsAsync();
   },
+  beforeUpdate() {
+    if (this.$route.params.id) {
+      this.addImageURLOrDefault();
+      this.addImageAuxIdOrDefault();
+    }
+    else {
+      this.clear();
+    }
+  },
   computed: {
     getTickets() {
       return this.tickets;
@@ -61,12 +71,16 @@ export default {
     getTicketById() {
       return this.tickets.find(value => value.id == this.$route.params.id);
     },
+    getImageTicketLocal() {
+      return this.imageURLView;
+    },
   },
   methods: {
     async getTicketsAsync() {
       this.$emit("setLoading", true);
       try {
         this.tickets = await TicketServices.GetAllTicketsAsync();
+        this.imageURLView = this.tickets.find(value => value.id == this.$route.params.id)?.files[0]?.url;
         if (this.$route.params.id) {
           this.imageAuxId = this.tickets.find(value => value.id == this.$route.params.id).files[0].id;
         }
@@ -77,14 +91,24 @@ export default {
       }
     },
     viewImage(image) {
-      this.tickets.find(value => value.id == this.$route.params.id).imageURL = image.url;
+      this.imageURLView = image.url;
+      console.log(this.imageURLView)
       this.selectImage(image);
     },
     selectImage(image) {
-      this.tickets.find(value => value.id == this.$route.params.id).files.find(value => value.id == image.id)['classSelected'] = "selected";
       this.$refs['imageAction'].find(value => value.id == this.imageAuxId).classList = null;
       this.imageAuxId = image.id;
       this.$refs['imageAction'].find(value => value.id == image.id).classList = "selected";
+    },
+    addImageURLOrDefault() {
+      if (!this.imageURLView) this.imageURLView = this.tickets.find(value => value.id == this.$route.params.id)?.files[0]?.url;
+    },
+    addImageAuxIdOrDefault() {
+      if (!this.imageAuxId) this.imageAuxId = this.tickets.find(value => value.id == this.$route.params.id).files[0].id;
+    },
+    clear() {
+      this.imageAuxId = '';
+      this.imageURLView = '';
     }
   }
 }

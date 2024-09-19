@@ -1,5 +1,5 @@
 <template>
-  <div class="container my-5 py-4">
+  <div class="container-xl">
     <div v-if="!$route.params.id">
       <div class="w-100 d-flex justify-content-center banner">
         <h1>Eventos</h1>
@@ -29,8 +29,41 @@
           </section>
         </div>
       </div>
+      <div class="title">
+        <h1>{{ getTicketById?.name }}</h1>
+      </div>
+      <div class="info">
+        <div class="row gap-2">
+          <div class="col">
+            <h5>R$ {{ getTicketById?.price.toFixed(2) }}</h5>
+          </div>
+          <div class="col custom-radios">
+            <input type="radio" class="btn-check" name="options-base" id="option5" autocomplete="off" checked>
+            <label class="btn" for="option5">Normal</label>
+
+            <input type="radio" class="btn-check" name="options-base" id="option6" autocomplete="off">
+            <label class="btn" for="option6">VIP</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="custom-units">
+              <strong>
+                Unidades: <input type="number" v-model="units">
+              </strong>
+            </div>
+          </div>
+        </div>
+        <div class="custom-buttons-payment">
+          <button class="btn btn-success">Comprar agora</button>
+          <button class="btn btn-outline-success">Adicionar ao carrinho</button>
+        </div>
+      </div>
       <div class="description">
-        <p>{{ getTicketById?.description }}</p>
+        <h2>Descrição:</h2>
+        <p>
+          {{ getTicketById?.description }}
+        </p>
       </div>
     </div>
   </div>
@@ -46,7 +79,9 @@ export default {
     return {
       tickets: [],
       imageAuxId: '',
-      imageURLView: ''
+      imageURLView: '',
+
+      units: 1
     }
   },
   components: {
@@ -136,8 +171,9 @@ export default {
   grid-template-areas: 
     "header       header        header"
     "banner       banner        banner"
-    "left-images  description   description"
-    "left-images  description   description"
+    "left-images  info          info"
+    "left-images  info          info"
+    "description  description   description"
     "footer       footer        footer";
   grid-gap: 10px;
   padding: 10px;
@@ -256,5 +292,87 @@ export default {
 
 .custom-images-views .custom-low-images img {
   border: 2px solid #000;
+}
+
+.title {
+  grid-area: banner;
+  text-align: center;
+}
+
+.info {
+  position: relative;
+  grid-area: info;
+  text-align: start;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  border-left: 1px solid #000;
+  gap: 15px;
+}
+
+.info .full-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+}
+
+.info .custom-units strong {
+  display: flex;
+  flex-wrap: nowrap;
+  column-gap: 10px;
+}
+
+.info .custom-units input {
+  width: 3em;
+  border: none;
+  border-bottom: 1px solid #000;
+}
+  .info .custom-units input:focus {
+    outline: none;
+    border-bottom: 2px solid #3b35d8;
+  }
+
+.info .custom-radios {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 0fr;
+}
+
+.info .custom-buttons-payment {
+  position: absolute;
+  display: grid;
+  gap: 5px;
+  bottom: 0;
+  width: 100%;
+}
+
+.description {
+  display: block;
+  text-align: start;
+  border-top: 1px solid;
+}
+
+  .description::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .description::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+  }
+
+  .description::-webkit-scrollbar-thumb {
+    background: rgb(77, 77, 77); 
+    border-radius: 10px;
+  }
+
+  .description::-webkit-scrollbar-thumb:hover {
+    background: rgba(77, 77, 77, 0.5);
+  }
+
+.description p {
+  font-size: medium;
+  font-style: normal;
+  font-family: system-ui;
 }
 </style>

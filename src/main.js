@@ -1,5 +1,7 @@
 import { createApp, configureCompat } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { fas } from "@fortawesome/free-solid-svg-icons"
+import { far } from "@fortawesome/free-regular-svg-icons"
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -8,9 +10,9 @@ import userManager from './services/userManager'
 import BootstrapVue from 'bootstrap-vue';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import icons from './assets/icons/icons.js'
 
-library.add(...icons);
+library.add(far);
+library.add(fas);
 
 //import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"

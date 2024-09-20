@@ -17,7 +17,7 @@
                @setLoading="setLoading"
                @showToastSuccess="showToastSuccess"
                @showToastError="showToastError" />
-  <div class="d-flex justify-content-center">
+  <div class="position-absolute d-flex justify-content-center">
     <toast id="toastId" ref="toast" :mensagem="this.mensagem" class="text-white" :class="!getIsError ? `bg-success` : `bg-danger`" />
   </div>
 </template>

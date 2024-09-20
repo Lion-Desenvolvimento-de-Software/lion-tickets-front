@@ -26,6 +26,33 @@
                 :class="getTicketById?.files[0].id == image.id ? 'selected' : ''"
                 ref="imageAction"
                 @click="viewImage(image)">
+                <img v-for="image in getTicketById?.files?.filter(value => value.type.includes('image'))" 
+                :key="image" 
+                :src="image.url"
+                width="80" 
+                height="80"
+                :id="image.id"
+                :class="getTicketById?.files[0].id == image.id ? 'selected' : ''"
+                ref="imageAction"
+                @click="viewImage(image)">
+                <img v-for="image in getTicketById?.files?.filter(value => value.type.includes('image'))" 
+                :key="image" 
+                :src="image.url"
+                width="80" 
+                height="80"
+                :id="image.id"
+                :class="getTicketById?.files[0].id == image.id ? 'selected' : ''"
+                ref="imageAction"
+                @click="viewImage(image)">
+                <img v-for="image in getTicketById?.files?.filter(value => value.type.includes('image'))" 
+                :key="image" 
+                :src="image.url"
+                width="80" 
+                height="80"
+                :id="image.id"
+                :class="getTicketById?.files[0].id == image.id ? 'selected' : ''"
+                ref="imageAction"
+                @click="viewImage(image)">
           </section>
         </div>
       </div>
@@ -33,6 +60,16 @@
         <h1>{{ getTicketById?.name }}</h1>
       </div>
       <div class="info">
+        <div class="row">
+          <div class="col custom-assessment">
+            <font-awesome-icon :icon="['far', 'star']" />
+            <font-awesome-icon :icon="['far', 'star']" />
+            <font-awesome-icon :icon="['far', 'star']" />
+            <font-awesome-icon :icon="['far', 'star']" />
+            <font-awesome-icon :icon="['far', 'star']" />
+            <span> Curtidas ({{ 0 }})</span>
+          </div>
+        </div>
         <div class="row gap-2">
           <div class="col">
             <h5>R$ {{ getTicketById?.price.toFixed(2) }}</h5>
@@ -42,15 +79,15 @@
             <label class="btn" for="option5">Normal</label>
 
             <input type="radio" class="btn-check" name="options-base" id="option6" autocomplete="off">
-            <label class="btn" for="option6">VIP</label>
+            <label class="btn" for="option6">Camarote</label>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <div class="custom-units">
-              <strong>
+              <span>
                 Unidades: <input type="number" v-model="units">
-              </strong>
+              </span>
             </div>
           </div>
         </div>
@@ -59,11 +96,29 @@
           <button class="btn btn-outline-success">Adicionar ao carrinho</button>
         </div>
       </div>
-      <div class="description">
-        <h2>Descrição:</h2>
-        <p>
-          {{ getTicketById?.description }}
-        </p>
+      <div class="low-contents">
+        <div class="description">
+          <h2>Descrição:</h2>
+          <p>
+            {{ getTicketById?.description }}
+          </p>
+        </div>
+        <div class="coments">
+          <h2>Comentários:</h2>
+          <hr />
+          <ol>
+            <h5>Mauricio: </h5>
+            <ul>
+              <li>
+                <p>
+                  Gostei, ótiom ingresso.
+                  <br/>
+                  Estou Amando este ingresso, parabéns!!
+                </p>
+              </li>
+            </ul>
+          </ol>
+        </div>
       </div>
     </div>
   </div>
@@ -157,13 +212,6 @@ export default {
   grid-area: main;
 }
 
-.description {
-  grid-area: description;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .container-ticket {
   grid-template-rows: 80px auto 1fr auto 50px;
   grid-template-columns: 1fr 4fr 1fr;
@@ -173,18 +221,21 @@ export default {
     "banner       banner        banner"
     "left-images  info          info"
     "left-images  info          info"
-    "description  description   description"
+    "low-contents low-contents  low-contents"
     "footer       footer        footer";
   grid-gap: 10px;
   padding: 10px;
-  font-weight: 600;
-  font-size: 20px;
+  font-weight: 400;
+  font-size: 18px;
 }
 
 .custom-images-views {
   grid-area: left-images;
   display: flex;
   flex-direction: row;
+  border-radius: 10px;
+  box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.2);
+  padding: 5px;
 }
 
 .custom-images-views > img {
@@ -194,6 +245,7 @@ export default {
 
 .custom-images-views .image-view {
   object-fit: contain;
+  padding: 5px;
 }
 
 .custom-images-views .custom-low-images {
@@ -201,17 +253,19 @@ export default {
   width: 80px;
   display: flex;
   justify-content: center;
+  padding: 5px;
 }
 
 .custom-images-views .custom-low-images section {
   position: absolute;
-  height: 350px;
+  height: 335px;
   display: flex;
   flex-direction: column;
   white-space: nowrap;
   overflow-y: auto;
   overflow-x: hidden;
   gap: 3px;
+  padding: 3px;
 }
 
   section::-webkit-scrollbar {
@@ -234,9 +288,9 @@ export default {
 
   .custom-images-views .custom-low-images section img {
     width: 60px;
-    height: 60px;
-    margin: 0 2px;
+    min-height: 60px;
     cursor: pointer;
+    object-fit: cover;
   }
 
     .custom-images-views .custom-low-images section img:hover {
@@ -306,8 +360,13 @@ export default {
   display: flex;
   flex-direction: column;
   padding: 15px;
-  border-left: 1px solid #000;
   gap: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.2);
+}
+
+.info .custom-assessment svg {
+  color: rgb(201, 201, 0);
 }
 
 .info .full-info {
@@ -342,18 +401,30 @@ export default {
   position: absolute;
   display: grid;
   gap: 5px;
-  bottom: 0;
+  bottom: 15px;
   width: 100%;
+  left: 0;
+  padding: 0 15px
+}
+
+.low-contents {
+  grid-area: low-contents;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-wrap: wrap;
+  text-align: justify;
 }
 
 .description {
-  display: block;
-  text-align: start;
-  border-top: 1px solid;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.2);
 }
 
   .description::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
   }
 
   .description::-webkit-scrollbar-track {
@@ -375,4 +446,73 @@ export default {
   font-style: normal;
   font-family: system-ui;
 }
+
+.coments {
+  border-radius: 10px;
+  box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+}
+
+.coments ol {
+  padding: 0;
+}
+
+.coments ol h5 {
+  font-weight: 600;
+  font-size: 22px;
+}
+
+.coments ol ul li {
+  list-style: none;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 5px;
+}
+
+@media(max-width: 830px) {
+  .container-ticket {
+    grid-template-rows: 50px 50px 1fr 1fr;
+    grid-template-columns: 1fr;
+    height: 100%;
+    grid-template-areas: 
+      "header"
+      "banner"
+      "left-images"
+      "info"
+      "low-contents"
+      "footer";
+  }
+  
+  .image-view {
+    width: 100% !important;
+  }
+}
+
+@media(max-width: 480px) {
+
+  .custom-images-views {
+    flex-wrap: wrap !important;
+  }
+
+  .custom-images-views .custom-low-images {
+    width: 100%;
+    border-radius: 0;
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    height: 130px
+  }
+
+  .custom-images-views .custom-low-images section {
+    width: calc(100% - 25px);
+    height: auto !important;
+    margin: 10px;
+    overflow-x: auto !important;
+    scrollbar-width: 8px;
+    flex-direction: row;
+  }
+
+  section::-webkit-scrollbar-track {
+    height: 8px !important;
+  }
+}
+
 </style>

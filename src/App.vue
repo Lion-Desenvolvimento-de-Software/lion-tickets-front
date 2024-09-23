@@ -20,6 +20,7 @@
   <div class="position-absolute d-flex justify-content-center">
     <toast id="toastId" ref="toast" :mensagem="this.mensagem" class="text-white" :class="!getIsError ? `bg-success` : `bg-danger`" />
   </div>
+  <footer-component />
 </template>
 
 <script>
@@ -31,6 +32,7 @@ import toast from './components/toasts/toast.vue';
 import collapseProfile from './components/colapses/collapseProfile.vue';
 import userManager from './services/userManager';
 import axios from '@/services/axios';
+import footerComponent from './components/footer-component.vue';
 
 export default {
   name: 'app',
@@ -62,6 +64,7 @@ export default {
     spinner,
     toast,
     collapseProfile,
+    footerComponent
   },
   computed: {
     getIsError() {

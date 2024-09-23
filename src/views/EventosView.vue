@@ -26,33 +26,6 @@
                 :class="getTicketById?.files[0].id == image.id ? 'selected' : ''"
                 ref="imageAction"
                 @click="viewImage(image)">
-                <img v-for="image in getTicketById?.files?.filter(value => value.type.includes('image'))" 
-                :key="image" 
-                :src="image.url"
-                width="80" 
-                height="80"
-                :id="image.id"
-                :class="getTicketById?.files[0].id == image.id ? 'selected' : ''"
-                ref="imageAction"
-                @click="viewImage(image)">
-                <img v-for="image in getTicketById?.files?.filter(value => value.type.includes('image'))" 
-                :key="image" 
-                :src="image.url"
-                width="80" 
-                height="80"
-                :id="image.id"
-                :class="getTicketById?.files[0].id == image.id ? 'selected' : ''"
-                ref="imageAction"
-                @click="viewImage(image)">
-                <img v-for="image in getTicketById?.files?.filter(value => value.type.includes('image'))" 
-                :key="image" 
-                :src="image.url"
-                width="80" 
-                height="80"
-                :id="image.id"
-                :class="getTicketById?.files[0].id == image.id ? 'selected' : ''"
-                ref="imageAction"
-                @click="viewImage(image)">
           </section>
         </div>
       </div>
@@ -85,15 +58,16 @@
         <div class="row">
           <div class="col">
             <div class="custom-units">
-              <span>
-                Unidades: <input type="number" v-model="units">
-              </span>
+              Unidades: <select v-model="unit">
+                <option v-for="value in units" :key="value" :value="value">{{ value }}</option>
+              </select>
+              <span>({{ getQtdade }}) unidades restantes</span>
             </div>
           </div>
         </div>
         <div class="custom-buttons-payment">
-          <button class="btn btn-success">Comprar agora</button>
-          <button class="btn btn-outline-success">Adicionar ao carrinho</button>
+          <button class="btn btn-primary">Comprar agora</button>
+          <button class="btn btn-outline-primary">Adicionar ao carrinho</button>
         </div>
       </div>
       <div class="low-contents">
@@ -136,7 +110,8 @@ export default {
       imageAuxId: '',
       imageURLView: '',
 
-      units: 1
+      units: [1, 2, 3, 4, 5, 6],
+      unit: 1,
     }
   },
   components: {
@@ -164,6 +139,10 @@ export default {
     getImageTicketLocal() {
       return this.imageURLView;
     },
+    getQtdade() {
+      return '+10';
+      //return this.tickets.qtdade > 10 ? '+10' : this.tickets.qtdade;
+    }
   },
   methods: {
     async getTicketsAsync() {
@@ -213,7 +192,7 @@ export default {
 }
 
 .container-ticket {
-  grid-template-rows: 80px auto 1fr auto 50px;
+  grid-template-rows: 80px auto 1fr;
   grid-template-columns: 1fr 4fr 1fr;
   height: 100%;
   grid-template-areas: 
@@ -381,15 +360,23 @@ export default {
   column-gap: 10px;
 }
 
-.info .custom-units input {
+.info .custom-units select {
   width: 3em;
   border: none;
-  border-bottom: 1px solid #000;
 }
-  .info .custom-units input:focus {
+  .info .custom-units select:hover {
     outline: none;
     border-bottom: 2px solid #3b35d8;
   }
+  .info .custom-units select:focus {
+    outline: none;
+    border-bottom: 2px solid #3b35d8;
+  }
+
+.info .custom-units span {
+  color: rgba(0, 0, 0, 0.3);
+  font-size: 16px;
+}
 
 .info .custom-radios {
   display: grid;

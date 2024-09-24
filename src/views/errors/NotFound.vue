@@ -21,7 +21,7 @@ export default {
 
 <style scoped>
 .not-found-general {
- height: 100%;
+ height: 100vh;
  align-content: center;
 }
 .not-found-title {

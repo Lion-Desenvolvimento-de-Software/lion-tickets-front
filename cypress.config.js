@@ -1,7 +1,7 @@
 const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
-  projectId: '1vr4zo',
+  projectId: 'ohrnw6',
   component: {
     devServer: {
       framework: "vue-cli",

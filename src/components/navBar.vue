@@ -1,61 +1,28 @@
 <template>
-	<header class="navbar fixed-top navbar-expand-sm custom-navbar">
-		<div class="container-fluid">
-			<router-link class="navbar-brand" to="/">LionTickets</router-link>
-			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav me-auto mb-2 mb-lg-0 w-100 justify-content-center">
-					<li class="nav-item">
-						<router-link class="nav-link" aria-current="page" to="/eventos">Eventos</router-link>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#">Sobre nós</a>
-					</li>
-					<li class="nav-item dropdown">
-						<button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-							Produtos
-						</button>
-						<ul class="dropdown-menu">
-							<li>
-								<router-link class="dropdown-item" 
-														:to="{ name: 'Produtos', params: { productsName: 'roupas' } }">
-									Roupas
-								</router-link>
-							</li>
-							<li>
-								<router-link class="dropdown-item" 
-														:to="{ name: 'Produtos', params: { productsName: 'acessorios' } }">
-									Acessórios
-								</router-link>
-							</li>
-						</ul>
-					</li>
-				</ul>
-				<div v-if="!usuario?.Id" class="d-flex justify-content-end">
-					<!--<RouterLink to="/login">-->
-						<button class="btn btn-success mx-1" @click="login">Entrar</button>
-					<!--</RouterLink>-->
-				</div>
-				<div v-else class="dropstart">
-					<img class="btn p-0 custom-imagem-perfil"
-						@click="$emit('openCollapse')"
-						aria-expanded="false" 
-						:src="getImagemPerfil"
-						alt="Imagem do Perfil"
-						height="40" 
-						width="40"
-						v-if="$route.params.Id != usuario.Id" />
-				</div>
+	<nav class="custom-navbar" :class="isExpand ? 'expand' : ''">
+		<h3>Lion Tickets</h3>
+		<div class="custom-items-nav" :class="isExpand ? 'view-flex' : 'view-none'">
+			<a href="">Eventos</a>
+			<a href="">Ingressos</a>
+			<a href="">Produtos</a>
+		</div>
+		<div class="custom-actions">
+			<span @click="isExpand = !isExpand" class="btn">
+				<font-awesome-icon :icon="['fas', 'bars']" />
+			</span>
+			<div class="custom-profile" v-if="usuario?.Id">
+				<font-awesome-icon :icon="['fas', 'cart-shopping']" />
+				<font-awesome-icon :icon="['fas', 'user']" />
+			</div>
+			<div v-else>
+				<button class="btn btn-success" @click="login">Entrar</button>
 			</div>
 		</div>
-  </header>
+	</nav>
 </template>
 
 <script>
 import { Usuario } from '@/assets/classes/Usuario';
-import { RouterLink } from 'vue-router';
 import userManager from '@/services/userManager';
 
 export default {
@@ -67,10 +34,10 @@ export default {
 		}
 	},
 	emits: ['openCollapse'],
-  components: { RouterLink },
 	data() {
 		return {
-			BGHader: 'bg-transparent'
+			BGHader: 'bg-transparent',
+			isExpand: false
 		}
 	},
 	mounted() {
@@ -99,39 +66,116 @@ export default {
 
 <style scoped>
 .custom-navbar {
-	background-color: orange;
-	box-shadow: 0 2px 10px 0 rgba(0, 0, 0, .7);
-}
-
-li a, li button {
-	display: block;
+	position: fixed;
 	width: 100%;
-	height: 100%;
-	cursor: pointer;
-}
-li {
-  display: inline-block;
-  position: relative;
-	height: 30px;
-  margin-bottom: 3px;
-  margin-right: 10px;
-}
-
-li::after {
-  content: '';
-  display: block;
-  margin: auto;
-  height: 3px;
-  width: 0;
-  background: transparent;
-  transition: width .5s ease, background-color .5s ease;
-}
-li:hover::after {
-  width: 100%;
-  background: blue;
+	height: 50px;
+	background-color: orange;
+	padding: 5px;
+	display: grid;
+	align-items: center;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: 1fr;
+	border-radius: 3px;
+	box-shadow: 0 2px 8px 5px rgba(0, 0, 0, 0.4);
+	z-index: 255;
 }
 
-.custom-imagem-perfil {
-	border-radius: 50%;
+.custom-navbar h3 {
+	display: flex;
+	width: 100%;
+	justify-content: start;
+	font-size: 24px;
+	font-family:Arial, Helvetica, sans-serif;
+}
+
+.custom-items-nav {
+	position: relative;
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	gap: 15px;
+}
+
+.custom-items-nav a {
+	text-decoration: none;
+	text-align: center
+}
+
+.custom-items-nav a::after {
+	transition: all ease-in-out .2s;
+  background: none repeat scroll 0 0 blue;
+	content: "";
+	display: block;
+  height: 2px;
+  width: 0
+}
+
+.custom-items-nav a:hover::after {
+	width: 100%;
+}
+
+.custom-actions {
+	display: flex;
+	flex-direction: row-reverse;
+	font-size: 24px;
+	gap: 25px;
+}
+
+.custom-actions span {
+	border: 1px solid black;
+	width: 45px;
+	display: none;
+}
+
+.custom-actions .custom-profile {
+	display: flex;
+	width: 100%;
+	justify-content: end;
+	gap: 25px;
+	align-items: center;
+}
+
+@media(max-width: 570px) {
+	.custom-navbar {
+		grid-template-columns: 1fr 1fr 90px;
+	}
+}
+
+@media(max-width: 490px) {
+	.custom-navbar {
+		grid-template-columns: 1fr 1fr;
+		grid-template-rows: 1fr 1fr;
+		overflow-y: hidden;
+		align-items: start;
+		transition: ease .2s;
+	}
+
+	.custom-items-nav {
+		position: absolute;
+		height: 80%;
+		bottom: 0;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.custom-items-nav a {
+		width: calc(100% - 350px);
+	}
+
+	.custom-actions span {
+		display: block;
+	}
+
+	.view-flex {
+		display: flexblock;
+	}
+
+	.view-none {
+		display: none;
+	}
+
+	.expand {
+		height: 250px;
+	}
 }
 </style>

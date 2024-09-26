@@ -5,7 +5,7 @@
     </div>
     <div class="custom-products">
       <b-table :fields="fields"
-               :data="data"></b-table>
+               :items="cartDetail"></b-table>
     </div>
   </div>
 </template>
@@ -25,9 +25,9 @@ export default {
     }
   },
   props: {
-    data: {
+    cartDetail: {
       type: Array,
-      default: () => []
+      default: () => [{ id: 1, name: 'Alok', price: 'R$ 29.90', description: 'Show do alok na expo Bauru' }]
     }
   }
 }

@@ -21,6 +21,9 @@ import './commands'
 
 import { mount } from 'cypress/vue'
 
+import "bootstrap"
+import 'bootstrap/dist/css/bootstrap.css';
+
 Cypress.Commands.add('mount', mount)
 
 // Example use:

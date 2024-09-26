@@ -2,6 +2,7 @@ const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
   projectId: 'ohrnw6',
+  port: 80,
   component: {
     devServer: {
       framework: "vue-cli",
@@ -10,8 +11,6 @@ module.exports = defineConfig({
   },
 
   e2e: {
-    setupNodeEvents(on, config) {
-      // implement node event listeners here
-    },
+    baseUrl: 'http://localhost:8080',
   },
 });

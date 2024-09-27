@@ -11,7 +11,10 @@
 				<font-awesome-icon :icon="['fas', 'bars']" />
 			</span>
 			<div class="custom-profile" v-if="usuario?.Id">
-				<font-awesome-icon :icon="['fas', 'cart-shopping']" />
+				<span class="quantity-items" :class="CartQuantity > 0 ? 'visible' : 'invisible'">{{ CartQuantity }}</span>
+				<button @click="enterViewCart()" class="button-cart">
+					<font-awesome-icon :icon="['fas', 'cart-shopping']" />
+				</button>
 				<font-awesome-icon :icon="['fas', 'user']" />
 			</div>
 			<div v-else>
@@ -31,7 +34,8 @@ export default {
 		usuario: {
 			type: Usuario,
 			default: null
-		}
+		},
+		CartQuantity: Number
 	},
 	emits: ['openCollapse'],
 	data() {
@@ -59,6 +63,9 @@ export default {
       }).catch(error => {
         console.error("Erro durante o redirecionamento:", error);
       });
+		},
+		enterViewCart() {
+			this.$router.push("/cart");
 		}
 	}
 }
@@ -72,7 +79,6 @@ export default {
 	background-color: orange;
 	padding: 5px;
 	display: grid;
-	align-items: center;
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-template-rows: 1fr;
 	border-radius: 3px;
@@ -86,6 +92,8 @@ export default {
 	justify-content: start;
 	font-size: 24px;
 	font-family:Arial, Helvetica, sans-serif;
+	height: 100%;
+  align-items: center;
 }
 
 .custom-items-nav {
@@ -94,6 +102,8 @@ export default {
 	width: 100%;
 	justify-content: center;
 	gap: 15px;
+	height: 100%;
+  align-items: center;
 }
 
 .custom-items-nav a {
@@ -128,11 +138,36 @@ export default {
 }
 
 .custom-actions .custom-profile {
+	position: relative;
 	display: flex;
 	width: 100%;
 	justify-content: end;
 	gap: 25px;
-	align-items: center;
+	height: 100%;
+  align-items: center;
+}
+
+.quantity-items {
+	position: absolute;
+	display: block !important;
+	width: 17px !important;
+	height: 17px;
+	background: rgb(255, 0, 0);
+	border: 0 !important;
+	outline: none;
+	border-radius: 50px;
+	top: -2px;
+	right: 38px;
+	font-size: 11px;
+	padding: 0 3px;
+	color: black;
+}
+
+.button-cart {
+	background: none;
+	border: 0;
+	outline: none;
+	padding: 0;
 }
 
 @media(max-width: 570px) {
@@ -146,7 +181,6 @@ export default {
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: 1fr 1fr;
 		overflow-y: hidden;
-		align-items: start;
 		transition: ease .2s;
 	}
 

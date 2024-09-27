@@ -5,8 +5,8 @@ export default {
     const { data } = await axios.get(`/api/v1/tickets/${Number.parseInt(paginate) - 1}`);
     return data;
   },
-  async GetTicketsAsync(companyId, paginate = 1) {
-    const { data } = await axios.get(`/api/v1/tickets/${companyId}/${Number.parseInt(paginate) - 1}`);
+  async GetTicketsAsync(companyId = 0, paginate = 1) {
+    const { data } = await axios.get(`/api/v1/tickets/GetTicketsByCompanyId/${companyId}/${Number.parseInt(paginate) - 1}`);
     return data;
   },
 

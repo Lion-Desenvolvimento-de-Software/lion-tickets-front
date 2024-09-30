@@ -2,8 +2,7 @@
 	<nav class="custom-navbar" :class="isExpand ? 'expand' : ''">
 		<h3>Lion Tickets</h3>
 		<div class="custom-items-nav" :class="isExpand ? 'view-flex' : 'view-none'">
-			<a href="">Eventos</a>
-			<a href="">Ingressos</a>
+			<router-link to="/Eventos">Eventos</router-link>
 			<a href="">Produtos</a>
 		</div>
 		<div class="custom-actions">
@@ -108,7 +107,8 @@ export default {
 
 .custom-items-nav a {
 	text-decoration: none;
-	text-align: center
+	text-align: center;
+	color: black;
 }
 
 .custom-items-nav a::after {

@@ -8,7 +8,7 @@
             v-if="$route.meta.navbar"
             @openCollapse="openCollapse"
             class="nav" />
-  <router-view :usuario="usuario"
+  <router-view :usuario="getUsuario"
                @ReenviarCodigo="ReenviarCodigo"
                @setMensagemToast="setMensagemToast"
                @setIsError="setIsError"
@@ -93,32 +93,7 @@ export default {
         //UrlImagemPerfil: res.profile.urlImagemPerfil
       }
       this.usuario.AddData(obj);
-    },
-    async fetchData() {
-      try {
-        this.loadingFethingData = true;
-        UsuarioServices.GetUserAuthenticated().then(async res => {
-          let obj = {
-            Id: res.id,
-            UserName: res.userName,
-            Email: res.email,
-            PhoneNumber: res.phoneNumber,
-            Genero: res.genero,
-            DataAniversario: res.dataAniversario?.split("T")[0],
-            UrlImagemPerfil: res.urlImagemPerfil
-          }
-          this.usuario.AddData(obj);
-          window.localStorage.setItem("isAuthenticated", true);
-        }).catch(err => {
-          console.log(err);
-          window.localStorage.clear();
-        }).finally(() => {
-          this.loadingFethingData = false;
-        })
-      } catch(err) {
-        this.loadingFethingData = false;
-        console.log(err);
-      }
+      
     },
     async logof() {
       this.usuario = null;

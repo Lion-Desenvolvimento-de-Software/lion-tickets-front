@@ -48,10 +48,10 @@
             <h5>R$ {{ getTicketById?.price.toFixed(2) }}</h5>
           </div>
           <div class="col custom-radios">
-            <input type="radio" class="btn-check" name="options-base" id="option5" autocomplete="off" checked>
+            <input v-model="typeTicket" type="radio" class="btn-check" name="options-base" id="option5" autocomplete="off" :value="1" checked>
             <label class="btn" for="option5">Normal</label>
 
-            <input type="radio" class="btn-check" name="options-base" id="option6" autocomplete="off">
+            <input v-model="typeTicket" type="radio" class="btn-check" name="options-base" id="option6" autocomplete="off" :value="2">
             <label class="btn" for="option6">Camarote</label>
           </div>
         </div>
@@ -67,7 +67,7 @@
         </div>
         <div class="custom-buttons-payment">
           <button class="btn btn-primary">Comprar agora</button>
-          <button class="btn btn-outline-primary">Adicionar ao carrinho</button>
+          <button class="btn btn-outline-primary" @click="SaveInTheCart">Adicionar ao carrinho</button>
         </div>
       </div>
       <div class="low-contents">
@@ -101,6 +101,7 @@
 <script>
 import leyaoutCards from '@/components/leyaoutCards.vue';
 import TicketServices from '@/services/TicketServices';
+import CartServices from '@/services/CartServices';
 
 export default {
   name: 'EventosView',
@@ -109,9 +110,10 @@ export default {
       tickets: [],
       imageAuxId: '',
       imageURLView: '',
-
+      
       units: [1, 2, 3, 4, 5, 6],
       unit: 1,
+      typeTicket: 1
     }
   },
   components: {
@@ -121,6 +123,7 @@ export default {
     this.getTicketsAsync();
   },
   beforeUpdate() {
+    console.log(this.usuario);
     if (this.$route.params.id) {
       this.addImageURLOrDefault();
       this.addImageAuxIdOrDefault();
@@ -128,6 +131,9 @@ export default {
     else {
       this.clear();
     }
+  },
+  props: {
+    usuario: Object
   },
   computed: {
     getTickets() {
@@ -157,6 +163,32 @@ export default {
         console.log(err);
       } finally {
         this.$emit("setLoading", false);
+      }
+    },
+    async SaveInTheCart() {
+      try {
+        var ticket = this.tickets.find(item => item.id == this.$route.params.id);
+        ticket['typeTicket'] = this.typeTicket;
+        ticket['quantidade'] = this.unit;
+        var cart = {
+          cartHeader: {
+            userId: this.usuario?.Id
+          },
+          cartDetails: [{
+            TicketId: ticket.id, 
+            Ticket: ticket, 
+            count: this.unit, 
+            countProducts: 0, 
+            countTickets: this.unit,
+            cartHeader: {
+              userId: this.usuario?.Id
+            }
+          }]
+        };
+        console.log(this.usuario);
+        await CartServices.SaveCartAsync(cart, "Ticket");
+      } catch (err) {
+        console.log(err);
       }
     },
     viewImage(image) {

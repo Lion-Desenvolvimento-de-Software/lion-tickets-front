@@ -26,6 +26,9 @@ export default {
       tickets: []
     }
   },
+  props: {
+    usuario: Object
+  },
   components: {
     Carousel,
     LeyaoutCards

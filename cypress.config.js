@@ -1,7 +1,7 @@
 const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
-  projectId: 'ohrnw6',
+  projectId: '9776di',
   port: 80,
   component: {
     devServer: {

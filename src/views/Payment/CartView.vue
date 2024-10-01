@@ -19,7 +19,7 @@
         </b-tab>
         <b-tab title="Produtos">
           <b-table :fields="fields"
-                  :items="getCartDetailsProducts"
+                  :items="null"
                   striped
                   hover
                   fixed
@@ -64,10 +64,10 @@ export default {
   },
   computed: {
     getCartDetailsTickets() {
-      return this.cart?.cartDetails.map(value => { return value?.ticket ?? [] }) ?? [];
+      return this.cart?.cartDetails.map(value => { return value?.ticket ?? null }) ?? null;
     },
     getCartDetailsProducts() {
-      return this.cart?.cartDetails.map(value => { return value?.product ?? [] }) ?? [];
+      return this.cart?.cartDetails.map(value => { return value?.product ?? null }) ?? null;
     }
   },
   methods: {

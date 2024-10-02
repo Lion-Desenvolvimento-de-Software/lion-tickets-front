@@ -2,7 +2,6 @@
   <div class="container custom-page">
     <div class="custom-title">
       <h1>Carrinho</h1>
-      {{ getValuePaymentTotal }}
     </div>
     <div class="custom-table-cart">
       <b-tabs content-class="mt-3" fill>
@@ -49,14 +48,21 @@
       <div class="custom-order-infos">
         <h2>Pedido</h2>
         <div class="info">
-          <h4></h4>
+          <h4>R$ {{ getValuePaymentTotalOrItemsSpecific }}</h4>
+          <select v-model="itemsSelected">
+            <option :value="0" selected>Todos</option>
+            <option :value="1">Ingressos</option>
+            <option :value="2">Produtos</option>
+          </select>
         </div>
         <div class="coupon">
-          <button class="btn btn-outline-secondary text-dark">Coupon</button>
+          <span class="text-dark">Cupom: 
+            <a href="">Adicionar</a>
+          </span>
         </div>
       </div>
       <div class="custom-order-events">
-        <button class="btn btn-success">Finalizar Compra</button>
+        <button class="btn btn-success" :disabled="getValuePaymentTotalOrItemsSpecific <= 0 ? true : false">Finalizar Compra</button>
       </div>
     </div>
   </div>
@@ -77,7 +83,8 @@ export default {
         { key: "category", label: "Categoria" },
         { key: "action", label: "" },
       ],
-      cart: null
+      cart: null,
+      itemsSelected: 0
     }
   },
   props: {
@@ -97,13 +104,17 @@ export default {
     getCartDetailsProducts() {
       return this.cart?.cartDetails.map(value => { return value?.product ?? null }) ?? null;
     },
-    getValuePaymentTotal() {
+    getValuePaymentTotalOrItemsSpecific() {
       var initialValue = 0;
       var sumPrices = this.cart?.cartDetails.reduce((accumulator, currentValue) => 
-        (accumulator + Number.parseFloat(currentValue?.ticket?.price ?? currentValue?.product?.price)), initialValue);
+        (accumulator + Number.parseFloat(this.itemsSelected == 0 
+          ? (currentValue?.ticket?.price ?? currentValue?.product?.price) 
+          : (this.itemsSelected == 1 ? (currentValue?.ticket?.price ?? 0) : (currentValue?.product?.price ?? 0))
+        )), 
+      initialValue);
 
       return Number.parseFloat(sumPrices).toFixed(2);
-    }
+    },
   },
   methods: {
     async getCartByUserId(userId) {
@@ -169,5 +180,16 @@ export default {
 
 .right-order-cart .custom-order-events button {
   width: 100%;
+}
+
+.info select {
+  height: 25px;
+  border-radius: 10px;
+  padding: 0 5px;
+  margin: 10px 0;
+}
+
+.info select:focus {
+  border: 2px solid rgba(0, 21, 255, 0.5);
 }
 </style>

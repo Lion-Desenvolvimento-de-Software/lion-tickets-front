@@ -1,5 +1,5 @@
 describe('Cart', () => {
-  it ('Visit', () => {
+  it ('visit', () => {
     cy.visit('/cart');
   })
 })

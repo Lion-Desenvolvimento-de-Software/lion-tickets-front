@@ -1,59 +1,43 @@
 <template>
-  <div class="container custom-page">
+  <div class="container-fluid custom-page">
     <div class="custom-title">
       <h1>Carrinho</h1>
     </div>
-    <div class="custom-table-cart">
-      <b-tabs content-class="mt-3" fill>
-        <b-tab title="Ingressos" active>
-          <b-table :fields="fields"
-                  :items="getCartDetailsTickets"
-                  striped
-                  hover
-                  fixed
-                  tbody-tr-class="align-middle"
-                  class="cart">
-            <template #cell(imageURL)="{ item }">
-              <img :src="item?.imageURL" width="80">
-            </template>
-            <template #cell(action)>
-              <button class="btn btn-danger"><font-awesome-icon :icon="['fas', 'trash']" /></button>
-            </template>
-            <template #cell(price)="{ item }">
-              <span>{{ Number.parseFloat(item.price).toFixed(2) }}</span>
-            </template>
-          </b-table>
-        </b-tab>
-        <b-tab title="Produtos">
-          <b-table :fields="fields"
-                  :items="null"
-                  striped
-                  hover
-                  fixed
-                  class="cart">
-            <template #cell(imageURL)="{ item }">
-              <img :src="item?.imageURL" width="80">
-            </template>
-            <template #cell(action)="{ item }">
-              <button class="btn btn-danger fa-trash" @click="item"></button>
-            </template>
-            <template #cell(price)="{ item }">
-              <span>{{ Number.parseFloat(item.price).toFixed(2) }}</span>
-            </template>
-          </b-table>
-        </b-tab>
-      </b-tabs>
+    <div class="custom-cart">
+      <table>
+        <tbody>
+          <tr v-for="cartDetail in cart?.cartDetails" :key="cartDetail.id" class="custom-items">
+            <div class="item-cart-detail">
+              <div class="custom-image">
+                <img :src="cartDetail.ticket?.imageURL ?? cartDetail.product?.imageURL" width="150" height="150">
+              </div>
+              <div class="layout-item">
+                <div class="custom-detail">
+                  <b><p>{{ cartDetail.ticket?.name ?? cartDetail.product?.name }}</p></b>
+                  <div class="custom-classification">
+                    <font-awesome-icon :icon="['far', 'star']" />
+                    <font-awesome-icon :icon="['far', 'star']" />
+                    <font-awesome-icon :icon="['far', 'star']" />
+                    <font-awesome-icon :icon="['far', 'star']" />
+                    <font-awesome-icon :icon="['far', 'star']" />
+                    <span> ({{ 0 }} Classificações)</span>
+                  </div>
+                </div>
+                <div class="custom-actions">
+                  <button class="border-0 bg-transparent text-primary">Remover</button>
+                  <!-- <button class="border-0 bg-transparent text-primary">Desejos+</button> -->
+                </div>
+              </div>
+            </div>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <div class="right-order-cart">
       <div class="custom-order-infos">
-        <h2>Pedido</h2>
         <div class="info">
-          <h4>R$ {{ getValuePaymentTotalOrItemsSpecific }}</h4>
-          <select v-model="itemsSelected">
-            <option :value="0" selected>Todos</option>
-            <option :value="1">Ingressos</option>
-            <option :value="2">Produtos</option>
-          </select>
+          <b>Total:</b>
+          <h4>R$ {{ getValuePaymentTotal }}</h4>
         </div>
         <div class="coupon">
           <span class="text-dark">Cupom: 
@@ -62,7 +46,7 @@
         </div>
       </div>
       <div class="custom-order-events">
-        <button class="btn btn-success" :disabled="getValuePaymentTotalOrItemsSpecific <= 0 ? true : false">Finalizar Compra</button>
+        <button class="btn btn-success" :disabled="getValuePaymentTotal <= 0 ? true : false">Finalizar Compra</button>
       </div>
     </div>
   </div>
@@ -104,13 +88,10 @@ export default {
     getCartDetailsProducts() {
       return this.cart?.cartDetails.map(value => { return value?.product ?? null }) ?? null;
     },
-    getValuePaymentTotalOrItemsSpecific() {
+    getValuePaymentTotal() {
       var initialValue = 0;
       var sumPrices = this.cart?.cartDetails.reduce((accumulator, currentValue) => 
-        (accumulator + Number.parseFloat(this.itemsSelected == 0 
-          ? (currentValue?.ticket?.price ?? currentValue?.product?.price) 
-          : (this.itemsSelected == 1 ? (currentValue?.ticket?.price ?? 0) : (currentValue?.product?.price ?? 0))
-        )), 
+        accumulator + Number.parseFloat(currentValue?.ticket?.price ?? currentValue?.product?.price), 
       initialValue);
 
       return Number.parseFloat(sumPrices).toFixed(2);
@@ -136,6 +117,7 @@ export default {
   height: 100vh;
   padding-top: 80px;
   display: grid;
+  height: 100%;
   grid-template-rows: 80px 1fr;
   grid-template-columns: 1fr;
   grid-template-areas: 
@@ -149,24 +131,78 @@ export default {
   grid-area: header;
 }
 
-.custom-table-cart {
+.custom-cart {
   grid-area: cart;
-  height: 480px;
+  height: auto;
   overflow-y: auto;
   overflow-x: hidden;
-  box-shadow: 0 0 10px 2px rgba(0, 0, 0, .25);
 }
 
-.custom-table-cart .cart {
-  margin: 0;
-  height: 100%;
+.custom-cart table {
+  width: 100%;
 }
+
+.custom-items {
+  display: flex;
+  flex-direction: row;
+  padding: 5px;
+  border: none;
+  border-top: 1px solid #000;
+}
+
+.item-cart-detail {
+  display: flex;
+  height: 150px;
+  width: 100%;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.item-cart-detail .layout-item {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  justify-items: stretch;
+  width: 100%;
+}
+
+.item-cart-detail .layout-item .custom-detail {
+  display: block;
+  height: 100%;
+  width: 100%;
+  text-align: start;
+}
+
+.custom-detail .custom-classification {
+  font-size: 12px;
+}
+
+.custom-detail .custom-classification svg {
+  color: rgb(133, 133, 0);
+}
+
+.item-cart-detail .layout-item .custom-actions {
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}
+
+  .item-cart-detail .layout-item .custom-actions button {
+    padding: 0;
+    border-bottom: 1px solid blue !important;
+    margin: 5px 0;
+  }
+
+  .item-cart-detail .layout-item .custom-actions button:hover {
+    padding: 0;
+    color: rgba(0, 0, 255, 0.6) !important;
+    border-bottom: 1px solid rgba(0, 0, 255, 0.6) !important;
+  }
 
 .right-order-cart {
   grid-area: info-order-cart;
-  width: 280px;
-  height: 480px;
-  box-shadow: 0 0 10px 2px rgba(0, 0, 0, .25);
+  width: 180px;
+  height: 150px;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -184,12 +220,51 @@ export default {
 
 .info select {
   height: 25px;
-  border-radius: 10px;
+  border: none;
+  border-bottom: 2px solid #000;
   padding: 0 5px;
   margin: 10px 0;
 }
 
-.info select:focus {
-  border: 2px solid rgba(0, 21, 255, 0.5);
+  .info select:focus {
+    border-bottom: 2px solid rgba(0, 21, 255, 0.5);
+    outline: none;
+  }
+
+.coupon {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+@media(max-width: 730px) {
+  .item-cart-detail .layout-item {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: start;
+    width: 100%;
+  }
+}
+
+@media(max-width: 635px) {
+  .custom-page {
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "header"
+      "info-order-cart"
+      "cart"
+      "footer";
+    gap: 15px;
+  }
+
+  .right-order-cart {
+    height: auto;
+    width: 100%;
+    display: block;
+  }
+
+  .custom-detail .custom-classification span {
+    font-size: 12px;
+  }
 }
 </style>

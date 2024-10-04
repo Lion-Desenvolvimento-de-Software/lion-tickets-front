@@ -3,7 +3,7 @@ import axios from '@/services/axios';
 
 const userManager = new UserManager({
   userStore: new WebStorageStateStore({ store: window.localStorage }),
-  authority: "https://f5ea-2804-7f0-aa38-ba-8829-1e84-1096-b60e.ngrok-free.app",  // URL do seu Identity Server
+  authority: "https://localhost:44360",  // URL do seu Identity Server
   client_id: "lion_tickets",
   client_secret: "my_super_secret",
   redirect_uri: "http://localhost:8080/callback",

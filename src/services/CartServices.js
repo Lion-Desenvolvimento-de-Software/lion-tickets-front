@@ -8,5 +8,9 @@ export default {
   async SaveCartAsync(cart, typeTicket) {
     const { data } = await axios.post('/api/v1/cartAPI', cart, { params: { typeTicket: typeTicket }, }, { headers: { 'Content-Type': 'application/json' } });
     return data;
+  },
+  async DeleteCartDetail(cartDetailId) {
+    const { data } = await axios.delete(`/api/v1/cartAPI/${cartDetailId}`);
+    return data;
   }
 }

@@ -24,7 +24,9 @@
                   </div>
                 </div>
                 <div class="custom-actions">
-                  <button class="border-0 bg-transparent text-primary">Remover</button>
+                  <button class="border-0 bg-transparent text-primary" @click="deleteCartDetail(cartDetail.id)">Remover</button>
+                  <button class="border-0 bg-transparent text-primary">Pagar</button>
+                  <button class="border-0 bg-transparent text-primary">Abrir</button>
                   <!-- <button class="border-0 bg-transparent text-primary">Desejos+</button> -->
                 </div>
               </div>
@@ -37,7 +39,7 @@
       <div class="custom-order-infos">
         <div class="info">
           <b>Total:</b>
-          <h4>R$ {{ getValuePaymentTotal }}</h4>
+          <h4>R$ {{ getValuePaymentTotal ?? Number.parseFloat("0").toFixed(2) }}</h4>
         </div>
         <div class="coupon">
           <span class="text-dark">Cupom: 
@@ -49,11 +51,13 @@
         <button class="btn btn-success" :disabled="getValuePaymentTotal <= 0 ? true : false">Finalizar Compra</button>
       </div>
     </div>
+    <toast-personalizado style="z-index: 700;"></toast-personalizado>
   </div>
 </template>
 
 <script>
 import CartServices from '@/services/CartServices';
+import toastPersonalizado from '@/components/toasts/toastPersonalizado.vue';
 
 export default {
   name: "CartView",
@@ -77,6 +81,9 @@ export default {
     //   type: Array,
     //   default: () => [{ id: 1, name: 'Alok', price: 'R$ 29.90', description: 'Show do alok na expo Bauru' }]
     // }
+  },
+  components: {
+    toastPersonalizado
   },
   created() {
     this.getCartByUserId(this.usuario.Id);
@@ -108,6 +115,13 @@ export default {
         this.$emit('setLoading', false);
       }
     },
+    async deleteCartDetail(cartDetailId) {
+      var isDeleted = await CartServices.DeleteCartDetail(cartDetailId);
+      if (isDeleted) {
+        var index = this.cart.cartDetails.findIndex(item => item.id == cartDetailId);
+        this.cart.cartDetails.splice(index, 1);
+      }
+    }
   }
 }
 </script>
@@ -117,7 +131,6 @@ export default {
   height: 100vh;
   padding-top: 80px;
   display: grid;
-  height: 100%;
   grid-template-rows: 80px 1fr;
   grid-template-columns: 1fr;
   grid-template-areas: 
@@ -237,6 +250,10 @@ export default {
 }
 
 @media(max-width: 730px) {
+  .custom-actions {
+    align-items: start !important;
+  }
+
   .item-cart-detail .layout-item {
     display: grid;
     grid-template-columns: 1fr;

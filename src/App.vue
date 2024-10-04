@@ -48,6 +48,7 @@ export default {
     }
   },
   created() {
+    console.log(process.env.VUE_APP_NOT_SECRET_CODE)
     userManager.getUser().then(res => {
       console.log(res)
       if(!res) throw "usuário deslogado!";

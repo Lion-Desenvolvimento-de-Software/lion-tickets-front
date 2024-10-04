@@ -1,6 +1,6 @@
 <template>
 	<nav class="custom-navbar" :class="isExpand ? 'expand' : ''">
-		<h3>Lion Tickets</h3>
+		<h3 @click="$router.push('/')">Lion Tickets</h3>
 		<div class="custom-items-nav" :class="isExpand ? 'view-flex' : 'view-none'">
 			<router-link to="/Eventos">Eventos</router-link>
 			<a href="">Produtos</a>
@@ -11,10 +11,12 @@
 			</span>
 			<div class="custom-profile" v-if="usuario?.Id">
 				<span class="quantity-items" :class="CartQuantity > 0 ? 'visible' : 'invisible'">{{ CartQuantity }}</span>
-				<button @click="enterViewCart()" class="button-cart">
+				<button @click="enterViewCart()" class="button-icon">
 					<font-awesome-icon :icon="['fas', 'cart-shopping']" />
 				</button>
-				<font-awesome-icon :icon="['fas', 'user']" />
+				<button class="button-icon">
+					<font-awesome-icon :icon="['fas', 'user']" />
+				</button>
 			</div>
 			<div v-else>
 				<button class="btn btn-success" @click="login">Entrar</button>
@@ -93,6 +95,7 @@ export default {
 	font-family:Arial, Helvetica, sans-serif;
 	height: 100%;
   align-items: center;
+	cursor: pointer;
 }
 
 .custom-items-nav {
@@ -163,7 +166,7 @@ export default {
 	color: black;
 }
 
-.button-cart {
+.button-icon {
 	background: none;
 	border: 0;
 	outline: none;

@@ -11,6 +11,6 @@ describe('Auth0', function () {
   })
 
   it('shows onboarding', function () {
-    cy.log(`token: ${window.localStorage.getItem('oidc.user:https://localhost:44360:lion_tickets')}`)
+    cy.log(`token: ${window.localStorage.getItem('oidc.user:https://f5ea-2804-7f0-aa38-ba-8829-1e84-1096-b60e.ngrok-free.app:lion_tickets')}`)
   })
 })

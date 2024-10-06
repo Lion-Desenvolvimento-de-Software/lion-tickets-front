@@ -9,6 +9,8 @@ import axios from 'axios'
 import userManager from './services/userManager'
 import BootstrapVue from 'bootstrap-vue';
 
+import ToastPersonalizado from './components/toasts/toastPersonalizado.vue'
+
 import { library } from '@fortawesome/fontawesome-svg-core'
 
 library.add(far);
@@ -41,7 +43,7 @@ axios.interceptors.response.use(response => {
 
 const app = createApp(App);
 
-app.component("font-awesome-icon", FontAwesomeIcon).use(BootstrapVue).use(store).use(router).mount('#app')
+app.component('toast-personalizado', ToastPersonalizado).component("font-awesome-icon", FontAwesomeIcon).use(BootstrapVue).use(store).use(router).mount('#app')
 
 configureCompat({
   WATCH_ARRAY: 'suppress-warning',

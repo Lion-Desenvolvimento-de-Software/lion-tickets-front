@@ -25,7 +25,7 @@
                 </div>
                 <div class="custom-actions">
                   <button class="border-0 bg-transparent text-primary" @click="deleteCartDetail(cartDetail.id)">Remover</button>
-                  <button class="border-0 bg-transparent text-primary">Pagar</button>
+                  <button class="border-0 bg-transparent text-primary" @click="showToast">Pagar</button>
                   <button class="border-0 bg-transparent text-primary">Abrir</button>
                   <!-- <button class="border-0 bg-transparent text-primary">Desejos+</button> -->
                 </div>
@@ -51,13 +51,12 @@
         <button class="btn btn-success" :disabled="getValuePaymentTotal <= 0 ? true : false">Finalizar Compra</button>
       </div>
     </div>
-    <toast-personalizado style="z-index: 700;"></toast-personalizado>
+    <toast-personalizado ref="toast" style="z-index: 700;"></toast-personalizado>
   </div>
 </template>
 
 <script>
 import CartServices from '@/services/CartServices';
-import toastPersonalizado from '@/components/toasts/toastPersonalizado.vue';
 
 export default {
   name: "CartView",
@@ -81,9 +80,6 @@ export default {
     //   type: Array,
     //   default: () => [{ id: 1, name: 'Alok', price: 'R$ 29.90', description: 'Show do alok na expo Bauru' }]
     // }
-  },
-  components: {
-    toastPersonalizado
   },
   created() {
     this.getCartByUserId(this.usuario.Id);
@@ -121,6 +117,9 @@ export default {
         var index = this.cart.cartDetails.findIndex(item => item.id == cartDetailId);
         this.cart.cartDetails.splice(index, 1);
       }
+    },
+    showToast() {
+      this.$refs.toast.showToast();
     }
   }
 }

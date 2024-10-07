@@ -3,7 +3,7 @@
     <div class="custom-internal-toast">
       <div class="custom-title-toast">
         <h3>Aviso</h3>
-        <vutton class="btn btn-transparent"><font-awesome-icon :icon="['fas', 'close']"></font-awesome-icon></vutton>
+        <button class="btn btn-transparent"><font-awesome-icon :icon="['fas', 'close']"></font-awesome-icon></button>
       </div>
       <div class="custom-info-toast">
         <span @click="getMessage">Avisando!!!!</span>

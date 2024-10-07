@@ -141,6 +141,7 @@ export default {
 
 .custom-title {
   grid-area: header;
+  height: auto;
 }
 
 .custom-cart {
@@ -263,7 +264,8 @@ export default {
 
 @media(max-width: 635px) {
   .custom-page {
-    grid-template-rows: 1fr;
+    height: auto !important;
+    grid-template-rows: 50px 1fr 3fr;;
     grid-template-columns: 1fr;
     grid-template-areas: 
       "header"

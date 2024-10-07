@@ -14,7 +14,7 @@
 				<button @click="enterViewCart()" class="button-icon">
 					<font-awesome-icon :icon="['fas', 'cart-shopping']" />
 				</button>
-				<button class="button-icon">
+				<button class="button-icon" @click="$emit('openCollapse');">
 					<font-awesome-icon :icon="['fas', 'user']" />
 				</button>
 			</div>

@@ -1,16 +1,11 @@
 <template>
-  <div class="colapse-geral">
-    <div class="custom-fechar-colapse" @click="$emit('fecharCollapse')">
+  <div class="sidbar-geral">
+    <div class="custom-fechar-sidbar" @click="$emit('fecharCollapse')">
       <span>X</span>
     </div>
-    <div class="custom-colapse">
+    <div class="custom-sidbar">
       <div class="d-flex w-100 justify-content-center">
-        <img class="p-0 custom-imagem-perfil"
-              aria-expanded="false" 
-              :src="getImagemPerfil"
-              alt="Imagem do Perfil"
-              height="75" 
-              width="75" />
+        <font-awesome-icon :icon="['fas', 'user']" style="height: 75px; width: 75px;" />
       </div>
       <div class="custom-items">
         <ul>
@@ -27,7 +22,7 @@
 
 <script>
 export default {
-  name: "colapseProfile",
+  name: "sidbarProfile",
   props: {
     usuario: Object
   },
@@ -46,7 +41,7 @@ a {
   color: #000;
 }
 
-.colapse-geral {
+.sidbar-geral {
   right: 0;
   width: 200px;
   height: 100%;
@@ -57,7 +52,7 @@ a {
   transition: .5s;
 }
 
-.custom-colapse {
+.custom-sidbar {
   padding: 2em 0;
   margin: 1em 0 0 0;
   display: flex;
@@ -104,13 +99,13 @@ a {
   width: 100%;
 }
 
-.custom-fechar-colapse {
+.custom-fechar-sidbar {
   width: auto;
   height: auto;
   position: absolute;
   cursor: pointer;
 }
-.custom-fechar-colapse span {
+.custom-fechar-sidbar span {
   font-size: 18px;
 }
 

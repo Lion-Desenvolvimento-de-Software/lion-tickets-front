@@ -1,6 +1,6 @@
 <template>
   <spinner :isLoading="loadingFethingData"></spinner>
-  <collapse-profile :usuario="getUsuario"
+  <sidbar-profile :usuario="getUsuario"
     @fecharCollapse="fecharCollapse" 
     @logof="logof"
     :class="usuario && isOpenCollapse ? 'open-collapse' : 'close-collapse'" />
@@ -29,7 +29,7 @@ import { Usuario } from './assets/classes/Usuario';
 import UsuarioServices from './services/UsuarioServices';
 import spinner from './components/spinner.vue';
 import toast from './components/toasts/toast.vue';
-import collapseProfile from './components/colapses/collapseProfile.vue';
+import SidbarProfile from './components/colapses/sidbarProfile.vue';
 import userManager from './services/userManager';
 import axios from '@/services/axios';
 import footerComponent from './components/footer-component.vue';
@@ -64,7 +64,7 @@ export default {
     navBar,
     spinner,
     toast,
-    collapseProfile,
+    SidbarProfile,
     footerComponent
   },
   computed: {

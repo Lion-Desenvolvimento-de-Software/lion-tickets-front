@@ -11,6 +11,7 @@ const routes = [
   ...require(/* webpackChunkName: "ConfirmacaoCodigo" */ '@/router/admin/Admin').default,
   ...require(/* webpackChunkName: "NotFound" */ '@/router/errors/NotFound').default,
   ...require(/* webpackChunkName: "CartView" */ '@/router/Cart').default,
+  ...require(/* webpackChunkName: "CheckoutView" */ '@/router/Checkout').default,
   {
     path: '/produtos/:productsName?/:id?',
     name: 'Produtos',

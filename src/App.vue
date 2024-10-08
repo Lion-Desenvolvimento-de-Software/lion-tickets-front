@@ -20,7 +20,7 @@
   <div class="position-absolute d-flex justify-content-center">
     <toast id="toastId" ref="toast" :mensagem="this.mensagem" class="text-white" :class="!getIsError ? `bg-success` : `bg-danger`" />
   </div>
-  <footer-component />
+  <footer-component v-if="$route.meta.navbar" />
 </template>
 
 <script>

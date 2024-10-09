@@ -1,6 +1,6 @@
 <template>
   <div class="custom-forma-pagamento">
-    <div v-for="item in itens" :key="item.id" class="" :id="formasPagamento[item.id]" @click="selection(formasPagamento[item.id])">
+    <div v-for="item in itens" :key="item.id" :id="item.id" @click="selection(item)">
       <font-awesome-icon :icon="[item.typeIcon, item.icon]" class="icon" /> 
       <h3 class="title">{{ item.title }}</h3>
     </div>
@@ -10,47 +10,47 @@
 <script>
 export default {
   name: 'TabelaFormaPagamento',
+  emits: ['formSelected'],
   data() {
     return {
-      formPaymentSelected: null,
-      formasPagamento: { card_credit: 1, card_debit: 2, boleto: 3, pix: 4 },
       itens: [
         {
-          id: 'card_credit',
+          id: 1,
           title: 'Cartão de Crédito',
           class: 'card-credit',
           icon: 'credit-card',
           typeIcon: 'fas'
         },
         {
-          id: 'card_debit',
+          id: 2,
           title: 'Cartão de Débito',
           class: 'card-debit',
           icon: 'credit-card',
           typeIcon: 'fas'
         },
         {
-          id: 'boleto',
+          id: 3,
           title: 'Boleto',
           class: 'boleto',
           icon: 'barcode',
           typeIcon: 'fas'
         },
         {
-          id: 'pix',
+          id: 4,
           title: 'PIX',
           class: 'pix',
           icon: 'pix',
-          typeIcon: 'fab'
+          typeIcon: 'fab',
         }
       ]
     }
   },
   methods: {
-    selection(id) {
+    selection(item) {
       var elementSelected = document.getElementsByClassName('selected');
       if (elementSelected.length > 0) document.getElementsByClassName('selected')[0].classList.remove('selected');
-      document.getElementById(id).classList = 'selected';
+      document.getElementById(item.id).classList = 'selected';
+      this.$emit('formSelected', item);
     }
   }
 }

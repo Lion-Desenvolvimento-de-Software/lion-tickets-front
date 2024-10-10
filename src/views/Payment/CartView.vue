@@ -48,7 +48,7 @@
         </div>
       </div>
       <div class="custom-order-events">
-        <button class="btn btn-success" :disabled="getValuePaymentTotal <= 0 ? true : false">Finalizar Compra</button>
+        <button @click="enterViewCheckout" class="btn btn-success" :disabled="getValuePaymentTotal <= 0 ? true : false">Continuar</button>
       </div>
     </div>
     <toast-personalizado ref="toast" style="z-index: 700;"></toast-personalizado>
@@ -94,11 +94,16 @@ export default {
     getValuePaymentTotal() {
       var initialValue = 0;
       var sumPrices = this.cart?.cartDetails.reduce((accumulator, currentValue) => 
-        accumulator + Number.parseFloat(currentValue?.ticket?.price ?? currentValue?.product?.price), 
+      accumulator + Number.parseFloat(currentValue?.ticket?.price ?? currentValue?.product?.price), 
       initialValue);
-
+      
       return Number.parseFloat(sumPrices).toFixed(2);
     },
+  },
+  provide() {
+    return {
+      tickets: this.getCartDetailsTickets
+    }
   },
   methods: {
     async getCartByUserId(userId) {
@@ -120,6 +125,12 @@ export default {
     },
     showToast() {
       this.$refs.toast.showToast();
+    },
+    async enterViewCheckout() {
+      this.$router.push({ name: 'Checkout', query: { 
+        valuePayment: this.getValuePaymentTotal, 
+        tickets: JSON.stringify(this.getCartDetailsTickets.map(item => { return { 'price': item.price, 'name': item.name } } )) 
+      } });
     }
   }
 }

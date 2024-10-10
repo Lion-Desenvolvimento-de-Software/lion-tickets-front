@@ -85,4 +85,22 @@ export default {
 .custom-forma-pagamento > div .icon {
   font-size: 60px;
 }
+
+@media (max-width: 570px) {
+  .custom-forma-pagamento > div {
+    grid-template-columns: 60px 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .custom-forma-pagamento > div {
+    grid-template-columns: 80px 1fr;
+  }
+}
+
+@media (max-width: 350px) {
+  .custom-forma-pagamento > div h3 {
+    font-size: 16px;
+  }
+}
 </style>

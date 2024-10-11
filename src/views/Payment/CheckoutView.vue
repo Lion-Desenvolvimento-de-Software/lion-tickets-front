@@ -12,18 +12,18 @@
       </div>
       <div class="row">
         <div class="col">
-          <input-default v-model="fullName" :isDisabled="formPaymentId == null" id="fullName" name="FullName" placeholder="Informe seu nome completo" label="Nome Completo"></input-default>
+          <input-default v-model:data="fullName" :isDisabled="formPaymentId == null" id="fullName" name="FullName" placeholder="Informe seu nome completo" label="Nome Completo"></input-default>
         </div>
       </div>
       <div class="row" v-if="[1, 2].includes(formPaymentId)">
         <div class="col-sm-4">
-          <input-default v-model:data="expirationDate" id="expirationDate" name="ExpirationDate" placeholder="12/2000" label="Data de validade"></input-default>
+          <input-default :maxLength="7" v-model:data="expirationDate" id="expirationDate" name="ExpirationDate" placeholder="12/2000" label="Data de validade"></input-default>
         </div>
         <div class="col-sm-6">
-          <input-default v-model:data="numberCard" id="numberCard" name="NumberCard" placeholder="xxxx-xxxx-xxxx-xxxx" label="Número do cartão"></input-default>
+          <input-default :maxLength="16" v-model:data="numberCard" id="numberCard" name="NumberCard" placeholder="xxxx-xxxx-xxxx-xxxx" label="Número do cartão"></input-default>
         </div>
         <div class="col-sm-2">
-          <input-default v-model:data="cvc" id="cvc" name="CVC" placeholder="111" label="CVC"></input-default>
+          <input-default :maxLength="3" v-model:data="cvc" id="cvc" name="CVC" placeholder="111" label="CVC"></input-default>
         </div>
       </div>
       <hr/>
@@ -72,6 +72,24 @@ export default {
         this.cpf = num.replaceAll("-", "");
       }
       console.log(this.cpf)
+    },
+    expirationDate() {
+      this.expirationDate = this.expirationDate.replace(/\D/g, "");
+
+      // Adiciona as barras automaticamente
+      if (this.expirationDate.length > 2) {
+        this.expirationDate = this.expirationDate.slice(0, 2) + "/" + this.expirationDate.slice(2);
+      }
+    },
+    numberCard() {
+      this.numberCard = this.numberCard.replace(/\D/g, "");
+
+      if (this.numberCard?.length == 16) {
+        this.numberCard = this.numberCard.replaceAll(/(\d{4})(\d{4})(\d{4})(\d{4})/g, "$1-$2-$3-$4")
+      }
+    },
+    cvc() {
+      this.cvc = this.cvc.replace(/\D/g, "");
     }
   },
   props: {
@@ -83,7 +101,11 @@ export default {
   },
   computed: {
     isDisabled() {
-      return this.cpf?.match(/(\d{3})[.?](\d{3})[.?](\d{3})[-?](\d{2})/g) == null;
+      return (this.cpf?.match(/(\d{3})[.?](\d{3})[.?](\d{3})[-?](\d{2})/g) == null 
+        || !this.fullName 
+        || (!this.expirationDate || this.expirationDate?.length < 7) 
+        || !this.numberCard?.match(/(\d{4})[-?](\d{4})[-?](\d{4})[-?](\d{4})/g)
+        || (!this.cvc || this.cvc?.length < 3));
     }
   },
   components: {

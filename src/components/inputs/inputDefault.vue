@@ -1,6 +1,6 @@
 <template>
   <div class="position-relative p-2">
-    <input :value="data" @input="$emit('update:data', $event.target.value)" :disabled="isDisabled" type="text" :id="id" :name="name" :placeholder="placeholder" >
+    <input :maxlength="maxLength" :value="data" @input="$emit('update:data', $event.target.value)" :disabled="isDisabled" type="text" :id="id" :name="name" :placeholder="placeholder" >
     <label :for="id">{{ label }}</label>
   </div>
 </template>
@@ -18,7 +18,8 @@ export default {
       type: Boolean,
       default: false
     },
-    data: null
+    data: null,
+    maxLength: null
   }
 }
 </script>

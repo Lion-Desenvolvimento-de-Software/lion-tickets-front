@@ -182,17 +182,18 @@ export default {
 @media(max-width: 490px) {
 	.custom-navbar {
 		grid-template-columns: 1fr 1fr;
-		grid-template-rows: 1fr 1fr;
+		grid-template-rows: 40px 1fr;
 		overflow-y: hidden;
 		transition: ease .2s;
 	}
 
 	.custom-items-nav {
 		position: absolute;
-		height: 80%;
-		bottom: 0;
+		margin-top: 50px;
+		top: 0;
 		flex-direction: column;
 		align-items: center;
+		height: auto;
 	}
 
 	.custom-items-nav a {
@@ -212,7 +213,7 @@ export default {
 	}
 
 	.expand {
-		height: 250px;
+		height: 125px;
 	}
 }
 </style>

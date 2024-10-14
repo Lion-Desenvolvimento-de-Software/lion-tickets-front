@@ -6,7 +6,7 @@
     <div class="custom-cart">
       <table>
         <tbody>
-          <tr v-for="cartDetail in cart?.cartDetails" :key="cartDetail.id" class="custom-items">
+          <tr v-for="cartDetail in cartDetails" :key="cartDetail.id" class="custom-items">
             <div class="item-cart-detail">
               <div class="custom-image">
                 <img :src="cartDetail.ticket?.imageURL ?? cartDetail.product?.imageURL" width="150" height="150">
@@ -76,61 +76,47 @@ export default {
   },
   props: {
     usuario: null,
-    // cartDetail: {
-    //   type: Array,
-    //   default: () => [{ id: 1, name: 'Alok', price: 'R$ 29.90', description: 'Show do alok na expo Bauru' }]
-    // }
-  },
-  created() {
-    this.getCartByUserId(this.usuario.Id);
+    cartDetails: {
+      type: Array,
+      default: () => [{}]
+    }
   },
   computed: {
     getCartDetailsTickets() {
-      return this.cart?.cartDetails.map(value => { return value?.ticket ?? null }) ?? null;
+      return this.cartDetails.map(value => { return value?.ticket ?? null }) ?? null;
     },
     getCartDetailsProducts() {
-      return this.cart?.cartDetails.map(value => { return value?.product ?? null }) ?? null;
+      return this.cartDetails.map(value => { return value?.product ?? null }) ?? null;
     },
     getValuePaymentTotal() {
       var initialValue = 0;
-      var sumPrices = this.cart?.cartDetails.reduce((accumulator, currentValue) => 
+      var sumPrices = this.cartDetails.reduce((accumulator, currentValue) => 
       accumulator + Number.parseFloat(currentValue?.ticket?.price ?? currentValue?.product?.price), 
       initialValue);
       
       return Number.parseFloat(sumPrices).toFixed(2);
     },
   },
-  provide() {
-    return {
-      tickets: this.getCartDetailsTickets
-    }
-  },
   methods: {
-    async getCartByUserId(userId) {
+    async deleteCartDetail(cartDetailId) {
       try {
         this.$emit('setLoading', true);
-        this.cart = await CartServices.GetCartByUserId(userId);
-      } catch (err) {
-        console.log(err);
+        var isDeleted = await CartServices.DeleteCartDetail(cartDetailId);
+        if (isDeleted) {
+          var index = this.$props.cartDetails.findIndex(item => item.id == cartDetailId);
+          this.$props.cartDetails.splice(index, 1);
+        }
+      } catch(e) {
+        console.log(e);
       } finally {
         this.$emit('setLoading', false);
-      }
-    },
-    async deleteCartDetail(cartDetailId) {
-      var isDeleted = await CartServices.DeleteCartDetail(cartDetailId);
-      if (isDeleted) {
-        var index = this.cart.cartDetails.findIndex(item => item.id == cartDetailId);
-        this.cart.cartDetails.splice(index, 1);
       }
     },
     showToast() {
       this.$refs.toast.showToast();
     },
     async enterViewCheckout() {
-      this.$router.push({ name: 'Checkout', query: { 
-        valuePayment: this.getValuePaymentTotal, 
-        tickets: JSON.stringify(this.getCartDetailsTickets.map(item => { return { 'price': item.price, 'name': item.name } } )) 
-      } });
+      this.$router.push({ name: 'Checkout' });
     }
   }
 }

@@ -28,14 +28,15 @@
       </div>
       <hr/>
       <div class="row m-3">
-        <h3 class="my-2">R$ {{ $route.query.valuePayment }}</h3>
+        <h3 class="my-2">R$ </h3>
         <div class="custom-items">
-          <div v-for="ticket in JSON.parse($route.query.tickets)" :key="ticket" class="d-flex justify-content-between py-2 border-top">
+          {{ cartDetails }}
+          <!-- <div v-for="ticket in JSON.parse()" :key="ticket" class="d-flex justify-content-between py-2 border-top">
             <span class="text-start">{{ ticket.name }}</span>
             <h5>R$ {{ ticket.price.toFixed(2) }}</h5>
-          </div>
+          </div> -->
         </div>
-        <button :disabled="isDisabled" @click="console.log(valuePayment)" class="btn btn-success p-2">
+        <button :disabled="isDisabled" @click="Checkout" class="btn btn-success p-2">
           <font-awesome-icon :icon="['fas', 'lock']" /> 
           Realizar Pagamento
         </button>
@@ -95,9 +96,7 @@ export default {
   props: {
     itens: null,
     valuePayment: Number,
-  },
-  created() {
-    console.log(this.tickets) // Verifica se o id está chegando
+    cartDetails: Array
   },
   computed: {
     isDisabled() {
@@ -113,10 +112,12 @@ export default {
     inputDefault
   },
   methods: {
+    Checkout() {
+
+    },
     formPaymentAdd(item) {
       this.formPaymentId = item?.id;
     },
-    
   }
 }
 </script>

@@ -7,9 +7,11 @@
   <nav-bar :usuario="usuario"
             v-if="$route.meta.navbar"
             @openCollapse="openCollapse"
+            @enterViewCart="EnterViewCart"
             class="nav" />
   <router-view :usuario="getUsuario"
-               @ReenviarCodigo="ReenviarCodigo"
+               :cartDetails="cart?.cartDetails"
+               @addCartDetails="addCartDetails"
                @setMensagemToast="setMensagemToast"
                @setIsError="setIsError"
                @showToast="showToast"
@@ -33,6 +35,7 @@ import SidbarProfile from './components/colapses/sidbarProfile.vue';
 import userManager from './services/userManager';
 import axios from '@/services/axios';
 import footerComponent from './components/footer-component.vue';
+import CartServices from './services/CartServices';
 
 export default {
   name: 'app',
@@ -41,10 +44,11 @@ export default {
       loadingFethingData: false,
       isError: false,
       usuario: new Usuario(),
+      cart: null,
 
       mensagem: null,
       isShow: false,
-      isOpenCollapse: false
+      isOpenCollapse: false,
     }
   },
   created() {
@@ -82,7 +86,7 @@ export default {
     async checkSession() {
       await userManager.events.addUserSignedIn()
     },
-    setUsuario(user) {
+    async setUsuario(user) {
       let obj = {
         Id: user.sub,
         UserName: user.name,
@@ -94,7 +98,7 @@ export default {
         //UrlImagemPerfil: res.profile.urlImagemPerfil
       }
       this.usuario.AddData(obj);
-      
+      await this.getCartByUserId(obj.Id);
     },
     async logof() {
       this.usuario = null;
@@ -117,6 +121,25 @@ export default {
         this.showToast();
         this.loadingFethingData = false;
       }
+    },
+
+    async EnterViewCart() {
+      this.$router.push("/cart");
+    },
+
+    async getCartByUserId(userId) {
+      try {
+        this.setLoading(true);
+        this.cart = await CartServices.GetCartByUserId(userId);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        this.setLoading(false);
+      }
+    },
+
+    addCartDetails(cart) {
+      this.cart = cart;
     },
 
     setMensagemToast(mensagem) {

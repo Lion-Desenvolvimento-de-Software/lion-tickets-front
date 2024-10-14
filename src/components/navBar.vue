@@ -38,7 +38,7 @@ export default {
 		},
 		CartQuantity: Number
 	},
-	emits: ['openCollapse'],
+	emits: ['openCollapse', 'enterViewCart'],
 	data() {
 		return {
 			BGHader: 'bg-transparent',
@@ -66,7 +66,7 @@ export default {
       });
 		},
 		enterViewCart() {
-			this.$router.push("/cart");
+			this.$emit("enterViewCart");
 		}
 	}
 }

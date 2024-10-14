@@ -12,5 +12,10 @@ export default {
   async DeleteCartDetail(cartDetailId) {
     const { data } = await axios.delete(`/api/v1/cartAPI/${cartDetailId}`);
     return data;
-  }
+  },
+
+  async Checkout(cart) {
+    const { data } = await axios.post('/api/v1/cartAPI/checkout', cart);
+    return data;
+  },
 }

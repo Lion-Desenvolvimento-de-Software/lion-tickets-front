@@ -167,6 +167,7 @@ export default {
     },
     async SaveInTheCart() {
       try {
+        this.$emit("setLoading", true);
         var ticket = this.tickets.find(item => item.id == this.$route.params.id);
         ticket['typeTicket'] = this.typeTicket;
         ticket['quantidade'] = this.unit;
@@ -175,8 +176,8 @@ export default {
             userId: this.usuario?.Id
           },
           cartDetails: [{
-            TicketId: ticket.id, 
-            Ticket: ticket, 
+            ticketId: ticket.id, 
+            ticket: ticket, 
             count: this.unit, 
             countProducts: 0, 
             countTickets: this.unit,
@@ -185,10 +186,12 @@ export default {
             }
           }]
         };
-        console.log(this.usuario);
         await CartServices.SaveCartAsync(cart, "Ticket");
+        this.$emit("addCartDetails", cart)
       } catch (err) {
         console.log(err);
+      } finally {
+        this.$emit("setLoading", false);
       }
     },
     viewImage(image) {

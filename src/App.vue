@@ -11,7 +11,7 @@
             class="nav" />
   <router-view :usuario="getUsuario"
                :cartDetails="cart?.cartDetails"
-               @addCartDetails="addCartDetails"
+               @getCartByUserId="getCartByUserId"
                @setMensagemToast="setMensagemToast"
                @setIsError="setIsError"
                @showToast="showToast"
@@ -136,10 +136,6 @@ export default {
       } finally {
         this.setLoading(false);
       }
-    },
-
-    addCartDetails(cart) {
-      this.cart = cart;
     },
 
     setMensagemToast(mensagem) {

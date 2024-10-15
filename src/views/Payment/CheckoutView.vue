@@ -28,13 +28,12 @@
       </div>
       <hr/>
       <div class="row m-3">
-        <h3 class="my-2">R$ </h3>
+        <h3 class="my-2">R$ {{ getValuePaymentTotal }}</h3>
         <div class="custom-items">
-          {{ cartDetails }}
-          <!-- <div v-for="ticket in JSON.parse()" :key="ticket" class="d-flex justify-content-between py-2 border-top">
-            <span class="text-start">{{ ticket.name }}</span>
-            <h5>R$ {{ ticket.price.toFixed(2) }}</h5>
-          </div> -->
+          <div v-for="cartDetail in cartDetails" :key="cartDetail?.ticketId" class="d-flex justify-content-between py-2 border-top">
+            <span class="text-start">{{ cartDetail?.ticket.name }}</span>
+            <h5>R$ {{ cartDetail?.ticket.price.toFixed(2) }}</h5>
+          </div>
         </div>
         <button :disabled="isDisabled" @click="Checkout" class="btn btn-success p-2">
           <font-awesome-icon :icon="['fas', 'lock']" /> 
@@ -95,7 +94,7 @@ export default {
   },
   props: {
     itens: null,
-    valuePayment: Number,
+    //valuePayment: Number,
     cartDetails: Array
   },
   computed: {
@@ -105,7 +104,15 @@ export default {
         || (!this.expirationDate || this.expirationDate?.length < 7) 
         || !this.numberCard?.match(/(\d{4})[-?](\d{4})[-?](\d{4})[-?](\d{4})/g)
         || (!this.cvc || this.cvc?.length < 3));
-    }
+    },
+    getValuePaymentTotal() {
+      var initialValue = 0;
+      var sumPrices = this.cartDetails.reduce((accumulator, currentValue) => 
+      accumulator + Number.parseFloat(currentValue?.ticket?.price ?? currentValue?.product?.price), 
+      initialValue);
+      
+      return Number.parseFloat(sumPrices).toFixed(2);
+    },
   },
   components: {
     TabelaFormaPagamento,
@@ -113,7 +120,7 @@ export default {
   },
   methods: {
     Checkout() {
-
+      console.log(this.cartDetails)
     },
     formPaymentAdd(item) {
       this.formPaymentId = item?.id;

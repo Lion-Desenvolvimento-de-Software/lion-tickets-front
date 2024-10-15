@@ -122,16 +122,6 @@ export default {
   created() {
     this.getTicketsAsync();
   },
-  beforeUpdate() {
-    console.log(this.usuario);
-    if (this.$route.params.id) {
-      this.addImageURLOrDefault();
-      this.addImageAuxIdOrDefault();
-    }
-    else {
-      this.clear();
-    }
-  },
   props: {
     usuario: Object
   },
@@ -171,26 +161,25 @@ export default {
         var ticket = this.tickets.find(item => item.id == this.$route.params.id);
         ticket['typeTicket'] = this.typeTicket;
         ticket['quantidade'] = this.unit;
-        var cart = {
-          cartHeader: {
-            userId: this.usuario?.Id
-          },
-          cartDetails: [{
-            ticketId: ticket.id, 
-            ticket: ticket, 
-            count: this.unit, 
-            countProducts: 0, 
-            countTickets: this.unit,
-            cartHeader: {
-              userId: this.usuario?.Id
-            }
-          }]
-        };
+         var cart = {
+           cartHeader: {
+             userId: this.usuario?.Id
+           },
+           cartDetails: [{
+             ticketId: ticket.id, 
+             ticket: ticket, 
+             count: this.unit, 
+             countProducts: 0, 
+             countTickets: this.unit,
+             cartHeader: {
+               userId: this.usuario?.Id
+             }
+           }]
+         };
         await CartServices.SaveCartAsync(cart, "Ticket");
-        this.$emit("addCartDetails", cart)
+        this.$emit("getCartByUserId", this.usuario?.Id)
       } catch (err) {
         console.log(err);
-      } finally {
         this.$emit("setLoading", false);
       }
     },

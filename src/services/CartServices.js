@@ -14,8 +14,8 @@ export default {
     return data;
   },
 
-  async Checkout(cart) {
-    const { data } = await axios.post('/api/v1/cartAPI/checkout', cart);
+  async Checkout(cartDetails) {
+    const { data } = await axios.post('/api/v1/cartAPI/checkout', cartDetails);
     return data;
   },
 }

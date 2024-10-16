@@ -2,7 +2,6 @@
   <div class="container-fluid custom-checkout">
     <div class="formas-pagamentos">
       <tabela-forma-pagamento @formSelected="formPaymentAdd"></tabela-forma-pagamento>
-      {{ isDisabled }}
     </div>
     <div class="custom-formulario-checkout h-50 w-100">
       <div class="row">
@@ -47,6 +46,7 @@
 <script>
 import TabelaFormaPagamento from '@/components/Tabelas/TabelaFormaPagamento.vue';
 import inputDefault from '@/components/inputs/inputDefault.vue';
+import CartServices from '@/services/CartServices';
 
 export default {
   name: 'CheckoutView',
@@ -107,11 +107,19 @@ export default {
     },
     getValuePaymentTotal() {
       var initialValue = 0;
-      var sumPrices = this.cartDetails.reduce((accumulator, currentValue) => 
+      var sumPrices = this.cartDetails?.reduce((accumulator, currentValue) => 
       accumulator + Number.parseFloat(currentValue?.ticket?.price ?? currentValue?.product?.price), 
       initialValue);
       
       return Number.parseFloat(sumPrices).toFixed(2);
+    },
+    getCountTotal() {
+      var initialValue = 0;
+      var sumQuantities = this.cartDetails?.reduce((accumulator, currentValue) => 
+        accumulator + Number.parseInt(currentValue?.count),
+        initialValue);
+      
+      return Number.parseInt(sumQuantities);
     },
   },
   components: {
@@ -119,8 +127,20 @@ export default {
     inputDefault
   },
   methods: {
-    Checkout() {
+    async Checkout() {
       console.log(this.cartDetails)
+      let obj = {
+        userId: this.cartDetails[0]?.cartHeader?.userId,
+        purchaseAmount: this.getValuePaymentTotal,
+        discountAmount: 0,
+        fullName: this.fullName,
+        email: "mauricio2017rubiale@gmail.com",
+        cardNumber: this.numberCard,
+        expirationDate: this.expirationDate,
+        cvc: this.cvc,
+        CartTotalItens: this.getCountTotal
+      }
+      CartServices.Checkout(obj);
     },
     formPaymentAdd(item) {
       this.formPaymentId = item?.id;

@@ -61,7 +61,7 @@ export default [
       {
         path: 'empresa/:id',
         name: 'Empresa',
-        component: () => import('@/views/Company.vue'),
+        component: () => import('@/views/Company/Company.vue'),
       },
       {
         path: 'usuarios',

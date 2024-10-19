@@ -45,7 +45,8 @@ axios.interceptors.response.use(response => {
 
 const app = createApp(App);
 
-app.component('toast-personalizado', ToastPersonalizado).component("font-awesome-icon", FontAwesomeIcon).use(BootstrapVue).use(store).use(router).mount('#app')
+app.component('toast-personalizado', ToastPersonalizado)
+    .component("font-awesome-icon", FontAwesomeIcon).use(BootstrapVue).use(store).use(router).mount('#app')
 
 configureCompat({
   WATCH_ARRAY: 'suppress-warning',

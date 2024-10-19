@@ -1,6 +1,6 @@
 const companyRoutes = [
   {
-    path: "company/:name",
+    path: "/company/:id",
     name: "Company",
     component: () => import('@/views/Company/Company.vue'),
     meta: { navbar: true },

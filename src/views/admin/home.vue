@@ -69,23 +69,28 @@ export default {
   methods: {
     async GetCompanyByUserId() {
       if (this.usuario.Role != "Admin") {
-        this.setLoading(true);
-        EmpresaService.GetCompanyByUserId(this.usuario.Id).then(res => {
-          this.company = new Company();
-          this.company.AddData({
-            Id: res.id,
-            Nome: res.nome,
-            CNPJ: res.cnpj,
-            ImagemEmpresa: res.imagemEmpresa
+        try {
+          this.setLoading(true);
+          EmpresaService.GetCompanyByUserId(this.usuario.Id).then(res => {
+            this.company = new Company();
+            this.company.AddData({
+              Id: res.id,
+              Nome: res.nome,
+              CNPJ: res.cnpj,
+              ImagemEmpresa: res.imagemEmpresa
+            });
+            if (this.company?.ImagemEmpresa) {
+              this.styleImgComponent.blank = false;
+            }
+          }).catch(err => {
+            console.log(err)
+          }).finally(() => {
+            this.setLoading(false);
           });
-          if (this.company?.ImagemEmpresa) {
-            this.styleImgComponent.blank = false;
-          }
-        }).catch(err => {
-          console.log(err)
-        }).finally(() => {
+        } catch (err) {
+          console.log(err);
           this.setLoading(false);
-        });
+        }
       }
     },
     modificar() {

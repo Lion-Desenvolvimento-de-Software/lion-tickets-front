@@ -1,5 +1,6 @@
 <template>
   <div class="px-3">
+    <spinner :isLoading="isLoading"></spinner>
     <h1>Usuários</h1>
 
     <div v-if="$route.path == '/admin/usuarios'">
@@ -134,6 +135,7 @@
 import UsuarioServices from '@/services/UsuarioServices';
 import EmpresaService from '@/services/admin/empresaService';
 import UserManager from '@/services/userManager';
+import spinner from '@/components/spinner.vue';
 
 export default {
   name: 'UsuariosAdmin',
@@ -169,8 +171,13 @@ export default {
       companies: null,
       countData: 1,
       currentPage: 1,
-      isEdit: false
+      isEdit: false,
+      isLoading: false
     }
+  },
+
+  components: {
+    spinner
   },
 
   props: {
@@ -236,19 +243,25 @@ export default {
 
   methods: {
     async getUsers() {
-      this.user = (await UserManager.getUser()).profile;
-      if (this.user.role == "Admin") {
-        this.companies = await EmpresaService.getEmpresasAll();
-        this.users = await UsuarioServices.GetUsers(0, (this.currentPage - 1));
-      } else {
-        var company = await EmpresaService.GetCompanyByUserId(this.user.sub);
-        console.log(company)
-        this.users = await UsuarioServices.GetUsers((this.currentPage - 1), company.id);
+      try {
+        this.isLoading = true;
+        this.user = (await UserManager.getUser()).profile;
+        if (this.user.role == "Admin") {
+          this.companies = await EmpresaService.getEmpresasAll();
+          this.users = await UsuarioServices.GetUsers(0, (this.currentPage - 1));
+        } else {
+          var company = await EmpresaService.GetCompanyByUserId(this.user.sub);
+          console.log(company)
+          this.users = await UsuarioServices.GetUsers((this.currentPage - 1), company.id);
+        }
+        this.countData = this.users.countTotal;
+  
+        if (this.isEdit) this.addDataEdit(this.users.find(item => item.id == this.$route.params.id));
+      } catch (err) {
+        console.log(err);
+      } finally {
+        this.isLoading = false;
       }
-
-      this.countData = this.users.countTotal;
-
-      if (this.isEdit) this.addDataEdit(this.users.find(item => item.id == this.$route.params.id));
     },
 
     async salvarUsuario() {

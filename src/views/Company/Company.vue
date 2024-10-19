@@ -7,7 +7,7 @@
             <b-img v-bind="styleImgComponent" rounded="circle" alt="Circle image" id="company-image" class="p-0 preview__image" :src="imageProfile ? imageProfile : getCompanyImage"></b-img>
           </div>
         </div>
-        <span class="btn custom-circle-add-image" @click="$refs['modal-anexo-imagem'].show()" v-if="Usuario.Role == 'Gerente'">
+        <span class="btn custom-circle-add-image" @click="$refs['modal-anexo-imagem'].show()" v-if="Usuario?.Role == 'Gerente'">
           <font-awesome-icon :icon="['fas', 'camera']" />
         </span>
       </div>
@@ -20,11 +20,11 @@
         <div class="row">
           <div class="col custom-descricao-e-length-descricao">
             <textarea :disabled="!isEdit" class="custom-form" id="descricao" name="Descrição" v-model="company.Descricao" placeholder="Insira uma descrição" rows="4" maxlength="500" />
-            <span v-if="Usuario.Role == 'Gerente'">{{ company.Descricao?.length }}/500</span>
+            <span v-if="Usuario?.Role == 'Gerente'">{{ company.Descricao?.length }}/500</span>
           </div>
         </div>
       </div>
-      <div class="custom-layout-buttons my-3" v-if="Usuario.Role == 'Gerente'">
+      <div class="custom-layout-buttons my-3" v-if="Usuario?.Role == 'Gerente'">
         <div v-if="!isEdit">
           <button class="btn btn-success" @click="editar">Editar</button>
         </div>
@@ -76,6 +76,7 @@ export default {
   },
   methods: {
     async GetCompany() {
+      
       var company = await EmpresaService.getEmpresaById(this.$route.params.id);
       if (company?.imagemEmpresa != null) this.styleImgComponent.blank = false;
       this.company.AddData({
@@ -124,7 +125,7 @@ export default {
 
 <style scoped>
 #profile-company {
-  height: 100%;
+  height: 100vh;
 }
 .layout {
   position: relative;

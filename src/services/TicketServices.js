@@ -14,6 +14,11 @@ export default {
     const { data } = await axios.get(`/api/v1/tickets/GetTicketById/${ticketId}`);
     return data;
   },
+
+  async GetTicketsByCompanyIdAsync(companyId) {
+    const { data } = await axios.get(`/api/v2/ticketsByCompany/${companyId}`);
+    return data;
+  },
   
   async PostAsync(formData) {
     await axios.post("/api/v1/tickets", formData, { headers: { 'Content-Type': 'multipart/form-data' } });

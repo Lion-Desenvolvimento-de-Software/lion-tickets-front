@@ -1,5 +1,5 @@
-describe('CompanyView', () => {
-  it("visit Company View", () => {
+describe('OrganizationView', () => {
+  it("visit Organization View", () => {
     cy.origin(
       "https://localhost:44360",
       () => {

@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ProdutosView from '@/views/ProdutosView.vue'
 import UserView from '@/views/UserView.vue'
 import callback from '@/views/callback'
-import companyRoutes from './Company/Company.js'
+import organizationRoutes from './Organization/Organization.js'
 
 import userManager from '@/services/userManager'
 
@@ -13,7 +13,7 @@ const routes = [
   ...require(/* webpackChunkName: "NotFound" */ '@/router/errors/NotFound').default,
   ...require(/* webpackChunkName: "CartView" */ '@/router/Cart').default,
   ...require(/* webpackChunkName: "CheckoutView" */ '@/router/Checkout').default,
-  ...companyRoutes,
+  ...organizationRoutes,
   {
     path: '/produtos/:productsName?/:id?',
     name: 'Produtos',

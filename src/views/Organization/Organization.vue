@@ -1,20 +1,21 @@
 <template>
   <div class="container-fluid layout">
-    <h1 class="custom-form">{{ company.Nome }}</h1>
-    <div class="profile-company-image">
-      <div class="vue-preview custom-preview rounded-circle" id="company-image">
+    <h1 class="custom-form">{{ organization.Nome }}</h1>
+    <div class="profile-organization-image">
+      <div class="vue-preview custom-preview rounded-circle" id="organization-image">
         <div class="vue-preview__wrapper position-relative" style="width: 125px; height: 125px; left: calc(50% - 60px); top: calc(50% - 60px);">
-          <b-img v-bind="styleImgComponent" rounded="circle" alt="Circle image" id="company-image" class="p-0 preview__image" :src="imageProfile ? imageProfile : getCompanyImage"></b-img>
+          <b-img v-bind="styleImgComponent" rounded="circle" alt="Circle image" id="organization-image" class="p-0 preview__image" :src="imageProfile ? imageProfile : getOrganizationImage"></b-img>
           <span class="btn custom-circle-add-image" @click="$refs['modal-anexo-imagem'].show()" v-if="usuario?.Role == 'Gerente' && isEdit">
             <font-awesome-icon :icon="['fas', 'camera']" />
           </span>
         </div>
       </div>
-      <div class="layout-form-company">
+      <div class="layout-form-organization">
         <div class="row">
           <div class="col custom-descricao-e-length-descricao">
             <h4>Curtidas</h4>
             <b>0</b>
+            {{ organization }}
           </div>
           <div class="col custom-descricao-e-length-descricao">
             <h4>Seguidores</h4>
@@ -74,26 +75,20 @@
 </template>
 
 <script>
-import EmpresaService from '@/services/admin/empresaService.js';
+import OrganizationService from '@/services/admin/OrganizationService.js';
 import TicketServices from '@/services/TicketServices';
-import Company from '@/assets/classes/Company.js';
+import Organization from '@/assets/classes/Organization.js';
 import ModalAnexoImagem from '@/components/modals/ModalAnexoImagem.vue';
 
 export default {
-  name: "Company",
+  name: "Organization",
   data() {
     return  {
-      company: null,
+      organization: null,
       imageProfile: null,
       styleImgComponent: { blank: true, blankColor: '#777', width: 120, height: 120, class: 'm1' },
-      isEdit: false,
 
-      companyAux: {
-        Nome: null,
-        Descricao: null
-      },
-
-      ticketsByCompany: null
+      ticketsByOrganization: null
     }
   },
   emits: ['modificar'],
@@ -104,42 +99,42 @@ export default {
     ModalAnexoImagem
   },
   async created() {
-    this.company = new Company();
-    await this.GetCompany();
+    this.organization = new Organization();
+    await this.GetOrganization();
   },
   computed: {
-    getCompanyImage() {
-      return this.company.ImagemEmpresa;
+    getOrganizationImage() {
+      return this.organization.ImagemOrganizacao;
     },
     getTickets(){
-      return this.ticketsByCompany;
+      return this.ticketsByOrganization;
     }
   },
   methods: {
-    async GetCompany() {
+    async GetOrganization() {
       try {
         this.$emit('setLoading', true);
-        var company = await EmpresaService.getEmpresaById(this.$route.params.id);
-        if (company?.imagemEmpresa != null) this.styleImgComponent.blank = false;
-        this.company.AddData({
-          Id: company?.id,
-          Nome: company?.nome,
-          CNPJ: company?.cnpj,
-          ImagemEmpresa: company?.imagemEmpresa,
-          Descricao: company?.descricao
+        var organization = await OrganizationService.getOrganizationById(this.$route.params.id);
+        if (organization?.ImagemOrganizacao != null) this.styleImgComponent.blank = false;
+        this.organization.AddData({
+          Id: organization?.id,
+          Nome: organization?.nome,
+          CNPJ: organization?.cnpj,
+          ImagemOrganizacao: organization?.organizationImage,
+          Descricao: organization?.descricao
         });
-        await this.getTicketByCompanyId(this.$route.params.id);
+        await this.getTicketByOrganizationId(this.$route.params.id);
       } catch (err) {
         console.log(err);
       } finally {
         this.$emit('setLoading', false);
       }
     },
-    async getTicketByCompanyId(companyId) {
+    async getTicketByOrganizationId(organizationId) {
       try {
         this.$emit('setLoading', true);
-        this.ticketsByCompany = await TicketServices.GetTicketsByCompanyIdAsync(companyId);
-        console.log(this.ticketsByCompany)
+        this.ticketsByOrganization = await TicketServices.GetTicketsByOrganizationIdAsync(organizationId);
+        console.log(this.ticketsByOrganization)
       } catch (err) {
         console.log(err);
       } finally {
@@ -150,29 +145,29 @@ export default {
       this.$emit('modificar');
       this.imageProfile = infoImagem.srcImage.src;
       this.styleImgComponent.blank = false;
-      await EmpresaService.SalvarImagemProfile({
+      await OrganizationService.SalvarImagemProfile({
         FileBase: infoImagem.srcImage.src,
         Type: infoImagem.srcImage.type,
-        CompanyId: Number(this.$route.params.id)
+        OrganizationId: Number(this.$route.params.id)
       });
     },
     editar() {
-      this.companyAux.Nome = this.company.Nome;
-      this.companyAux.Descricao = this.company.Descricao;
+      this.organizationAux.Nome = this.organization.Nome;
+      this.organizationAux.Descricao = this.organization.Descricao;
       this.isEdit = true;
     },
     async salvar() {
-      await EmpresaService.editarEmpresa(this.company);
-      this.companyAux = {
+      await OrganizationService.editarOrganization(this.organization);
+      this.organizationAux = {
         Nome: null,
         Descricao: null
       };
       this.isEdit = false;
     },
     cancelar() {
-      this.company.Nome = this.companyAux.Nome;
-      this.company.Descricao = this.companyAux.Descricao;
-      this.companyAux = {
+      this.organization.Nome = this.organizationAux.Nome;
+      this.organization.Descricao = this.organizationAux.Descricao;
+      this.organizationAux = {
         Nome: null,
         Descricao: null
       };
@@ -183,7 +178,7 @@ export default {
 </script>
 
 <style scoped>
-#profile-company {
+#profile-organization {
   height: 100vh;
 }
 .layout {
@@ -194,13 +189,13 @@ export default {
   grid-template-rows: 180px 120px 1fr;
   grid-template-areas: 
   "title            title"
-  "profile-image-company  profile-company"
+  "profile-image-organization  profile-organization"
   "items            items"
   "footer           footer";
   align-items: center;
 }
-.profile-company-image {
-  grid-area: profile-image-company;
+.profile-organization-image {
+  grid-area: profile-image-organization;
   display: flex;
   width: 100%;
   height: 240px;
@@ -218,11 +213,11 @@ export default {
   height: 120px;
 }
 
-#company-image ~ .custom-circle-add-image:hover {
+#organization-image ~ .custom-circle-add-image:hover {
   background: rgba(777, 777, 777, 0.5);
 }
 
-  #company-image ~ .custom-circle-add-image:hover svg {
+  #organization-image ~ .custom-circle-add-image:hover svg {
     visibility: visible;
   }
 
@@ -240,9 +235,9 @@ export default {
   visibility: hidden;
 }
 
-.layout-form-company {
+.layout-form-organization {
   width: 100%;
-  grid-area: profile-company;
+  grid-area: profile-organization;
 }
 
 input, textarea {

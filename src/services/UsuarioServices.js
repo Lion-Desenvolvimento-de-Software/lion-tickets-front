@@ -1,9 +1,9 @@
 import axios from 'axios'
 
 export default {
-  async GetUsers(pagination = 0, companyId = 0) {
+  async GetUsers(pagination = 0, organizationId = 0) {
     try {
-      const { data } = await axios.get(`/api/v1/usuario/${pagination}/${companyId}`);
+      const { data } = await axios.get(`/api/v1/usuario/${pagination}/${organizationId}`);
       return data;
     } catch (err) {
       console.log("GetUsers: ", err);

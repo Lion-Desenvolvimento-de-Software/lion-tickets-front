@@ -1,9 +1,8 @@
-export default class Company {
+export default class Organization {
   constructor() {
     this.Id = null;
     this.Nome = null;
-    this.CNPJ = null;
-    this.ImagemEmpresa = null;
+    this.ImagemOrganizacao = null;
     this.Descricao = null;
   }
 

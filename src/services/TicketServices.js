@@ -5,8 +5,8 @@ export default {
     const { data } = await axios.get(`/api/v1/tickets/${Number.parseInt(paginate) - 1}`);
     return data;
   },
-  async GetTicketsAsync(companyId = 0, paginate = 1) {
-    const { data } = await axios.get(`/api/v1/tickets/GetTicketsByCompanyId/${companyId}/${Number.parseInt(paginate) - 1}`);
+  async GetTicketsAsync(organizationId = 0, paginate = 1) {
+    const { data } = await axios.get(`/api/v1/tickets/GetTicketsByOrganizationId/${organizationId}/${Number.parseInt(paginate) - 1}`);
     return data;
   },
 
@@ -15,8 +15,8 @@ export default {
     return data;
   },
 
-  async GetTicketsByCompanyIdAsync(companyId) {
-    const { data } = await axios.get(`/api/v2/ticketsByCompany/${companyId}`);
+  async GetTicketsByOrganizationIdAsync(organizationId) {
+    const { data } = await axios.get(`/api/v2/ticketsByOrganization/${organizationId}`);
     return data;
   },
   

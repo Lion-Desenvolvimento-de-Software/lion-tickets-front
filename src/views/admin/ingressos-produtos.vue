@@ -236,7 +236,7 @@ export default {
     }
   },
   props: {
-    Company: null,
+    Organization: null,
     Usuario: null
   },
   computed: {
@@ -258,7 +258,7 @@ export default {
     },
   },
   created() {
-    if (this.Company != null) {
+    if (this.Organization != null) {
       this.GetProdutos();
       this.GetIngressos();
     }
@@ -271,7 +271,7 @@ export default {
   methods: {
     async GetProdutos() {
       this.isBusyProducts = true;
-      ProdutosServices.GetProdutos(this.Company?.Id, this.currentPageProduct).then(res => {
+      ProdutosServices.GetProdutos(this.Organization?.Id, this.currentPageProduct).then(res => {
         this.dataProdutos = res.products;
         this.countData = res.countProducts
       }).catch(err => {
@@ -282,7 +282,7 @@ export default {
     },
     async GetIngressos() {
       this.isBusyTickets = true;
-      TicketServices.GetTicketsAsync(this.Company?.Id, this.currentPageTickets).then(res => {
+      TicketServices.GetTicketsAsync(this.Organization?.Id, this.currentPageTickets).then(res => {
         console.log(res.tickets)
         this.dataTickets = res.tickets;
         this.countTickets = res.countTickets
@@ -308,12 +308,12 @@ export default {
 
         if (this.tipo == 1) {
           formData.append("CategoryName", this.category);
-          formData.append("CompanyId", this.Company.Id);
+          formData.append("OrganizationId", this.Organization.Id);
 
           await ProdutosServices.SalvarProduto(formData);
         }
         else {
-          formData.append("TicketsHeader.CompanyId", this.Company.Id);
+          formData.append("TicketsHeader.OrganizationId", this.Organization.Id);
           formData.append("TicketsHeader.UserId", this.Usuario.Id);
           formData.append("DateEvent", this.dateEvent);
           formData.append("TimeEvent", this.timeEvent);
@@ -346,7 +346,7 @@ export default {
           formData.append("ImageURL", product['imageURL']);
 
           formData.append("CategoryName", this.category);
-          formData.append("CompanyId", this.Company.Id);
+          formData.append("OrganizationId", this.Organization.Id);
 
           var dataProduto = await ProdutosServices.EditarProduto(formData)
 
@@ -354,7 +354,7 @@ export default {
         } else {
           var ticket = this.dataTickets.find(item => item.id == id);
           formData.append("ImageURL", ticket['imageURL']);
-          formData.append("TicketsHeader.CompanyId", this.Company.Id);
+          formData.append("TicketsHeader.OrganizationId", this.Organization.Id);
           formData.append("TicketsHeader.UserId", this.Usuario.Id);
 
           ticket['files'].forEach((item, index) => {

@@ -1,12 +1,12 @@
 <template>
   <div class="px-3">
-    <h1>Empresas</h1>
+    <h1>Organizações</h1>
     
-    <div v-if="$route.path == '/admin/empresas'">
+    <div v-if="$route.path == '/admin/organizacoes'">
       <div class="w-100 d-flex justify-content-between custom-layout-action">
         <div class="custom-filters w-100"></div>
         <div class="custom-action-data">
-          <RouterLink to="/admin/empresas/new"><button class="btn btn-success" @click="clearDados">Adicionar</button></RouterLink>
+          <RouterLink to="/admin/organizacoes/new"><button class="btn btn-success" @click="clearDados">Adicionar</button></RouterLink>
         </div>
       </div>
 
@@ -23,7 +23,7 @@
           >
           <template #cell(Ação)="row">
             <div class="d-flex justify-content-center spacing-x">
-              <RouterLink :to="`/admin/empresas/${row.item.id}`" @click="dados = row.item"><button class="btn btn-success"><font-awesome-icon :icon="['fa', 'pen']" /></button></RouterLink>
+              <RouterLink :to="`/admin/organizacoes/${row.item.id}`" @click="dados = row.item"><button class="btn btn-success"><font-awesome-icon :icon="['fa', 'pen']" /></button></RouterLink>
               <button class="btn btn-danger" @click="deletar(row.item.id)"><font-awesome-icon :icon="['fas', 'trash']" /></button>
             </div>
           </template>
@@ -35,20 +35,20 @@
             :total-rows="getCountPaginations"
             :per-page="10"
             aria-controls="my-table"
-            @change="getEmpresas"
+            @change="getOrganizations"
           ></b-pagination>
         </div>
       </div>
     </div>
     <RouterView v-else
-                @salvar="salvarEmpresa"
+                @salvar="SaveOrganization"
                 :errors="getErrors"
                 v-slot="{ Component }">
       <component :is="Component">
         <div class="row">
           <div class="col d-flex custom-input">
-            <label>Nome da empresa:</label>
-            <input v-model="dados.nome" type="text" name="NomeEmpresa" placeholder="Insira o nome da empresa" autofocus />
+            <label>Nome da organização:</label>
+            <input v-model="dados.nome" type="text" name="NomeOrganizacao" placeholder="Insira o nome da organização" autofocus />
             <span class="text-danger font-size">{{ getErrors?.nome[0] }}</span>
           </div>
           <div class="col d-flex custom-input">
@@ -66,7 +66,7 @@
         <div class="row">
           <div class="col d-flex custom-button">
             <button class="btn btn-outline-secondary" @click="cancelar">Cancelar</button>
-            <button class="btn btn-success" @click="salvarEmpresa()">{{ $route.params.id == 'new' ? 'Salvar' : 'Editar' }}</button>
+            <button class="btn btn-success" @click="SaveOrganization()">{{ $route.params.id == 'new' ? 'Salvar' : 'Editar' }}</button>
           </div>
         </div>
       </component>
@@ -75,10 +75,10 @@
 </template>
 
 <script>
-import empresaService from '@/services/admin/empresaService';
+import OrganizationService from '@/services/admin/OrganizationService';
 
 export default {
-  name: 'EmpresasAdmin',
+  name: 'OrganizationsAdmin',
   data() {
     return {
       fields: [
@@ -102,7 +102,7 @@ export default {
 
   async mounted() {
     this.$emit('setLoading', true);
-    await this.getEmpresas();
+    await this.getOrganizations();
     await this.getCount();
     this.$emit('setLoading', false);
   },
@@ -130,10 +130,10 @@ export default {
   },
 
   methods: {
-    async getEmpresas(pagina = 1) {
+    async getOrganizations(pagina = 1) {
       this.$emit('setLoading', true);
       try {
-        this.items = await empresaService.getEmpresas(pagina);
+        this.items = await OrganizationService.getOrganizations(pagina);
       } catch (err) {
         console.log(err);
       } finally {
@@ -141,14 +141,14 @@ export default {
       }
     },
 
-    async salvarEmpresa(isEditar = this.$route.params.id != 'new') {
+    async SaveOrganization(isEditar = this.$route.params.id != 'new') {
       this.$emit('setLoading', true);
       try {
         this.dados["id"] = this.$route.params.id != 'new' ? this.$route.params.id : null;
-        !isEditar ? await empresaService.salvarEmpresa(this.dados) : await empresaService.UpdateEmpresa(this.dados);
-        this.$emit('showToastSuccess', `Empresa ${!isEditar ? 'cadastrado' : 'editado'} com sucesso!`);
+        !isEditar ? await OrganizationService.salvarOrganization(this.dados) : await OrganizationService.UpdateOrganization(this.dados);
+        this.$emit('showToastSuccess', `Organização ${!isEditar ? 'cadastrado' : 'editado'} com sucesso!`);
         this.$router.back();
-        this.items = await empresaService.getEmpresas(this.currentPage);
+        this.items = await OrganizationService.getOrganizations(this.currentPage);
         await this.getCount();
       } catch (err) {
         let obj = {
@@ -162,15 +162,15 @@ export default {
     },
 
     async getCount() {
-      this.countData = await empresaService.getCount();
+      this.countData = await OrganizationService.getCount();
     },
 
     async deletar(id) {
       try {
-        await empresaService.DeletarEmpresa(id);
-        this.$emit('showToastSuccess', 'Empresa deletado com sucesso!');
+        await OrganizationService.DeletarOrganization(id);
+        this.$emit('showToastSuccess', 'Organização deletado com sucesso!');
         this.currentPage = 1;
-        this.items = await empresaService.getEmpresas();
+        this.items = await OrganizationService.getOrganizations();
         await this.getCount();
       } catch (err) {
         console.log(err);

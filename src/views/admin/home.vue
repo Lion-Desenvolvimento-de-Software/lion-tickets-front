@@ -3,10 +3,10 @@
     <div class="h-100">
       <div class="custom-menu">
         <div class="d-grid custom-items">
-          <div class="custom-company-profile" v-if="!GetIsAdmin">
-            <div class="company-profile-image">
-              <router-link :to="`/admin/empresa/${company?.Id}`">
-                <b-img v-bind="styleImgComponent" rounded="circle" alt="Circle image" id="company-image" class="my-1 p-0 preview__image" width="35" height="35" :src="company?.ImagemEmpresa" />
+          <div class="custom-organization-profile" v-if="!GetIsAdmin">
+            <div class="organization-profile-image">
+              <router-link :to="`/admin/organizacao/${organization?.Id}`">
+                <b-img v-bind="styleImgComponent" rounded="circle" alt="Circle image" id="organization-image" class="my-1 p-0 preview__image" width="35" height="35" :src="organization?.ImagemOrganizacao" />
               </router-link>
             </div>
           </div>
@@ -19,8 +19,8 @@
           <div v-if="GetIsGerente || GetIsAdmin" class="item" :class="$route.name.includes('UsuariosAdmin') ? 'selecionado' : ''">
             <router-link to="/admin/usuarios">Usuários</router-link>
           </div>
-          <div v-if="GetIsAdmin" class="item" :class="$route.name.includes('EmpresasAdmin') ? 'selecionado' : ''">
-            <router-link to="/admin/empresas">Empresas</router-link>
+          <div v-if="GetIsAdmin" class="item" :class="$route.name.includes('OrganizationsAdmin') ? 'selecionado' : ''">
+            <router-link to="/admin/organizacoes">Organizações</router-link>
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@
                   @showToastSuccess="showToastSuccess" 
                   @showToastError="showToastError"
                   @modificar="modificar"
-                  :Company="company"
+                  :Organization="organization"
                   :Usuario="usuario"
                   class="custom-pages"></router-view>
     </div>
@@ -36,20 +36,20 @@
 </template>
 
 <script>
-import Company from '@/assets/classes/Company.js';
-import EmpresaService from '@/services/admin/empresaService.js';
+import Organization from '@/assets/classes/Organization.js';
+import OrganizationService from '@/services/admin/OrganizationService.js';
 import { Usuario } from '@/assets/classes/Usuario.js';
 
 export default {
   name: 'HomeAdmin',
   data() {
     return {
-      company: null,
+      organization: null,
       styleImgComponent: { blank: true, blankColor: '#777', width: 120, height: 120, class: 'm1' },
     }
   },
   beforeMount() {
-    this.GetCompanyByUserId();
+    this.GetOrganizationByUserId();
   },
   computed: {
     GetIsAdmin() {
@@ -67,19 +67,19 @@ export default {
   },
   emits: ['setLoading', 'showToastSuccess', 'showToastError', 'atualizarImagem'],
   methods: {
-    async GetCompanyByUserId() {
+    async GetOrganizationByUserId() {
       if (this.usuario.Role != "Admin") {
         try {
           this.setLoading(true);
-          EmpresaService.GetCompanyByUserId(this.usuario.Id).then(res => {
-            this.company = new Company();
-            this.company.AddData({
+          OrganizationService.GetOrganizationByUserId(this.usuario.Id).then(res => {
+            this.organization = new Organization();
+            this.organization.AddData({
               Id: res.id,
               Nome: res.nome,
               CNPJ: res.cnpj,
-              ImagemEmpresa: res.imagemEmpresa
+              ImagemOrganizacao: res.imagemOrganizacao
             });
-            if (this.company?.ImagemEmpresa) {
+            if (this.organization?.ImagemOrganizacao) {
               this.styleImgComponent.blank = false;
             }
           }).catch(err => {
@@ -164,12 +164,12 @@ export default {
   background: lightblue !important;
 }
 
-.custom-company-profile {
+.custom-organization-profile {
   position: relative;
   left: 0;
   padding: 5px;
 }
-.company-profile-image {
+.organization-profile-image {
   padding: 5px;
   width: auto;
 }

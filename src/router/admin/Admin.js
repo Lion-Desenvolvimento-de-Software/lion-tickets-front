@@ -40,28 +40,28 @@ export default [
         ]
       },
       {
-        path: 'empresas',
-        name: 'EmpresasAdmin',
-        component: () => import('@/views/admin/Empresa/empresas'),
+        path: 'organizacoes',
+        name: 'OrganizationAdmin',
+        component: () => import('@/views/admin/Organization/organization.vue'),
         meta: { roles: ['Admin'] },
         children: [
           {
             path: 'new',
-            name: 'EmpresasAdmin',
+            name: 'OrganizationAdmin',
             component: () => import('@/components/FormAdmin/Form.vue'),
           },
           {
             path: ':id',
-            name: 'EmpresasAdmin',
+            name: 'OrganizationAdmin',
             component: () => import('@/components/FormAdmin/Form.vue'),
             props: { Nome: "" }
           }
         ]
       },
       {
-        path: 'empresa/:id',
-        name: 'Empresa',
-        component: () => import('@/views/Company/Company.vue'),
+        path: 'organizacoes/:id',
+        name: 'Organization',
+        component: () => import('@/views/Organization/Organization.vue'),
       },
       {
         path: 'usuarios',

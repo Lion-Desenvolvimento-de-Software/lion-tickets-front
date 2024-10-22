@@ -111,10 +111,10 @@
             </select>
           </div>
           <div class="col d-flex custom-input" v-if="dados.RoleName != null && dados.RoleName != 'Admin' && user?.role == 'Admin' && $route.params.id == 'new'">
-            <label>Company: *</label>
-            <select v-model="dados.CompanyId" name="CompanyId">
+            <label>Organization: *</label>
+            <select v-model="dados.OrganizationId" name="OrganizationId">
               <option :value="null" selected>Selecione...</option>
-              <option v-for="company in companies" :value="company.id" :key="company.Id">{{ company.nome }}</option>
+              <option v-for="organization in companies" :value="organization.id" :key="organization.Id">{{ organization.nome }}</option>
             </select>
           </div>
         </div>
@@ -133,7 +133,7 @@
 
 <script>
 import UsuarioServices from '@/services/UsuarioServices';
-import EmpresaService from '@/services/admin/empresaService';
+import OrganizationService from '@/services/admin/OrganizationService';
 import UserManager from '@/services/userManager';
 import spinner from '@/components/spinner.vue';
 
@@ -148,7 +148,7 @@ export default {
         { key: 'email', label: 'Email' },
         { key: 'phoneNumber', label: 'Telefone' },
         { key: 'genero', label: 'Genero' },
-        { key: 'companyName', label: 'Empresa' },
+        { key: 'organizationName', label: 'Organização' },
         { key: 'action', label: '' }
       ],
       users: null,
@@ -164,8 +164,8 @@ export default {
         Password: null,
         ConfirmPassword: null,
         RoleName: null,
-        CompanyId: null,
-        CompanyName: null
+        OrganizationId: null,
+        OrganizationName: null
       },
       user: null,
       companies: null,
@@ -181,7 +181,7 @@ export default {
   },
 
   props: {
-    Company: null
+    Organization: null
   },
 
   created() {
@@ -193,7 +193,7 @@ export default {
 
   computed: {
     hasDatasInserted() {
-      return (this.hasFirstAndLastName && this.hasUsername && this.hasEmail && this.hasGenero && this.hasPassword && this.isPasswordConfirm && this.hasRole && this.hasCompany)
+      return (this.hasFirstAndLastName && this.hasUsername && this.hasEmail && this.hasGenero && this.hasPassword && this.isPasswordConfirm && this.hasRole && this.hasOrganization)
     },
     hasFirstAndLastName() {
       return (this.dados.FirstName && this.dados.LastName) ? true : false;
@@ -217,9 +217,9 @@ export default {
     hasRole() {
       return this.dados.RoleName ? true : false;
     },
-    hasCompany() {
+    hasOrganization() {
       if (this.user.role != "Admin") return true;
-      return this.dados.RoleName == "Admin" || (this.dados.RoleName && this.dados.RoleName != "Admin" && this.dados.CompanyId) ? true : false;
+      return this.dados.RoleName == "Admin" || (this.dados.RoleName && this.dados.RoleName != "Admin" && this.dados.OrganizationId) ? true : false;
     },
     getMensagem() {
       return this.mensagem;
@@ -234,8 +234,8 @@ export default {
     getCountPaginations() {
       return this.countData;
     },
-    getCompany() {
-      return this.Company;
+    getOrganization() {
+      return this.Organization;
     }
   },
 
@@ -247,12 +247,12 @@ export default {
         this.isLoading = true;
         this.user = (await UserManager.getUser()).profile;
         if (this.user.role == "Admin") {
-          this.companies = await EmpresaService.getEmpresasAll();
+          this.companies = await OrganizationService.getOrganizationsAll();
           this.users = await UsuarioServices.GetUsers(0, (this.currentPage - 1));
         } else {
-          var company = await EmpresaService.GetCompanyByUserId(this.user.sub);
-          console.log(company)
-          this.users = await UsuarioServices.GetUsers((this.currentPage - 1), company.id);
+          var organization = await OrganizationService.GetOrganizationByUserId(this.user.sub);
+          console.log(organization)
+          this.users = await UsuarioServices.GetUsers((this.currentPage - 1), organization.id);
         }
         this.countData = this.users.countTotal;
   
@@ -266,13 +266,13 @@ export default {
 
     async salvarUsuario() {
       this.dados.Genero = Number(this.dados.Genero);
-      console.log(this.companies.find(item => item.id == this.dados.CompanyId))
-      if (this.dados.CompanyId != null) this.dados.CompanyName = this.companies.find(item => item.id == this.dados.CompanyId)?.nome;
+      console.log(this.companies.find(item => item.id == this.dados.OrganizationId))
+      if (this.dados.OrganizationId != null) this.dados.OrganizationName = this.companies.find(item => item.id == this.dados.OrganizationId)?.nome;
       UsuarioServices.Criar(this.dados).then(async (res) => {
-        if (this.dados.RoleName != 'Admin' && this.Company != null) {
-          await EmpresaService.salvarUsuarioParaEmpresa({UserId: res.id, CompanyId: Number(this.Company.Id )});
+        if (this.dados.RoleName != 'Admin' && this.Organization != null) {
+          await OrganizationService.salvarUsuarioParaOrganization({UserId: res.id, OrganizationId: Number(this.Organization.Id )});
         } else {
-          await EmpresaService.salvarUsuarioParaEmpresa({UserId: res.id, CompanyId: Number(this.dados.CompanyId)});
+          await OrganizationService.salvarUsuarioParaOrganization({UserId: res.id, OrganizationId: Number(this.dados.OrganizationId)});
         }
 
         this.$emit('showToastSuccess', 'Criado com sucesso');
@@ -298,7 +298,7 @@ export default {
     async deletar(id) {
       try {
         UsuarioServices.Delete(id).then(() => {
-          EmpresaService.RemoveUserOfCompany(id).then(res => {
+          OrganizationService.RemoveUserOfOrganization(id).then(res => {
             delete this.users[id];
             this.$emit('showToastSuccess', res);
             this.getUsers();
@@ -307,7 +307,7 @@ export default {
           });
         }).catch(err => {
           console.log(err);
-          this.$emit('showToastError', "Houve um problema ao deletar usuário com a empresas!");
+          this.$emit('showToastError', "Houve um problema ao deletar usuário com a organização!");
         });
       } catch (err) {
         this.$emit('showToastError', err);
@@ -357,7 +357,7 @@ export default {
       this.dados.RoleName = item?.roleName;
       this.dados.FirstName = item?.firstName;
       this.dados.LastName = item?.lastName;
-      this.dados.CompanyId = item?.companyId;
+      this.dados.OrganizationId = item?.organizationId;
     },
     claerDatas() {
       this.isEdit = false;
@@ -368,14 +368,14 @@ export default {
       this.dados.Username = null;
       this.dados.PhoneNumber = null;
       this.dados.RoleName = null;
-      this.dados.CompanyId = null;
+      this.dados.OrganizationId = null;
     },
     cancelar() {
       this.$router.back();
       this.claerDatas();
     },
     selectRole() {
-      if (!this.dados.RoleName || this.dados.RoleName == "Admin") this.dados.CompanyId = null;
+      if (!this.dados.RoleName || this.dados.RoleName == "Admin") this.dados.OrganizationId = null;
     }
   }
 }

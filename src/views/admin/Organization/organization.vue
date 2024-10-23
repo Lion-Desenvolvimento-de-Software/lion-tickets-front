@@ -18,25 +18,45 @@
                 striped 
                 hover
                 small
+                class="align-vertical-middle"
                 :per-page="10"
                 :current-page="getCurrentPageDivisionTen"
           >
+          <template #cell(showUsers)="row">
+            <button class="border-0 bg-transparent" @click="row.toggleDetails">
+              <font-awesome-icon :icon="['fas', row.detailsShowing ? 'chevron-down' : 'chevron-right']" />
+            </button>
+          </template>
           <template #cell(Ação)="row">
             <div class="d-flex justify-content-center spacing-x">
               <RouterLink :to="`/admin/organizacoes/${row.item.id}`" @click="dados = row.item"><button class="btn btn-success"><font-awesome-icon :icon="['fa', 'pen']" /></button></RouterLink>
               <button class="btn btn-danger" @click="deletar(row.item.id)"><font-awesome-icon :icon="['fas', 'trash']" /></button>
             </div>
           </template>
+
+          <template #row-details="{ item }">
+            <div class="container-fluid">
+              <h4>Usuários</h4>
+              <div class="w-100 text-end mb-2 px-3">
+                <button class="btn btn-primary" @click="organizationId = item.id" v-b-modal.modal-1>Cadastrar</button>
+              </div>
+              <b-table id="table-users"
+                      :fields="fieldsUsers"
+                      striped 
+                      hover >
+              </b-table>
+            </div>
+          </template>
         </b-table>
         <div class="pagination">
-          {{ countData }}
           <b-pagination
-            v-model="currentPage"
-            :total-rows="getCountPaginations"
-            :per-page="10"
-            aria-controls="my-table"
-            @change="getOrganizations"
+          v-model="currentPage"
+          :total-rows="getCountPaginations"
+          :per-page="10"
+          aria-controls="my-table"
+          @change="getOrganizations"
           ></b-pagination>
+          <span>{{ countData }}</span>
         </div>
       </div>
     </div>
@@ -50,11 +70,6 @@
             <label>Nome da organização:</label>
             <input v-model="dados.nome" type="text" name="NomeOrganizacao" placeholder="Insira o nome da organização" autofocus />
             <span class="text-danger font-size">{{ getErrors?.nome[0] }}</span>
-          </div>
-          <div class="col d-flex custom-input">
-            <label>CNPJ:</label>
-            <input v-model="dados.cnpj" type="text" name="CNPJ" placeholder="99999999/0001-76" />
-            <span class="text-danger font-size">{{ getErrors?.cnpj[0] }}</span>
           </div>
         </div>
         <div class="row">
@@ -71,18 +86,50 @@
         </div>
       </component>
     </RouterView>
+    <b-modal id="modal-1" title="BootstrapVue">
+      <template #model-header="{ close }">
+        <div class="w-100 d-flex justify-between">
+          <h3>Cadastrar ID do usuário</h3>
+          <font-awesome-icon @click="close()" :icon="['fas', 'close']" />
+        </div>
+      </template>
+      <label for="userId">Id do Usuário:</label>
+      <input maxlength="36" class="w-100" :class="erroMessage != '' ? 'border-danger' : 'border-transparent'" type="text" id="userId" name="UserId" @input="setUserIdForOrganization" placeholder="00000000-0000-0000-0000-000000000000">
+      <div class="p-1">
+        <div v-if="isLoadingInput" class="spinner-border text-secondary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <span class="text-danger" style="font-size: 12px;" v-else>{{ erroMessage }}</span>
+      </div>
+      <template #modal-footer="{ ok, cancel }">
+        <button class="btn btn-outline-danger" @click="cancel()">Cancelar</button>
+        <button class="btn btn-success" style="width: 100px;" @click="registerUserInOrganization(ok)" :disabled="userId < 36 || isLoadingModal">
+          <span v-if="!isLoadingModal">
+            Cadastrar
+          </span>
+          <div v-else class="spinner-border text-dark" style="width: 15px; height: 15px;" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+      </button>
+      </template>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import OrganizationService from '@/services/admin/OrganizationService';
+import UsuarioServices from '@/services/UsuarioServices';
 
 export default {
   name: 'OrganizationsAdmin',
   data() {
     return {
       fields: [
-        "id", "nome", "descricao", "cnpj", "Ação"
+        {key: "showUsers", label: "" }, "id", "nome", "descricao", "Ação"
+      ],
+      fieldsUsers: [
+        { key: 'firstName', label: 'Primeiro Nome' },
+        { key: 'LastName', label: 'Sobrenome' },
       ],
       items: [],
       countData: 0,
@@ -90,11 +137,18 @@ export default {
 
       dados: {
         nome: null,
-        cnpj: null,
         descricao: null,
       },
 
-      errors: null
+      errors: null,
+      showUsers: false,
+      userId: null,
+      delayTimer: null,
+
+      isLoadingInput: false,
+      erroMessage: "",
+      isLoadingModal: false,
+      organizationId: null
     }
   },
 
@@ -142,8 +196,8 @@ export default {
     },
 
     async SaveOrganization(isEditar = this.$route.params.id != 'new') {
-      this.$emit('setLoading', true);
       try {
+        this.$emit('setLoading', true);
         this.dados["id"] = this.$route.params.id != 'new' ? this.$route.params.id : null;
         !isEditar ? await OrganizationService.salvarOrganization(this.dados) : await OrganizationService.UpdateOrganization(this.dados);
         this.$emit('showToastSuccess', `Organização ${!isEditar ? 'cadastrado' : 'editado'} com sucesso!`);
@@ -152,7 +206,6 @@ export default {
         await this.getCount();
       } catch (err) {
         let obj = {
-          cnpj: err.response.data.errors['CNPJ'],
           nome: err.response.data.errors['Nome']
         }
         this.errors = obj;
@@ -180,6 +233,37 @@ export default {
       this.$router.back();
     },
 
+    async registerUserInOrganization() {
+      try {
+        this.isLoadingModal = true;
+        await UsuarioServices.GetUsersById(this.userId);
+        var obj = {
+          userId: this.userId,
+          organizationId: this.organizationId
+        }
+        console.log(await OrganizationService.SaveUserIdInOrganization(obj));
+      } catch (err) {
+        if (err.status == 404) this.erroMessage = "ID do Usuário não existe!";
+      } finally {
+        this.isLoadingModal = false;
+      }
+    },
+
+    setUserIdForOrganization(event) {
+      clearTimeout(this.delayTimer)
+      this.delayTimer = setTimeout(() => {
+        this.isLoadingInput = true;
+        this.userId = event.target.value;
+        if (this.userId.length < 36) {
+          this.erroMessage = "ID inválido"
+          this.isLoadingInput = false;
+        } else {
+          this.erroMessage = ""
+          this.isLoadingInput = false;
+        }
+      }, 1000)
+    },
+
     clearDados() {
       this.dados.nome = null;
       this.dados.cnpj = null;
@@ -201,9 +285,9 @@ export default {
 }
 
 .pagination {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: 1fr;
+  width: 100%;
+  justify-content: center;
+  align-items: baseline;
 }
 
 .custom-layout-action {

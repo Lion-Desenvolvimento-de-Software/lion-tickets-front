@@ -6,7 +6,7 @@ const organizationRoutes = [
     meta: { navbar: true },
     children: [
       {
-        path: 'evento/:id',
+        path: 'evento/:eventId',
         name: 'Evento',
         component: () => import('@/views/EventosView.vue')
       }

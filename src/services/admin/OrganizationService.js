@@ -68,8 +68,8 @@ export default {
     await axios.post("api/v1/Organization/SalvarImagemProfile", obj, { headers: { 'Content-Type': 'application/json' } });
   },
 
-  async salvarUsuarioParaOrganization(obj) {
-    await axios.post("api/v1/UsersOrganization", obj, { headers: { "Content-Type": "application/json" } })
+  async SaveUserIdInOrganization(obj) {
+    await axios.post("api/v1/Organization/SaveUserInOrganization", obj, { headers: { "Content-Type": "application/json" } })
   },
 
   async editarOrganization(obj) {

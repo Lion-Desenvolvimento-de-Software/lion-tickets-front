@@ -11,9 +11,9 @@ export default {
     }
   },
 
-  async GetUsersByIds(userId) {
+  async GetUsersById(userId) {
     try {
-      const { data } = await axios.post(`/api/v1/usuario/GetUsuarioById/${userId}`);
+      const { data } = await axios.get(`/api/v1/usuario/GetUsuarioById/${userId}`);
       return data;
     } catch (err) {
       console.log("GetUsers: ", err);
